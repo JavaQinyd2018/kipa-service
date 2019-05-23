@@ -1,0 +1,98 @@
+package com.kipa.http.service.base;
+
+import com.kipa.http.annotation.ServiceType;
+import com.kipa.http.core.HttpRequest;
+import com.kipa.http.emuns.InvokeType;
+import com.kipa.http.emuns.RequestType;
+import com.kipa.http.service.convert.RequestConvert;
+import com.kipa.http.service.convert.ResponseConvert;
+import com.kipa.http.emuns.HttpSendMethod;
+import com.kipa.http.service.execute.HttpAsyncExecutor;
+import com.kipa.http.service.execute.HttpSyncExecutor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.Map;
+
+/**
+ * @Author: Yadong Qin
+ * @Date: 2019/3/30
+ */
+@SuppressWarnings("all")
+@Service("baseHttpService")
+public class BaseHttpServiceFactoryBean implements FactoryBean<BaseHttpService> {
+
+    @Autowired
+    private HttpSyncExecutor httpSyncExecutor;
+
+    @Autowired
+    private HttpAsyncExecutor httpAsyncExecutor;
+
+    @Autowired
+    private RequestConvert requestConvert;
+
+    @Autowired
+    private ResponseConvert responseConvert;
+
+    @Override
+    public BaseHttpService getObject() throws Exception {
+        return (BaseHttpService) Proxy.newProxyInstance(BaseHttpService.class.getClassLoader(), new Class[]{BaseHttpService.class}, new HttpServiceHandler());
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return BaseHttpService.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return false;
+    }
+
+    class HttpServiceHandler implements InvocationHandler{
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            ServiceType annotation = method.getAnnotation(ServiceType.class);
+            OkHttpClient okHttpClient = (OkHttpClient) args[0];
+            HttpSendMethod httpSendMethod = (HttpSendMethod) args[1];
+            HttpRequest httpRequest = (HttpRequest) args[2];
+            InvokeType invokeType = null;
+            RequestType requestType = annotation.requestType();
+            switch (requestType) {
+                case PARAMETER:
+                    httpRequest.setType(requestType);
+                    invokeType = (InvokeType) args[3];
+                    break;
+                case JSON:
+                    String json = (String) args[3];
+                    invokeType = (InvokeType) args[4];
+                    httpRequest.setJson(json);
+                    httpRequest.setType(requestType);
+                    break;
+                case FILE:
+                    Map<String, String> fileMap = (Map<String, String>) args[3];
+                    invokeType = (InvokeType) args[4];
+                    httpRequest.setFileMap(fileMap);
+                    httpRequest.setType(requestType);
+                    break;
+            }
+
+            Request request = requestConvert.convert(httpRequest);
+            if (invokeType == InvokeType.SYNC) {
+                 Response response = httpSyncExecutor.execute(okHttpClient, request, null);
+                 return responseConvert.convert(response);
+            }else if (invokeType == InvokeType.ASYNC) {
+                httpAsyncExecutor.execute(okHttpClient, request, httpRequest.getCallback());
+            }
+            return null;
+        }
+    }
+}
