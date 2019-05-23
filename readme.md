@@ -873,11 +873,12 @@ public class MockTest extends BaseTestConfiguration {
             @DataParam(paramName = "responseCsvFile",paramValue = "mock/data/mockResponse.csv")
     })
     public void mock(String requestCsvFile, String responseCsvFile) {
-      //构建参数MockParamRequest
-        MockParamRequest request = CSVUtils.convertVertical2Bean(requestCsvFile,  MockParamRequest.class, 0);
-      //构建参数：MockResponse
-        MockResponse response = CSVUtils.convertVertical2Bean(responseCsvFile, MockResponse.class, 0);
-      //进行mock
+
+        //构建参数MockParamRequest
+        MockParamRequest request = CSVUtils.convert2Bean( MockParamRequest.class,requestCsvFile, 1, CSVType.VERTICAL);
+        //构建参数：MockResponse
+        MockResponse response = CSVUtils.convert2Bean(MockResponse.class, responseCsvFile,1,CSVType.VERTICAL);
+        //进行mock
         mockService.mockResponse(request, response);
     }
 
@@ -914,7 +915,7 @@ public class SftpTest  extends BaseTestConfiguration {
 
 ```
 
-###6. DB(mybatis)使用
+### 6. DB(mybatis)使用
 
 框架对于数据库的操作，封装了mybatis的一些简单的CRUD操作，传入参数或者sql语句就可以实现和数据库的交互。
 
