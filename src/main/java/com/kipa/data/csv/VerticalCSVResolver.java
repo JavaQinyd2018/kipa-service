@@ -52,7 +52,7 @@ final class VerticalCSVResolver {
                 throw new RuntimeException("csv内容不能为空");
             }
 
-            int max = headers.length - 3;
+            int max = headers.length - 4;
             if (index < 0 || index > max) {
                 throw new IllegalArgumentException("索引超出范围不存在数据，索引index的范围为：[0-"+max + "]");
             }
@@ -105,7 +105,7 @@ final class VerticalCSVResolver {
                 throw new RuntimeException("csv内容不能为空");
             }
 
-            int max = headers.length - 3;
+            int max = headers.length - 4;
             if (index < 0 || index > max) {
                 throw new IllegalArgumentException("索引超出范围不存在数据，索引index的范围为：[0-"+max + "]");
             }
@@ -517,7 +517,7 @@ final class VerticalCSVResolver {
             if (ArrayUtils.isEmpty(headers) || CollectionUtils.isEmpty(list)) {
                 throw new RuntimeException("csv内容不能为空");
             }
-            int max = headers.length - 3;
+            int max = headers.length - 4;
             if (index < 0 || index > max) {
                 throw new IllegalArgumentException("索引超出范围不存在数据，索引index的范围为：[0-"+max + "]");
             }

@@ -10,97 +10,117 @@
 
     <properties>
         <aspectj.version>1.8.10</aspectj.version>
+        <spring.version>5.1.2.RELEASE</spring.version>
+        <mybatis.version>3.4.5</mybatis.version>
+        <mybatis.spring.version>1.3.2</mybatis.spring.version>
+        <mysql.version>6.0.6</mysql.version>
+        <druid.version>1.1.10</druid.version>
+        <lombok.version>1.18.2</lombok.version>
+        <testng.version>6.10</testng.version>
+        <slf4j.version>1.7.26</slf4j.version>
+        <logback.version>1.2.3</logback.version>
+        <opencsv.version>4.4</opencsv.version>
+        <fastjson.version>1.2.49</fastjson.version>
+        <reflections.version>0.9.10</reflections.version>
+        <okhttp.version>3.13.1</okhttp.version>
+        <dubbo.version>2.6.2</dubbo.version>
+        <curator.version>4.0.1</curator.version>
+        <mockserver.version>5.4.1</mockserver.version>
+        <jsch.version>0.1.54</jsch.version>
+        <spring.redis.version>2.1.2.RELEASE</spring.redis.version>
+        <jedis.version>2.9.0</jedis.version>
+        <rocketmq.version>4.3.2</rocketmq.version>
     </properties>
     <dependencies>
         <!--spring相关的依赖-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>5.1.2.RELEASE</version>
+            <version>${spring.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>5.1.2.RELEASE</version>
+            <version>${spring.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>5.1.2.RELEASE</version>
+            <version>${spring.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
-            <version>5.1.2.RELEASE</version>
+            <version>${spring.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>5.1.2.RELEASE</version>
+            <version>${spring.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-expression</artifactId>
-            <version>5.1.2.RELEASE</version>
+            <version>${spring.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>5.1.2.RELEASE</version>
+            <version>${spring.version}</version>
             <scope>compile</scope>
         </dependency>
         <!--mybatis相关依赖-->
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
-            <version>3.4.5</version>
+            <version>${mybatis.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
-            <version>1.3.2</version>
+            <version>${mybatis.spring.version}</version>
         </dependency>
         <!--数据库驱动-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>6.0.6</version>
+            <version>${mysql.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>1.1.10</version>
+            <version>${druid.version}</version>
         </dependency>
         <!--lombok-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.2</version>
+            <version>${lombok.version}</version>
         </dependency>
         <!--test-->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>6.10</version>
+            <version>${testng.version}</version>
         </dependency>
         <!--日志-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.26</version>
+            <version>${slf4j.version}</version>
         </dependency>
         <!--logback-classic依赖logback-core，会自动级联引入-->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
+            <version>${logback.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -112,7 +132,7 @@
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
-            <version>4.4</version>
+            <version>${opencsv.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.commons</groupId>
@@ -128,13 +148,13 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.49</version>
+            <version>${fastjson.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.10</version>
+            <version>${reflections.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.javassist</groupId>
@@ -146,26 +166,26 @@
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>1.8.10</version>
+            <version>${aspectj.version}</version>
         </dependency>
 
         <!--okhttp3的依赖-->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>3.13.1</version>
+            <version>${okhttp.version}</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>logging-interceptor</artifactId>
-            <version>3.13.1</version>
+            <version>${okhttp.version}</version>
         </dependency>
 
         <!--dubbo的配置-->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>dubbo</artifactId>
-            <version>2.6.2</version>
+            <version>${dubbo.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -173,7 +193,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
             <version>3.4.12</version>
@@ -183,11 +203,11 @@
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
-            <version>4.0.1</version>
+            <version>${curator.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -203,7 +223,7 @@
         <dependency>
             <groupId>org.mock-server</groupId>
             <artifactId>mockserver-netty</artifactId>
-            <version>5.4.1</version>
+            <version>${mockserver.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -221,13 +241,17 @@
                     <groupId>com.google.code.findbugs</groupId>
                     <artifactId>jsr305</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-text</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <!--sftp-->
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
-            <version>0.1.54</version>
+            <version>${jsch.version}</version>
         </dependency>
         <!--对象池 线程池-->
 <!--        <dependency>
@@ -239,7 +263,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-redis</artifactId>
-            <version>2.1.2.RELEASE</version>
+            <version>${spring.redis.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -250,13 +274,13 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>2.9.0</version>
+            <version>${jedis.version}</version>
         </dependency>
         <!--rocketMq-->
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-client</artifactId>
-            <version>4.3.2</version>
+            <version>${rocketmq.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.alibaba</groupId>
