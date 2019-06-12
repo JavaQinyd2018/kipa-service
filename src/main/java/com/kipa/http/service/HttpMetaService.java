@@ -219,9 +219,9 @@ public interface HttpMetaService {
 
     /**
      * 上传文件
-     * @param url
-     * @param headerMap
-     * @param fileMap
+     * @param url 请求的url地址
+     * @param headerMap 消息头
+     * @param fileMap 必须上传filePath：本地文件路径， mediaType文件类型， fileParamJson 带参数的文件上传信息
      * @param receiveAllInfo
      * @return
      */
@@ -247,28 +247,28 @@ public interface HttpMetaService {
      * 下载文件
      * @param url
      * @param headerMap
-     * @param fileMap
+     * @param localTargetDir
      * @param receiveAllInfo
      * @return
      */
-    Map<String, String> download(String url, Map<String, String> headerMap, Map<String, String> fileMap, boolean receiveAllInfo);
+    Map<String, String> download(String url, Map<String, String> headerMap, String localTargetDir, boolean receiveAllInfo);
 
     /**
      * 下载文件
      * @param url
-     * @param fileMap
+     * @param localTargetDir
      * @param receiveAllInfo
      * @return
      */
-    Map<String, String> download(String url, Map<String, String> fileMap, boolean receiveAllInfo);
+    Map<String, String> download(String url, String localTargetDir, boolean receiveAllInfo);
 
     /**
      * 下载文件
      * @param url
-     * @param fileMap
+     * @param localTargetDir
      * @return
      */
-    Map<String, String> download(String url, Map<String, String> fileMap);
+    Map<String, String> download(String url, String localTargetDir);
 
     /**
      * 异步get

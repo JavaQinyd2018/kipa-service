@@ -1,6 +1,6 @@
 package com.kipa.data;
 
-import com.kipa.mock.annotation.MockHttp;
+import com.kipa.mock.http.annotation.MockHttp;
 import com.kipa.utils.AnnotationUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;

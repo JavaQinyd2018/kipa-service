@@ -14,7 +14,8 @@ import org.springframework.context.annotation.*;
 @ComponentScan("com.kipa.dubbo.service"),
 @ComponentScan("com.kipa.log"),
 @ComponentScan("com.kipa.env"),
-@ComponentScan("com.kipa.mock.service")}
+@ComponentScan("com.kipa.mock.http.service"),
+@ComponentScan("com.kipa.mock.dubbo")}
 )
 @PropertySource(value = "classpath:application.properties")
 @EnableAspectJAutoProxy

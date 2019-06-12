@@ -6,6 +6,7 @@ import com.kipa.utils.PreCheckUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.testng.collections.Maps;
 
 import java.util.HashMap;
 import java.util.List;
@@ -134,13 +135,11 @@ public class HttpService extends AbstractHttpServiceImpl implements HttpMetaServ
 
     @Override
     public Map<String, String> upload(String url, Map<String, String> headerMap, Map<String, String> fileMap, boolean receiveAllInfo) {
+        PreCheckUtils.checkEmpty(fileMap, "文件信息集合为空");
+        fileMap.put("method", "upload");
         String filePath = fileMap.get("filePath");
-        String fileName = fileMap.get("fileName");
-        String fileType = fileMap.get("fileType");
         String mediaType = fileMap.get("mediaType");
         PreCheckUtils.checkEmpty(filePath, "上传的文件路径不能为空");
-        PreCheckUtils.checkEmpty(fileName, "上传的文件名称不能为空");
-        PreCheckUtils.checkEmpty(fileType, "上传的文件类型不能为空");
         PreCheckUtils.checkEmpty(mediaType, "上传的文件mediaType不能为空");
         HttpResponse httpResponse = httpInvokeService.file(url, headerMap, fileMap);
         return parseFileResponseToMap(httpResponse, receiveAllInfo);
@@ -152,13 +151,17 @@ public class HttpService extends AbstractHttpServiceImpl implements HttpMetaServ
     }
 
     @Override
-    public Map<String, String> download(String url, Map<String, String> headerMap, Map<String, String> fileMap, boolean receiveAllInfo) {
-        return null;
+    public Map<String, String> download(String url, Map<String, String> headerMap, String localTargetDir, boolean receiveAllInfo) {
+        PreCheckUtils.checkEmpty(localTargetDir, "下载保存的本地目录不存在");
+        Map<String, String> fileMap = Maps.newHashMap();
+        fileMap.put("localTargetDir",localTargetDir);
+        HttpResponse httpResponse = httpInvokeService.file(url, headerMap, fileMap);
+        return parseFileResponseToMap(httpResponse, receiveAllInfo);
     }
 
     @Override
-    public Map<String, String> download(String url, Map<String, String> fileMap, boolean receiveAllInfo) {
-        return null;
+    public Map<String, String> download(String url, String localTargetDir, boolean receiveAllInfo) {
+        return download(url, null, localTargetDir, receiveAllInfo);
     }
 
     @Override
@@ -197,8 +200,8 @@ public class HttpService extends AbstractHttpServiceImpl implements HttpMetaServ
     }
 
     @Override
-    public Map<String, String> download(String url, Map<String, String> fileMap) {
-        return download(url, fileMap, false);
+    public Map<String, String> download(String url, String localTargetDir) {
+        return download(url, localTargetDir, false);
     }
 
     @Override

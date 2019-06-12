@@ -6,7 +6,6 @@ import com.kipa.redis.StandAloneRedisCondition;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +25,6 @@ import org.testng.collections.Lists;
 import redis.clients.jedis.JedisPoolConfig;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
