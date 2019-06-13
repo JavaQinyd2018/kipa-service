@@ -13,7 +13,7 @@
 ```xml
 	<dependency>
         <groupId>com.kipa</groupId>
-        <artifactId>kipa</artifactId>
+        <artifactId>kipa-service</artifactId>
         <version>1.0.0</version>
     </dependency>
 ```
@@ -215,13 +215,13 @@ public class MockTest extends BaseTestConfiguration {
   	* @BeforeMethod 这个注解是为了在@Test方法之前运行mock操作，方便在@Test方法里面http调用的时候
   	* 返回mock的结果
   	*/
-    @BeforeMethod
-    public void before() {
-        MockParamRequest request = CSVUtils.convertVertical2Bean("mock/data/mockParamRequest.csv", MockParamRequest.class, 0);
-        MockResponse response = CSVUtils.convertVertical2Bean("mock/data/mockResponse.csv", MockResponse.class, 0);
-      //通过mock服务进行mock操作
-        mockService.mockResponse(request, response);
-    }
+        @BeforeMethod
+        public void before() {
+            MockParamRequest request =CSVUtils.convert2Bean(MockParamRequest.class,"mock/data/mockParamRequest.csv",0,CSVType.VERTICAL);
+            MockResponse response = CSVUtils.convert2Bean(MockResponse.class,"mock/data/mockResponse.csv",0,CSVType.VERTICAL);
+            //通过mock服务进行mock操作
+            mockService.mockResponse(request, response);
+        }
 
     @Autowired
     private HttpService httpService;

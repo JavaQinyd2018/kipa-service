@@ -140,14 +140,14 @@ public class DataHelloTest extends BaseTestConfiguration {
     @Autowired
     private HttpService httpService;
 
-  //用MockHttp标识的方法会在@Test注解标识的方法之前运行，达到mock的作用
+    //用MockHttp标识的方法会在@Test注解标识的方法之前运行，达到mock的作用
     @MockHttp
     @DataMeta({
             @DataParam(paramName = "requestCsvFile",paramValue = "mock/data/mockParamRequest.csv"),
             @DataParam(paramName = "responseCsvFile",paramValue = "mock/data/mockResponse.csv")
     })
     public void mock(String requestCsvFile, String responseCsvFile) {
-        MockParamRequest request = CSVUtils.convert2Bean( MockParamRequest.class,requestCsvFile, 1, CSVType.VERTICAL);
+        MockParamRequest request = CSVUtils.convert2Bean(MockParamRequest.class,requestCsvFile, 1, CSVType.VERTICAL);
         MockResponse response = CSVUtils.convert2Bean(MockResponse.class, responseCsvFile,1,CSVType.VERTICAL);
         mockService.mockResponse(request, response);
     }
