@@ -12,10 +12,10 @@
 
 ```xml
 	<dependency>
-            <groupId>com.kipa</groupId>
-            <artifactId>kipa</artifactId>
-            <version>1.0.0</version>
-        </dependency>
+        <groupId>com.kipa</groupId>
+        <artifactId>kipa</artifactId>
+        <version>1.0.0</version>
+    </dependency>
 ```
 
 ### 2. 配置
