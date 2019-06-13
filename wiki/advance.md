@@ -61,6 +61,12 @@ public class MockParamRequest {
     private Map<String, String> requestParams;
 }
 ```
+csv数据文件
+行模式的csv文件
+![csv-transverse.png](png/csv-transverse.png)
+列模式的csv文件
+![csv-vertical.png](png/csv-vertical.png)
+
 ```java
 //1.创建一个csv文件
 //创建列模式csv

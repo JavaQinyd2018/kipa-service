@@ -120,3 +120,7 @@ rocketmq.consumer.consumeThreadMax=64
 #设置一次消费消息的条数，默认为1条
 rocketmq.consumer.consumeMessageBatchMaxSize=1
 ```
+
+整个的配置情况如下图：
+
+![kipa](png/construction.png)

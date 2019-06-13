@@ -82,3 +82,6 @@
 > > * sftp 利用jsch和common-pool2实现基于对象池的jsch连接
 > > * redis 直接spring 整合redis，有单机和集群两种配置
 > > * mq 直接整合rocketMq
+
+### 框架的结构图
+![kipa-structure](png/kipa-structure.png)
