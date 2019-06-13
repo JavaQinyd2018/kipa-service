@@ -14,7 +14,7 @@
 	<dependency>
         <groupId>com.kipa</groupId>
         <artifactId>kipa-service</artifactId>
-        <version>1.0.0</version>
+        <version>${lastest-version}</version>
     </dependency>
 ```
 
