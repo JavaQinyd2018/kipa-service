@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service("mockDubboServiceRegister")
 public class MockDubboServiceRegister {
 
-    public void exportService(MockDubboConfig config, MockDubboRequest request, GenericService genericService) {
+    public void exportService(MockDubboConfig config, String interfaceName, GenericService genericService) {
         ServiceConfig<GenericService> serviceConfig = new ServiceConfig<>();
         ApplicationConfig applicationConfig = new ApplicationConfig();
         applicationConfig.setName(config.getApplicationName());
@@ -28,7 +28,7 @@ public class MockDubboServiceRegister {
 
         serviceConfig.setApplication(applicationConfig);
         serviceConfig.setRegistry(registryConfig);
-        serviceConfig.setInterface(request.getInterfaceName());
+        serviceConfig.setInterface(interfaceName);
         serviceConfig.setRef(genericService);
         serviceConfig.setGeneric("true");
         serviceConfig.setFilter("mockDubboProviderFilter");

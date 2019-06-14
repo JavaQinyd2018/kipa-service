@@ -208,9 +208,7 @@ public class PackageScanUtils {
         // 不使用默认的TypeFilter
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
         if (CollectionUtils.isNotEmpty(annotationTypeList)) {
-            annotationTypeList.forEach(annotationType -> {
-                provider.addIncludeFilter(new AnnotationTypeFilter(annotationType));
-            });
+            annotationTypeList.forEach(annotationType -> provider.addIncludeFilter(new AnnotationTypeFilter(annotationType)));
         }
         return provider.findCandidateComponents(basePackage);
     }

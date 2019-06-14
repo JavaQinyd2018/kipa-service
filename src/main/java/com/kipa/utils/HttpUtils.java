@@ -19,9 +19,7 @@ public class HttpUtils {
     public static String buildGetUrl(String url, Map<String, String> paramMap) {
         List<String> list = Lists.newArrayList();
         if (MapUtils.isNotEmpty(paramMap)) {
-            paramMap.forEach((param, value) -> {
-                list.add(String.format("%s=%s", param, value));
-            });
+            paramMap.forEach((param, value) -> list.add(String.format("%s=%s", param, value)));
             return String.format("%s?%s",url, StringUtils.join(list, "&"));
         }else {
             return url;

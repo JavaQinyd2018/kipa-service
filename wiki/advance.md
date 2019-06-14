@@ -192,7 +192,8 @@ public class DemoApplicationConfiguration {
 
 }
 
-这三个注解推荐配置到测试的入口类上面，需要修改的时候直接修改入口配置类，这样会方便很多
+/*
+ * 这三个注解推荐配置到测试的入口类上面，需要修改的时候直接修改入口配置类，这样会方便很多
  * 框架高级用法整合样例，切勿直接继承该类
  */
 @Database(datasourceFlag = "dev")

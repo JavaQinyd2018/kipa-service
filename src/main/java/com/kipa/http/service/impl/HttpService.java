@@ -20,6 +20,7 @@ import java.util.Map;
 @Slf4j
 public class HttpService extends AbstractHttpServiceImpl implements HttpMetaService {
 
+    private static final String MESSAGE = "回调函数接口不能为空";
     @Autowired
     private HttpInvokeServiceImpl httpInvokeService;
 
@@ -206,55 +207,55 @@ public class HttpService extends AbstractHttpServiceImpl implements HttpMetaServ
 
     @Override
     public void asyncGet(String url, Map<String, String> paramMap, Map<String, String> headerMap, ResultCallback callback) {
-        PreCheckUtils.checkEmpty(callback, "回调函数接口不能为空");
+        PreCheckUtils.checkEmpty(callback, MESSAGE);
         httpInvokeService.asyncGet(url, paramMap, headerMap, callback);
     }
 
     @Override
     public void asyncPost(String url, Map<String, String> paramMap, Map<String, String> headerMap, ResultCallback callback) {
-        PreCheckUtils.checkEmpty(callback, "回调函数接口不能为空");
+        PreCheckUtils.checkEmpty(callback, MESSAGE);
         httpInvokeService.asyncPost(url, paramMap, headerMap, callback);
     }
 
     @Override
     public void asyncPost(String url, Map<String, String> headerMap, String json, ResultCallback callback) {
-        PreCheckUtils.checkEmpty(callback, "回调函数接口不能为空");
+        PreCheckUtils.checkEmpty(callback, MESSAGE);
         httpInvokeService.asyncPost(url, headerMap, json, callback);
     }
 
     @Override
     public void asyncPut(String url, Map<String, String> paramMap, Map<String, String> headerMap, ResultCallback callback) {
-        PreCheckUtils.checkEmpty(callback, "回调函数接口不能为空");
+        PreCheckUtils.checkEmpty(callback, MESSAGE);
         httpInvokeService.asyncPut(url, paramMap, headerMap, callback);
     }
 
     @Override
     public void asyncPut(String url, Map<String, String> headerMap, String json, ResultCallback callback) {
-        PreCheckUtils.checkEmpty(callback, "回调函数接口不能为空");
+        PreCheckUtils.checkEmpty(callback, MESSAGE);
         httpInvokeService.asyncPut(url, headerMap, json, callback);
     }
 
     @Override
     public void asyncDelete(String url, Map<String, String> paramMap, Map<String, String> headerMap, ResultCallback callback) {
-        PreCheckUtils.checkEmpty(callback, "回调函数接口不能为空");
+        PreCheckUtils.checkEmpty(callback, MESSAGE);
         httpInvokeService.asyncDelete(url, paramMap, headerMap, callback);
     }
 
     @Override
     public void asyncDelete(String url, Map<String, String> headerMap, String json, ResultCallback callback) {
-        PreCheckUtils.checkEmpty(callback, "回调函数接口不能为空");
+        PreCheckUtils.checkEmpty(callback, MESSAGE);
         httpInvokeService.asyncDelete(url, headerMap, json, callback);
     }
 
     @Override
     public void asyncUpload(String url, Map<String, String> headerMap, Map<String, String> fileMap, ResultCallback callback) {
-        PreCheckUtils.checkEmpty(callback, "回调函数接口不能为空");
+        PreCheckUtils.checkEmpty(callback, MESSAGE);
         httpInvokeService.asyncFile(url, headerMap, fileMap, callback);
     }
 
     @Override
     public void asyncDownload(String url, Map<String, String> headerMap, Map<String, String> fileMap, ResultCallback callback) {
-        PreCheckUtils.checkEmpty(callback, "回调函数接口不能为空");
+        PreCheckUtils.checkEmpty(callback, MESSAGE);
         httpInvokeService.asyncFile(url, headerMap, fileMap, callback);
     }
 }

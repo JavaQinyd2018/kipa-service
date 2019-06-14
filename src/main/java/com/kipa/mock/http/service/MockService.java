@@ -40,14 +40,14 @@ public interface  MockService {
     /**
      * mock Error
      * @param request
-     * @param forward
+     * @param mockError
      */
     void mockError(MockParamRequest request, MockError mockError);
 
     /**
      * mock Error
      * @param request
-     * @param forward
+     * @param mockError
      */
     void mockError(MockBodyRequest request, MockError mockError);
 }
