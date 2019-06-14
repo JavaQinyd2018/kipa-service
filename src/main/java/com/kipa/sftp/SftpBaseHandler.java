@@ -21,6 +21,22 @@ class SftpBaseHandler {
 
     private static final String SFTP_CONFIG = "config/sftp.properties";
 
+    private static SftpConnectionPool sftpConnectionPool = null;
+
+    private static SftpConnectionPool getInstance(String env) {
+        final SftpConnectionFactory sftpConnectionFactory = new SftpConnectionFactory(getConfig(env));
+        if (sftpConnectionPool == null) {
+            synchronized (SftpBaseHandler.class){
+                if (sftpConnectionPool == null) {
+                    sftpConnectionPool = new SftpConnectionPool(sftpConnectionFactory);
+                }
+                return sftpConnectionPool;
+            }
+        }
+        return sftpConnectionPool;
+
+    }
+
     private static SftpConfig getConfig(String env) {
         try {
             Properties properties = PropertiesLoaderUtils.loadAllProperties(SFTP_CONFIG);
@@ -28,16 +44,19 @@ class SftpBaseHandler {
             Integer port = Integer.valueOf(properties.getProperty(StringUtils.isBlank(env) ? "sftp.connection.port" : String.format("%s.sftp.connection.port", env)));
             String username = properties.getProperty(StringUtils.isBlank(env) ? "sftp.connection.username" : String.format("%s.sftp.connection.username", env));
             String password = properties.getProperty(StringUtils.isBlank(env) ? "sftp.connection.password" : String.format("%s.sftp.connection.password", env));
+            PreCheckUtils.checkEmpty(host, "sftp的host不能为空");
+            PreCheckUtils.checkEmpty(port, "sftp的端口号不能为空");
+            PreCheckUtils.checkEmpty(username, "sftp主机的用户名不能为空");
+            PreCheckUtils.checkEmpty(password, "sftp主机的密码不能为空");
             return new SftpConfig(host, port, username, password);
         } catch (IOException e) {
             throw new RuntimeException("获取并解析sftp的配置文件异常",e);
         }
+
     }
 
-    private static SftpConnection getConnection(SftpConfig sftpConfig) {
+    private static SftpConnection getConnection(SftpConnectionPool sftpConnectionPool) {
         SftpConnection sftpConnection = null;
-        final SftpConnectionFactory sftpConnectionFactory = new SftpConnectionFactory(sftpConfig);
-        SftpConnectionPool sftpConnectionPool = new SftpConnectionPool(sftpConnectionFactory);
         try {
             sftpConnection = sftpConnectionPool.borrowObject();
         } catch (Exception e) {
@@ -47,25 +66,32 @@ class SftpBaseHandler {
     }
 
      static ChannelSftp getSftp(String env) {
-        SftpConfig config = getConfig(env);
-        SftpConnection connection = getConnection(config);
-        PreCheckUtils.checkEmpty(connection, "sftp连接不能为空");
+         SftpConnectionPool connectionPool = getInstance(env);
+         SftpConnection connection = getConnection(connectionPool);
+         PreCheckUtils.checkEmpty(connection, "sftp连接不能为空");
         return connection.getChannelSftp();
     }
 
-    static void closeSftp(ChannelSftp channelSftp) {
-        if (channelSftp != null) {
-            channelSftp.quit();
-            channelSftp.disconnect();
+    static void returnObject(ChannelSftp channelSftp) {
+        SftpConnection connection = new SftpConnection();
+        connection.setChannelSftp(channelSftp);
+        try {
+            sftpConnectionPool.returnObject(connection);
+        } catch (Exception e) {
+            throw new RuntimeException("释放sftp连接失败",e);
         }
+    }
+
+    static void closeConnection() {
+        sftpConnectionPool.close();
     }
 
     static void closeInputStream(InputStream inputStream) {
         if (inputStream != null) {
             try {
                 inputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignore) {
+
             }
         }
     }
@@ -74,8 +100,8 @@ class SftpBaseHandler {
         if (outputStream != null) {
             try {
                 outputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignore) {
+
             }
         }
     }

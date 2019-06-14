@@ -66,11 +66,12 @@ public final class SftpHelper {
         try {
             inputStream = new BufferedInputStream(new FileInputStream(file));
             channelSftp.put(inputStream, uploadFileName,ChannelSftp.OVERWRITE);
+            SftpBaseHandler.returnObject(channelSftp);
         } catch (Exception e) {
             throw new RuntimeException("文件上传失败.", e);
         }finally {
             SftpBaseHandler.closeInputStream(inputStream);
-            SftpBaseHandler.closeSftp(channelSftp);
+            SftpBaseHandler.closeConnection();
         }
     }
 
@@ -92,11 +93,12 @@ public final class SftpHelper {
             outputStream = new BufferedOutputStream(new FileOutputStream(file));
             channelSftp.get(remoteFilePath, outputStream);
             outputStream.flush();
+            SftpBaseHandler.returnObject(channelSftp);
         } catch (Exception e) {
             throw new RuntimeException("文件下载失败.",e);
         }finally {
             SftpBaseHandler.closeOutputStream(outputStream);
-            SftpBaseHandler.closeSftp(channelSftp);
+            SftpBaseHandler.closeConnection();
         }
     }
 
@@ -121,9 +123,12 @@ public final class SftpHelper {
 
         try {
             channelSftp.rm(remoteFileName);
+            SftpBaseHandler.returnObject(channelSftp);
         } catch (SftpException e) {
             log.error("远程删除文件名：{}失败，失败信息为：{}",remoteFileName, e);
             throw new RuntimeException("远程删除文件失败.",e);
+        }finally {
+            SftpBaseHandler.closeConnection();
         }
     }
 
@@ -152,6 +157,9 @@ public final class SftpHelper {
         } catch (SftpException e) {
             log.error("列表展开目录文件：{}失败，失败信息为：{}",remoteFilePath, e);
             return false;
+        }finally {
+            SftpBaseHandler.returnObject(channelSftp);
+            SftpBaseHandler.closeConnection();
         }
         return false;
     }
@@ -168,6 +176,9 @@ public final class SftpHelper {
         } catch (SftpException e) {
             log.error("列表展开目录文件：{}失败，失败信息为：{}",remoteDirectory, e);
             throw new RuntimeException("列表展开目录文件失败." ,e);
+        }finally {
+            SftpBaseHandler.returnObject(sftp);
+            SftpBaseHandler.closeConnection();
         }
         return list;
     }

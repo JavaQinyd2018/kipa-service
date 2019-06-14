@@ -42,10 +42,6 @@ public class SftpConnectionFactory extends BasePooledObjectFactory<SftpConnectio
          Integer port = sftpConfig.getPort();
          String username = sftpConfig.getUsername();
          String password = sftpConfig.getPassword();
-         PreCheckUtils.checkEmpty(host, "sftp的host不能为空");
-         PreCheckUtils.checkEmpty(port, "sftp的端口号不能为空");
-         PreCheckUtils.checkEmpty(username, "sftp主机的用户名不能为空");
-         PreCheckUtils.checkEmpty(password, "sftp主机的密码不能为空");
          JSch jSch = new JSch();
          Session session = jSch.getSession(username, host, port);
          session.setPassword(password);
