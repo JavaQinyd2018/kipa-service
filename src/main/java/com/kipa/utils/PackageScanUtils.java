@@ -11,9 +11,11 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
@@ -238,4 +240,33 @@ public class PackageScanUtils {
         Reflections reflections = new Reflections(packageName, new TypeAnnotationsScanner(),new SubTypesScanner());
         return reflections.getTypesAnnotatedWith(annotationType);
     }
+
+
+
+    /**
+     * 扫描单一的注解
+     * @param basePackage
+     * @param annotationType
+     * @return
+     */
+    private static Map<String, Object> getAnnotationAttributes(String basePackage, Class<? extends Annotation> annotationType) {
+        Map<String, Object> map = Maps.newHashMap();
+        if (StringUtils.isNotBlank(basePackage)) {
+            Set<BeanDefinition> beanWithAnnotation = getBeanWithAnnotation(basePackage, annotationType);
+            if (CollectionUtils.isNotEmpty(beanWithAnnotation)) {
+                beanWithAnnotation.forEach(beanDefinition -> {
+                    if (beanDefinition instanceof ScannedGenericBeanDefinition) {
+                        ScannedGenericBeanDefinition scannedGenericBeanDefinition = (ScannedGenericBeanDefinition) beanDefinition;
+                        AnnotationMetadata metadata = scannedGenericBeanDefinition.getMetadata();
+                        Map<String, Object> annotationAttributes = metadata.getAnnotationAttributes(annotationType.getName());
+                        if (annotationAttributes != null) {
+                            map.putAll(annotationAttributes);
+                        }
+                    }
+                });
+            }
+        }
+        return map;
+    }
+
 }

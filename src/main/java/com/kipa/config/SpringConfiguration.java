@@ -11,12 +11,13 @@ import org.springframework.context.annotation.*;
 @ComponentScans(value = {
         @ComponentScan("com.kipa.mybatis"),
         @ComponentScan("com.kipa.http.service"),
-@ComponentScan("com.kipa.dubbo.service"),
-@ComponentScan("com.kipa.log"),
-@ComponentScan("com.kipa.env"),
-@ComponentScan("com.kipa.mock.http.service"),
-@ComponentScan("com.kipa.mock.dubbo")}
-)
+        @ComponentScan("com.kipa.dubbo.service"),
+        @ComponentScan("com.kipa.log"),
+        @ComponentScan("com.kipa.env"),
+        @ComponentScan("com.kipa.mock.http.service"),
+        @ComponentScan("com.kipa.mock.dubbo"),
+        @ComponentScan("com.kipa.mq")
+})
 @PropertySource(value = "classpath:application.properties")
 @EnableAspectJAutoProxy
 public class SpringConfiguration {

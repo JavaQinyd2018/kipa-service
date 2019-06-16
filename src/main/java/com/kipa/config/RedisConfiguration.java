@@ -1,5 +1,6 @@
 package com.kipa.config;
 
+import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.kipa.redis.ClusterRedisCondition;
 import com.kipa.redis.RedisConfig;
 import com.kipa.redis.StandAloneRedisCondition;
@@ -168,10 +169,10 @@ public class RedisConfiguration {
     public RedisTemplate<Object, Object> redisTemplate(@Qualifier("connectionFactory") JedisConnectionFactory connectionFactory) {
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
+        redisTemplate.setKeySerializer(new FastJsonRedisSerializer<>(Object.class));
+        redisTemplate.setValueSerializer(new FastJsonRedisSerializer<>(Object.class));
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashValueSerializer(new JdkSerializationRedisSerializer());
+        redisTemplate.setHashValueSerializer(new FastJsonRedisSerializer<>(Object.class));
         return redisTemplate;
     }
 
@@ -180,9 +181,9 @@ public class RedisConfiguration {
         StringRedisTemplate stringRedisTemplate = new StringRedisTemplate();
         stringRedisTemplate.setConnectionFactory(connectionFactory);
         stringRedisTemplate.setKeySerializer(new StringRedisSerializer());
-        stringRedisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
+        stringRedisTemplate.setValueSerializer(new StringRedisSerializer());
         stringRedisTemplate.setHashKeySerializer(new StringRedisSerializer());
-        stringRedisTemplate.setHashValueSerializer(new JdkSerializationRedisSerializer());
+        stringRedisTemplate.setHashValueSerializer(new StringRedisSerializer());
         return stringRedisTemplate;
     }
 
