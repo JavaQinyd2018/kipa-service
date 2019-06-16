@@ -179,7 +179,6 @@ public class ReflectUtils {
                     return method;
                 }else if (StringUtils.startsWithIgnoreCase(methodName, "is")
                         && method.getParameters().length == 0
-                        && method.getReturnType().isAssignableFrom(Boolean.class)
                         && StringUtils.substringAfter(methodName, "is").equalsIgnoreCase(fieldName)) {
                     return method;
                 }
