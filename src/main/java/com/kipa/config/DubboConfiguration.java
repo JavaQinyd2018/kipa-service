@@ -1,7 +1,7 @@
 package com.kipa.config;
 
 import com.kipa.dubbo.entity.DubboConfig;
-import com.kipa.env.ConsumerContextHolder;
+import com.kipa.env.DubboContextHolder;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -74,7 +74,7 @@ public class DubboConfiguration {
 
     @PostConstruct
     public void init() {
-        Map<String, Object> config = ConsumerContextHolder.getConfig();
+        Map<String, Object> config = DubboContextHolder.getConfig();
         String flag = null;
         if (MapUtils.isNotEmpty(config)) {
             flag = (String) config.get("flag");
@@ -129,6 +129,6 @@ public class DubboConfiguration {
 
     @PreDestroy
     public void destroy() {
-        ConsumerContextHolder.removeConfig();
+        DubboContextHolder.removeConfig();
     }
 }

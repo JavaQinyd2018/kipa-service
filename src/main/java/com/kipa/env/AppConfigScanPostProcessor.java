@@ -4,7 +4,6 @@ import com.kipa.utils.PackageScanUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -50,11 +49,11 @@ public class AppConfigScanPostProcessor implements BeanFactoryPostProcessor {
                         Map<String, Object> datasourceAttributes = getAnnotationAttributes(beanDefinition, Database.class);
                         if (MapUtils.isNotEmpty(datasourceAttributes)) {
                             String flag = (String)datasourceAttributes.get("datasourceFlag");
-                            DubboContextHolder.setFlag(flag);
+                            DatabaseContextHolder.setFlag(flag);
                         }
                         Map<String, Object> consumerAttributes = getAnnotationAttributes(beanDefinition, Dubbo.class);
                         if (MapUtils.isNotEmpty(consumerAttributes)) {
-                            ConsumerContextHolder.setConfig(consumerAttributes);
+                            DubboContextHolder.setConfig(consumerAttributes);
                         }
 
                         Map<String, Object> httpAttributes = getAnnotationAttributes(beanDefinition, Http.class);

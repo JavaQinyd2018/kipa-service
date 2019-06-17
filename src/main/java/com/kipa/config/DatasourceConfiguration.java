@@ -1,7 +1,7 @@
 package com.kipa.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.kipa.env.DubboContextHolder;
+import com.kipa.env.DatabaseContextHolder;
 import com.kipa.mybatis.type.DatasourceConfig;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
@@ -69,7 +69,7 @@ public class DatasourceConfiguration {
     @PostConstruct
     private void init() {
         Properties properties = PropertiesUtils.loadProperties(DB_FILE);
-        String flag = DubboContextHolder.getFlag();
+        String flag = DatabaseContextHolder.getFlag();
         String driverName = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.driver");
         String url = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.url");
         String username = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.username");
@@ -159,6 +159,6 @@ public class DatasourceConfiguration {
 
     @PreDestroy
     public void destroy() {
-        DubboContextHolder.removeFlag();
+        DatabaseContextHolder.removeFlag();
     }
 }
