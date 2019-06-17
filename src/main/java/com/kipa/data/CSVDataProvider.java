@@ -34,7 +34,7 @@ public class CSVDataProvider {
             csvFilePath = String.format("%s\\%s",baseDir,paramValue.replace("/","\\"));
         } else {
             Class<?> clazz = method.getDeclaringClass();
-            String csvDir = String.format("%s\\%s\\%s\\",baseDir, "service\\data",method.getName());
+            String csvDir = String.format("%s\\%s\\%s\\",baseDir, "data\\service",method.getName());
             String csvFileName = String.format("%s.%s.csv",clazz.getSimpleName(), method.getName());
             csvFilePath = csvDir+csvFileName;
             log.debug("csv数据文件默认的目录是：{}，默认的文件名称为：{}",csvDir, csvFileName);

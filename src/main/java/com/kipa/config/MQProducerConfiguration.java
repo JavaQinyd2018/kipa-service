@@ -1,9 +1,11 @@
-package com.kipa.mq.producer;
+package com.kipa.config;
 
+import com.kipa.mq.producer.MQProducerConfig;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -17,6 +19,7 @@ import java.util.Properties;
  */
 @Configuration
 @PropertySource("classpath:mq/mq-producer.properties")
+@ComponentScan("com.kipa.mq.producer")
 public class MQProducerConfiguration {
 
     private static final String MQ_CONFIG = "config/mq.properties";

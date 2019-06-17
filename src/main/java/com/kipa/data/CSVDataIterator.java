@@ -36,7 +36,6 @@ public class CSVDataIterator implements Iterator<Object[]> {
 
     public CSVDataIterator(Method method, String csvFilePath) {
         Parameter[] parameters = method.getParameters();
-        log.info("csv文件路径为：{}",csvFilePath);
         if (StringUtils.isBlank(csvFilePath)) {
             throw new IllegalArgumentException("数据驱动的csv文件路径不能为空");
         }

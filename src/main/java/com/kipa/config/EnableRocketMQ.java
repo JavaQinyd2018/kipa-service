@@ -1,7 +1,5 @@
 package com.kipa.config;
 
-import com.kipa.mq.consumer.MQConsumerConfiguration;
-import com.kipa.mq.producer.MQProducerConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;

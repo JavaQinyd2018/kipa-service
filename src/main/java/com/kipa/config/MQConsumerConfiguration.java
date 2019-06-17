@@ -1,5 +1,6 @@
-package com.kipa.mq.consumer;
+package com.kipa.config;
 
+import com.kipa.mq.consumer.MQConsumerConfig;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +19,7 @@ import java.util.Properties;
  */
 @Configuration
 @PropertySource("classpath:mq/mq-consumer.properties")
-@ComponentScan("com.kipa.mq")
+@ComponentScan("com.kipa.mq.consumer")
 public class MQConsumerConfiguration {
 
     private static final String MQ_CONFIG = "config/mq.properties";
