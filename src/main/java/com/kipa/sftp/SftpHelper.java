@@ -1,10 +1,10 @@
 package com.kipa.sftp;
 
+import com.google.common.collect.Lists;
 import com.jcraft.jsch.*;
 import com.kipa.utils.PreCheckUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.testng.collections.Lists;
 
 import java.io.*;
 import java.util.*;

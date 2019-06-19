@@ -1,5 +1,6 @@
 package com.kipa.mybatis.service.impl;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.kipa.data.csv.CSVType;
 import com.kipa.data.csv.CSVUtils;
@@ -18,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.testng.collections.Lists;
 
 import java.util.LinkedHashMap;
 import java.util.List;

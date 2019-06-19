@@ -1,6 +1,7 @@
 package com.kipa.config;
 
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
+import com.google.common.collect.Lists;
 import com.kipa.redis.ClusterRedisCondition;
 import com.kipa.redis.RedisConfig;
 import com.kipa.redis.StandAloneRedisCondition;
@@ -21,7 +22,6 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.testng.collections.Lists;
 import redis.clients.jedis.JedisPoolConfig;
 
 import javax.annotation.PostConstruct;

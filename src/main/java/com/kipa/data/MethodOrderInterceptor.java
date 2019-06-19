@@ -1,5 +1,6 @@
 package com.kipa.data;
 
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -9,7 +10,6 @@ import org.testng.IMethodInterceptor;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
 import org.testng.annotations.Test;
-import org.testng.collections.Lists;
 
 import java.util.List;
 import java.util.regex.Pattern;

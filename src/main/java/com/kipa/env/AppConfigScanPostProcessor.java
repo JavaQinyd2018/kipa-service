@@ -1,5 +1,6 @@
 package com.kipa.env;
 
+import com.google.common.collect.Maps;
 import com.kipa.utils.PackageScanUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -13,7 +14,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-import org.testng.collections.Maps;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;

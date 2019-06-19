@@ -12,7 +12,7 @@ import com.kipa.http.service.execute.HttpSyncExecutor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.commons.collections4.MapUtils;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
