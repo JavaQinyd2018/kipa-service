@@ -4,10 +4,13 @@ import com.google.common.collect.Lists;
 import com.jcraft.jsch.*;
 import com.kipa.utils.PreCheckUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.util.*;
+
 
 /**
  * @author: Qinyadong
@@ -17,14 +20,23 @@ import java.util.*;
 @Slf4j
 public final class SftpHelper {
 
+
     private SftpHelper() {}
 
     public static void upload(String localFilePath, String directory, String uploadFileName) {
         upload(null, localFilePath, directory, uploadFileName);
     }
 
+    public static void batchUpload(String localDirectory, String remoteDirectory) {
+        batchUpload(null, localDirectory, remoteDirectory);
+    }
+
     public static void download(String remoteFilePath, String localFilePath) {
        download(null, remoteFilePath, localFilePath);
+    }
+
+    public static void batchDownload(String remoteDirectory, String localDirectory) {
+        batchDownload(null, remoteDirectory, localDirectory);
     }
 
     public static void remoteDelete(String remoteFilePath) {
@@ -40,10 +52,20 @@ public final class SftpHelper {
        return listRemoteFile(null, remoteDirectory);
     }
 
+
+    public static boolean remoteMkdir(String remoteDirectory) {
+        return remoteMkdir(null, remoteDirectory);
+    }
+
+    public static boolean remoteRmdir(String remoteDirectory) {
+        return remoteRmdir(null, remoteDirectory);
+    }
+
     public static void upload(String env, String localFilePath, String directory, String uploadFileName) {
         PreCheckUtils.checkEmpty(localFilePath, "本地文件路径不能为空");
         PreCheckUtils.checkEmpty(directory, "文件上传的目录不能为空");
         PreCheckUtils.checkEmpty(uploadFileName, "上传的文件名称不能为空");
+        checkDirIfLegal(directory);
         ChannelSftp channelSftp = SftpBaseHandler.getSftp(env);
         File file = new File(localFilePath);
         if (!file.exists()) {
@@ -75,6 +97,24 @@ public final class SftpHelper {
         }
     }
 
+    public static void batchUpload(String env, String localDirectory, String remoteDirectory) {
+        PreCheckUtils.checkEmpty(remoteDirectory, "参数远程目录不能为空");
+        PreCheckUtils.checkEmpty(localDirectory, "参数本地目录不能为空");
+        checkDirIfLegal(localDirectory, remoteDirectory);
+        File localTargetDir = new File(localDirectory);
+        if (!localTargetDir.exists()) {
+            throw new RuntimeException("本地目录"+localDirectory+"不存在");
+        }else if (localTargetDir.isFile()) {
+            throw new RuntimeException(localTargetDir+"不是目录一个文件");
+        }
+
+        //recursive 为true的时候回吧文件夹下面的文件以及文件夹的所有文件都扫描到
+        final Collection<File> files = FileUtils.listFiles(localTargetDir, null, true);
+        if (CollectionUtils.isNotEmpty(files)) {
+            files.forEach(file -> upload(env, file.getAbsolutePath(), remoteDirectory, file.getName()));
+        }
+    }
+
     public static void download(String env, String remoteFilePath, String localFilePath) {
         PreCheckUtils.checkEmpty(remoteFilePath,"目录参数不能为空");
         PreCheckUtils.checkEmpty(localFilePath, "本地下载的文件路径不能为空");
@@ -102,6 +142,44 @@ public final class SftpHelper {
         }
     }
 
+    public static void batchDownload(String env, String remoteDirectory, String localDirectory) {
+        PreCheckUtils.checkEmpty(remoteDirectory, "参数远程目录不能为空");
+        PreCheckUtils.checkEmpty(localDirectory, "参数本地目录不能为空");
+        checkDirIfLegal(remoteDirectory, localDirectory);
+        ChannelSftp channelSftp = SftpBaseHandler.getSftp(env);
+        File localTargetDir = new File(localDirectory);
+        if (!localTargetDir.exists()) {
+            if (!localTargetDir.mkdirs()) {
+                throw new RuntimeException("目录"+localDirectory+"创建失败");
+            }
+        }else if (localTargetDir.isFile()) {
+            throw new RuntimeException(localTargetDir+"不是目录一个文件");
+        }
+
+        try {
+            channelSftp.ls(remoteDirectory);
+        } catch (SftpException e) {
+            throw new RuntimeException("sftp服务器上面的路径："+remoteDirectory+"不存在",e);
+        }
+
+        final List<String> fileNameList = listRemoteFile(env, remoteDirectory);
+        try {
+            if (CollectionUtils.isNotEmpty(fileNameList)) {
+                fileNameList.forEach(fileName -> {
+                    String remoteFilePath = remoteDirectory + fileName;
+                    String localFilePath = localDirectory + fileName;
+                    download(env, remoteFilePath, localFilePath);
+                });
+            }
+            SftpBaseHandler.returnObject(channelSftp);
+        } catch (Exception e) {
+            throw new RuntimeException("文件批量下载异常",e);
+        }finally {
+            SftpBaseHandler.closeConnection();
+        }
+    }
+
+
     public static void remoteDelete(String env, String remoteFilePath) {
         PreCheckUtils.checkEmpty(remoteFilePath, "本地下载的文件路径不能为空");
         ChannelSftp channelSftp = SftpBaseHandler.getSftp(env);
@@ -125,7 +203,6 @@ public final class SftpHelper {
             channelSftp.rm(remoteFileName);
             SftpBaseHandler.returnObject(channelSftp);
         } catch (SftpException e) {
-            log.error("远程删除文件名：{}失败，失败信息为：{}",remoteFileName, e);
             throw new RuntimeException("远程删除文件失败.",e);
         }finally {
             SftpBaseHandler.closeConnection();
@@ -167,20 +244,73 @@ public final class SftpHelper {
     public static List<String> listRemoteFile(String env, String remoteDirectory) {
         List<String> list = Lists.newArrayList();
         PreCheckUtils.checkEmpty(remoteDirectory, "参数不能为空");
+        checkDirIfLegal(remoteDirectory);
         ChannelSftp sftp = SftpBaseHandler.getSftp(env);
         try {
             Vector<ChannelSftp.LsEntry> ls = sftp.ls(remoteDirectory);
             for (ChannelSftp.LsEntry entry : ls) {
+                if (StringUtils.equals(entry.getFilename(), ".") || StringUtils.equals(entry.getFilename(), "..")) {
+                    continue;
+                }
                 list.add(entry.getFilename());
             }
         } catch (SftpException e) {
-            log.error("列表展开目录文件：{}失败，失败信息为：{}",remoteDirectory, e);
             throw new RuntimeException("列表展开目录文件失败." ,e);
         }finally {
             SftpBaseHandler.returnObject(sftp);
             SftpBaseHandler.closeConnection();
         }
         return list;
+    }
+
+    public static boolean remoteMkdir(String env, String remoteDirectory) {
+        PreCheckUtils.checkEmpty(remoteDirectory, "参数远程目录不能为空");
+        checkDirIfLegal(remoteDirectory);
+        ChannelSftp channelSftp = SftpBaseHandler.getSftp(env);
+        try {
+            channelSftp.cd(remoteDirectory);
+        } catch (SftpException e) {
+            if (ChannelSftp.SSH_FX_NO_SUCH_FILE == e.id) {
+                try {
+                    channelSftp.mkdir(remoteDirectory);
+                    return true;
+                } catch (SftpException e1) {
+                    log.error("创建目录失败，错误信息：{}",e1);
+                   return false;
+                }
+            }
+           return false;
+        }
+        throw new RuntimeException("目录'"+remoteDirectory+"'已经存在，不能重复创建");
+    }
+
+    public static boolean remoteRmdir(String env, String remoteDirectory) {
+        PreCheckUtils.checkEmpty(remoteDirectory, "参数远程目录不能为空");
+        checkDirIfLegal(remoteDirectory);
+        ChannelSftp channelSftp = SftpBaseHandler.getSftp(env);
+        try {
+            channelSftp.cd(remoteDirectory);
+        } catch (SftpException e) {
+            if (ChannelSftp.SSH_FX_NO_SUCH_FILE == e.id) {
+                log.error("目录'"+remoteDirectory+"'不存在");
+            }
+            return false;
+        }
+        try {
+            channelSftp.rmdir(remoteDirectory);
+        } catch (SftpException e) {
+            log.error("创建删除目录失败，错误信息为：{}",e);
+            return false;
+        }
+        return true;
+    }
+
+    private static void checkDirIfLegal(String... dirPaths) {
+        for (String dirPath : dirPaths) {
+            if (!StringUtils.endsWith(dirPath, "\\") && !StringUtils.endsWith(dirPath,"/")) {
+                throw new IllegalArgumentException("目录'"+dirPath+"'不合法， 目录应该以'\\'或者'/'结束");
+            }
+        }
     }
 
 }

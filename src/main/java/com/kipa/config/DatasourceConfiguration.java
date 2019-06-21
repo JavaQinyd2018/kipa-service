@@ -85,24 +85,6 @@ public class DatasourceConfiguration {
         datasourceConfig.setPassword(password);
     }
 
-    /**
-     *  try {
-     *             Properties properties = PropertiesLoaderUtils.loadAllProperties(DB_FILE);
-     *             if (StringUtils.isNotBlank(flag)) {
-     *                 driverName = properties.getProperty(String.format("%s.mybatis.datasource.driver",flag));
-     *                 url = properties.getProperty(String.format("%s.mybatis.datasource.url",flag));
-     *                 username= properties.getProperty(String.format("%s.mybatis.datasource.username",flag));
-     *                 password = properties.getProperty(String.format("%s.mybatis.datasource.password",flag));
-     *             }else {
-     *                 driverName = properties.getProperty("mybatis.datasource.driver");
-     *                 url = properties.getProperty("mybatis.datasource.url");
-     *                 username= properties.getProperty("mybatis.datasource.username");
-     *                 password = properties.getProperty("mybatis.datasource.password");
-     *             }
-     *         } catch (IOException e) {
-     *             e.printStackTrace();
-     *         }
-     */
 
     /**
      *  <!-- 配置初始化大小、最小、最大 -->
