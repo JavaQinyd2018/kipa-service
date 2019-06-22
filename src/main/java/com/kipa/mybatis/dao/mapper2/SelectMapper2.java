@@ -1,4 +1,4 @@
-package com.kipa.mybatis.mapper;
+package com.kipa.mybatis.dao.mapper2;
 
 import com.kipa.mybatis.provider.SelectSqlProvider;
 import org.apache.ibatis.annotations.Param;
@@ -12,7 +12,7 @@ import java.util.List;
  * @date: 2019/3/21 11:17
  * 查询
  */
-public interface SelectMapper {
+public interface SelectMapper2 {
 
     @SelectProvider(type = SelectSqlProvider.class, method = "selectOneByCondition")
     LinkedHashMap<String, Object> selectOneByCondition(@Param("tableName") String tableName,

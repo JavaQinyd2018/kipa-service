@@ -7,7 +7,7 @@ import java.util.Map;
  * @author: Qinyadong
  * @date: 2019/3/22 15:55
  */
-public interface DatabaseService {
+public interface BaseDatabaseService {
 
     int insert(String tableName, Map<String, Object> paramMap);
 

@@ -1,4 +1,4 @@
-package com.kipa.mybatis.mapper;
+package com.kipa.mybatis.dao.mapper1;
 
 import com.kipa.mybatis.provider.UpdateSqlProvider;
 import org.apache.ibatis.annotations.Param;
@@ -11,7 +11,7 @@ import java.util.List;
  * @date: 2019/3/21 11:17
  * 更新
  */
-public interface UpdateMapper {
+public interface UpdateMapper1 {
 
     @UpdateProvider(type = UpdateSqlProvider.class, method = "update")
     int update(@Param("tableName") String tableName,

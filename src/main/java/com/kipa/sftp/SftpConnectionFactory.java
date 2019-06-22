@@ -1,7 +1,6 @@
 package com.kipa.sftp;
 
 import com.jcraft.jsch.*;
-import com.kipa.utils.PreCheckUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;

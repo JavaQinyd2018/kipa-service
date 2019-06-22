@@ -120,10 +120,16 @@ public final class SftpHelper {
         PreCheckUtils.checkEmpty(localFilePath, "本地下载的文件路径不能为空");
         ChannelSftp channelSftp = SftpBaseHandler.getSftp(env);
         File file = new File(localFilePath);
+        String remoteFileName = remoteFilePath.substring(remoteFilePath.lastIndexOf('/') +1);
+        long start = System.currentTimeMillis();
         if (file.isDirectory()) {
             log.warn("本地路径是个目录，文件将会下载到该目录下，并且和远程文件名一致");
+            file = new File(localFilePath + remoteFileName);
         }
+        long end = System.currentTimeMillis();
+        log.info("判断时长：" + (end - start));
         String remoteDirectory = remoteFilePath.substring(0, remoteFilePath.lastIndexOf('/'));
+
         BufferedOutputStream outputStream = null;
         try {
             Vector vector = channelSftp.ls(remoteDirectory);

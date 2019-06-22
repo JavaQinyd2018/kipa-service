@@ -1,4 +1,4 @@
-package com.kipa.mybatis.mapper;
+package com.kipa.mybatis.dao.mapper;
 
 import com.kipa.mybatis.provider.InsertSqlProvider;
 import org.apache.ibatis.annotations.InsertProvider;

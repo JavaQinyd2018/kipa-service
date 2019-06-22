@@ -1,4 +1,4 @@
-package com.kipa.mybatis.mapper;
+package com.kipa.mybatis.dao.mapper1;
 
 import org.apache.ibatis.annotations.Select;
 
@@ -10,7 +10,7 @@ import java.util.Map;
  * @date: 2019/3/21 17:19
  * 获取数据库信息
  */
-public interface DatabaseInfoMapper {
+public interface DatabaseInfoMapper1 {
 
     @Select("select TABLE_NAME from information_schema.TABLES where TABLE_SCHEMA=(select database())")
     List<Map<String, Object>> listTable();

@@ -1,4 +1,4 @@
-package com.kipa.mybatis.mapper;
+package com.kipa.mybatis.dao.mapper1;
 
 import com.kipa.mybatis.provider.DeleteSqlProvider;
 import org.apache.ibatis.annotations.DeleteProvider;
@@ -11,7 +11,7 @@ import java.util.List;
  * @date: 2019/3/21 11:18
  * 删除
  */
-public interface DeleteMapper {
+public interface DeleteMapper1 {
 
     @DeleteProvider(type = DeleteSqlProvider.class, method = "delete")
     int delete(@Param("tableName") String tableName,

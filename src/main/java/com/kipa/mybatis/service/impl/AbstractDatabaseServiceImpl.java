@@ -4,20 +4,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.kipa.data.csv.CSVType;
 import com.kipa.data.csv.CSVUtils;
-import com.kipa.mybatis.mapper.DeleteMapper;
-import com.kipa.mybatis.mapper.InsertMapper;
-import com.kipa.mybatis.mapper.SelectMapper;
-import com.kipa.mybatis.mapper.UpdateMapper;
-import com.kipa.mybatis.service.DatabaseService;
-import com.kipa.mybatis.type.TypeHelper;
+import com.kipa.mybatis.service.BaseDatabaseService;
+import com.kipa.mybatis.service.type.TypeConvertor;
 import com.kipa.utils.PreCheckUtils;
-import com.kipa.mybatis.type.SqlParser;
-import com.kipa.mybatis.type.SqlType;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
@@ -27,27 +18,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author: Qinyadong
- * @date: 2019/3/22 15:59
+ * @date: 2019/6/21 21:01
+ * @since: 数据库增删改查抽象类
  */
-@Service
-@Slf4j
-public class DatabaseServiceImpl implements DatabaseService {
-
-
-    @Autowired
-    private TypeHelper typeHelper;
-
-    @Autowired
-    private InsertMapper insertMapper;
-
-    @Autowired
-    private SelectMapper selectMapper;
-
-    @Autowired
-    private UpdateMapper updateMapper;
-
-    @Autowired
-    private DeleteMapper deleteMapper;
+public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService {
 
     @Override
     public int insert(String tableName, Map<String, Object> paramMap) {
@@ -58,19 +32,30 @@ public class DatabaseServiceImpl implements DatabaseService {
             if (value == null) {
                 return;
             }
-            String columnType = typeHelper.getColumnType(tableName, columnName);
+            String columnType = getColumnType(tableName, columnName);
             if (StringUtils.isBlank(columnType)) {
                 throw new RuntimeException(String.format("表名为：【%s】的表中查不到列名为：【%s】的数据类型",tableName, columnName));
             }
-            insertParamMap.put(columnName, typeHelper.convertSqlSequence(value, columnType));
+            insertParamMap.put(columnName, TypeConvertor.convertSqlSequence(value, columnType));
         });
-        return insertMapper.insert(tableName, insertParamMap);
+        return insertParam(tableName, insertParamMap);
     }
 
-    @Override
-    public int insert(String sql) {
-        return insertMapper.insertBySql(sql);
-    }
+    /**
+     * 获取列类型抽象方法
+     * @param tableName
+     * @param columnName
+     * @return
+     */
+    public abstract String getColumnType(String tableName, String columnName);
+
+    /**
+     * 插入参数的抽象方法
+     * @param tableName
+     * @param insertParamMap
+     * @return
+     */
+    public abstract int insertParam(String tableName, Map<String,String> insertParamMap);
 
     @Override
     public int batchInsert(String tableName, String csvFilePath) {
@@ -96,10 +81,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         return count.get();
     }
 
-    @Override
-    public Map<String, Object> selectOne(String tableName, List<String> whereConditionList) {
-        return selectMapper.selectOneByCondition(tableName, whereConditionList);
-    }
+
 
     @Override
     public Map<String, Object> selectOne(String tableName, Map<String, Object> whereConditionMap) {
@@ -112,10 +94,18 @@ public class DatabaseServiceImpl implements DatabaseService {
     public List<Map<String, Object>> selectList(String tableName, List<String> whereConditionList) {
         List<Map<String, Object>> list = Lists.newArrayList();
         PreCheckUtils.checkEmpty(tableName, "表名不能为空");
-        List<LinkedHashMap<String, Object>> linkedHashMaps = selectMapper.selectListByCondition(tableName, whereConditionList);
-        list.addAll(linkedHashMaps);
+        List<LinkedHashMap<String, Object>> selectListByCondition = getSelectListByCondition(tableName, whereConditionList);
+        list.addAll(selectListByCondition);
         return list;
     }
+
+    /**
+     * 根据条件查询数据集合抽象方法
+     * @param tableName
+     * @param whereConditionList
+     * @return
+     */
+    public abstract List<LinkedHashMap<String, Object>> getSelectListByCondition(String tableName, List<String> whereConditionList);
 
     @Override
     public List<Map<String, Object>> selectList(String tableName, Map<String, Object> whereConditionMap) {
@@ -124,36 +114,12 @@ public class DatabaseServiceImpl implements DatabaseService {
         return selectList(tableName, whereConditionList);
     }
 
-    @Override
-    public Map<String, Object> selectOne(String sql) {
-        return selectMapper.selectOneBySql(sql);
-    }
-
-    @Override
-    public List<Map<String, Object>> selectList(String sql) {
-        List<Map<String, Object>> list = Lists.newArrayList();
-        List<LinkedHashMap<String, Object>> linkedHashMaps = selectMapper.selectListBySql(sql);
-        list.addAll(linkedHashMaps);
-        return list;
-    }
-
-    @Override
-    public Long count(String tableName, List<String> whereConditionList) {
-        PreCheckUtils.checkEmpty(tableName, "表名不能为空");
-        return selectMapper.countByCondition(tableName, whereConditionList);
-    }
 
     @Override
     public Long count(String tableName, Map<String, Object> whereConditionMap) {
         PreCheckUtils.checkEmpty(whereConditionMap,"查询条件map不能为空");
         List<String> whereConditionList = buildConditionList(tableName, whereConditionMap);
         return count(tableName, whereConditionList);
-    }
-
-    @Override
-    public Map<String, Long> countColumn(String tableName, String columnName, List<String> whereConditionList) {
-        PreCheckUtils.checkEmpty(tableName, "表名不能为空");
-        return selectMapper.countColumnByCondition(tableName, columnName, whereConditionList);
     }
 
     @Override
@@ -167,10 +133,19 @@ public class DatabaseServiceImpl implements DatabaseService {
     public List<Map<String, Object>> selectColumn(String tableName, List<String> columnNameList, List<String> whereConditionList) {
         List<Map<String, Object>> list = Lists.newArrayList();
         PreCheckUtils.checkEmpty(tableName, "表名不能为空");
-        List<LinkedHashMap<String, Object>> linkedHashMaps = selectMapper.selectColumnByCondition(tableName, columnNameList, whereConditionList);
+        List<LinkedHashMap<String, Object>> linkedHashMaps = getSelectColumnByCondition(tableName, columnNameList, whereConditionList);
         list.addAll(linkedHashMaps);
         return list;
     }
+
+    /**
+     * 根据条件查询指定列对应的属性值
+     * @param tableName
+     * @param columnNameList
+     * @param whereConditionList
+     * @return
+     */
+    public abstract List<LinkedHashMap<String, Object>> getSelectColumnByCondition(String tableName, List<String> columnNameList, List<String> whereConditionList);
 
     @Override
     public List<Map<String, Object>> selectColumn(String tableName, List<String> columnNameList, Map<String, Object> whereConditionMap) {
@@ -188,10 +163,21 @@ public class DatabaseServiceImpl implements DatabaseService {
         if (pageSize == 0) {
             pageSize = 10;
         }
-        List<LinkedHashMap<String, Object>> linkedHashMaps = selectMapper.selectPageByCondition(tableName, whereConditionList, pageNo, pageSize);
+        List<LinkedHashMap<String, Object>> linkedHashMaps = getSelectPageByCondition(tableName, whereConditionList, pageNo, pageSize);
         list.addAll(linkedHashMaps);
         return list;
     }
+
+    /**
+     * 获取分页查询抽象方法
+     * @param tableName
+     * @param whereConditionList
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    public abstract List<LinkedHashMap<String, Object>> getSelectPageByCondition(String tableName, List<String> whereConditionList, Integer pageNo, Integer pageSize);
+
 
     @Override
     public List<Map<String, Object>> selectPage(String tableName, Map<String, Object> whereConditionMap, Integer pageNo, Integer pageSize) {
@@ -199,12 +185,6 @@ public class DatabaseServiceImpl implements DatabaseService {
         return selectPage(tableName, whereConditionList, pageNo, pageSize);
     }
 
-    @Override
-    public int update(String tableName, List<String> setFiledList, List<String> updateConditionList) {
-        PreCheckUtils.checkEmpty(setFiledList, "修改的set值不能为空");
-        PreCheckUtils.checkEmpty(updateConditionList, "修改的where条件不能为空");
-        return updateMapper.update(tableName, setFiledList, updateConditionList);
-    }
 
     @Override
     public int update(String tableName, Map<String, Object> setFiledMap, Map<String, Object> updateConditionMap) {
@@ -215,17 +195,6 @@ public class DatabaseServiceImpl implements DatabaseService {
         return update(tableName, setFieldList, updateConditionList);
     }
 
-    @Override
-    public int update(String sql) {
-        SqlParser.checkSql(sql, SqlType.UPDATE);
-        return updateMapper.updateBySql(sql);
-    }
-
-    @Override
-    public int delete(String tableName, List<String> deleteConditionList) {
-        PreCheckUtils.checkEmpty(tableName, "表名不能为空");
-        return deleteMapper.delete(tableName, deleteConditionList);
-    }
 
     @Override
     public int delete(String tableName, Map<String, Object> deleteConditionMap) {
@@ -233,11 +202,6 @@ public class DatabaseServiceImpl implements DatabaseService {
         return delete(tableName, deleteConditionList);
     }
 
-    @Override
-    public int delete(String sql) {
-        SqlParser.checkSql(sql, SqlType.DELETE);
-        return deleteMapper.deleteBySql(sql);
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -248,7 +212,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             PreCheckUtils.checkEmpty(tableName, "表名不能为空");
             PreCheckUtils.checkEmpty(condition, "删除条件不能为空");
             String sql = String.format("delete from %s where %s", tableName, condition);
-            int i = deleteMapper.deleteBySql(sql);
+            int i = delete(sql);
             count.set(count.get() + i);
         });
         if (count.get() != tableNameAndConditionMap.size()) {
@@ -257,6 +221,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         return count.get();
     }
 
+
     private List<String> buildConditionList(String tableName, Map<String, Object> whereConditionMap) {
         PreCheckUtils.checkEmpty(tableName, "表名不能为空");
         List<String> whereConditionList = Lists.newArrayList();
@@ -264,9 +229,10 @@ public class DatabaseServiceImpl implements DatabaseService {
             if (value == null) {
                 return;
             }
-            String columnType = typeHelper.getColumnType(tableName, columnName);
-            whereConditionList.add(String.format("%s = %s",columnName, typeHelper.convertSqlSequence(value, columnType)));
+            String columnType = getColumnType(tableName, columnName);
+            whereConditionList.add(String.format("%s = %s",columnName, TypeConvertor.convertSqlSequence(value, columnType)));
         });
         return whereConditionList;
     }
+
 }
