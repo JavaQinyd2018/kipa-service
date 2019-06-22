@@ -1,7 +1,7 @@
 package com.kipa.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.kipa.env.DubboContextHolder;
+import com.kipa.env.DatabaseContextHolder;
 import com.kipa.mybatis.type.DatasourceConfig;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
@@ -26,6 +26,10 @@ public class DatasourceConfiguration {
     private static final String DB_FILE = "config/db.properties";
 
     private DatasourceConfig datasourceConfig;
+
+    private DatasourceConfig datasourceConfig1;
+
+    private DatasourceConfig datasourceConfig2;
 
     /**
      * 固定的配置
@@ -68,41 +72,13 @@ public class DatasourceConfiguration {
 
     @PostConstruct
     private void init() {
-        Properties properties = PropertiesUtils.loadProperties(DB_FILE);
-        String flag = DubboContextHolder.getFlag();
-        String driverName = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.driver");
-        String url = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.url");
-        String username = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.username");
-        String password = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.password");
-        PreCheckUtils.checkEmpty(driverName, "数据源配置driver不能为空");
-        PreCheckUtils.checkEmpty(url, "数据源配置的url不能为空");
-        PreCheckUtils.checkEmpty(username, "数据源配置的username不能为空");
-        PreCheckUtils.checkEmpty(password, "数据源配置的password不能为空");
-        datasourceConfig = new DatasourceConfig();
-        datasourceConfig.setDriverName(driverName);
-        datasourceConfig.setUrl(url);
-        datasourceConfig.setUsername(username);
-        datasourceConfig.setPassword(password);
+        final Properties properties = PropertiesUtils.loadProperties(DB_FILE);
+        String flag = DatabaseContextHolder.getFlag();
+        datasourceConfig = getConfigByConfig(flag, properties);
+        datasourceConfig1 = getConfigByConfig("dev",properties);
+        datasourceConfig2 = getConfigByConfig("test",properties);
     }
 
-    /**
-     *  try {
-     *             Properties properties = PropertiesLoaderUtils.loadAllProperties(DB_FILE);
-     *             if (StringUtils.isNotBlank(flag)) {
-     *                 driverName = properties.getProperty(String.format("%s.mybatis.datasource.driver",flag));
-     *                 url = properties.getProperty(String.format("%s.mybatis.datasource.url",flag));
-     *                 username= properties.getProperty(String.format("%s.mybatis.datasource.username",flag));
-     *                 password = properties.getProperty(String.format("%s.mybatis.datasource.password",flag));
-     *             }else {
-     *                 driverName = properties.getProperty("mybatis.datasource.driver");
-     *                 url = properties.getProperty("mybatis.datasource.url");
-     *                 username= properties.getProperty("mybatis.datasource.username");
-     *                 password = properties.getProperty("mybatis.datasource.password");
-     *             }
-     *         } catch (IOException e) {
-     *             e.printStackTrace();
-     *         }
-     */
 
     /**
      *  <!-- 配置初始化大小、最小、最大 -->
@@ -135,8 +111,44 @@ public class DatasourceConfiguration {
 
     @Bean(name = "dataSource",initMethod = "init", destroyMethod = "close")
     public DruidDataSource dataSource() {
+        return getDataSource(datasourceConfig);
+    }
+
+    @Bean(name = "dataSource1",initMethod = "init", destroyMethod = "close")
+    public DruidDataSource dataSource1() {
+        return getDataSource(datasourceConfig1);
+    }
+
+    @Bean(name = "dataSource2",initMethod = "init", destroyMethod = "close")
+    public DruidDataSource dataSource2() {
+        return getDataSource(datasourceConfig2);
+    }
+
+    @PreDestroy
+    public void destroy() {
+        DatabaseContextHolder.removeFlag();
+    }
+
+    private DatasourceConfig getConfigByConfig(String flag, Properties properties) {
+        String driverName = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.driver");
+        String url = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.url");
+        String username = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.username");
+        String password = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.password");
+        PreCheckUtils.checkEmpty(driverName, "数据源配置driver不能为空");
+        PreCheckUtils.checkEmpty(url, "数据源配置的url不能为空");
+        PreCheckUtils.checkEmpty(username, "数据源配置的username不能为空");
+        PreCheckUtils.checkEmpty(password, "数据源配置的password不能为空");
+        DatasourceConfig config = new DatasourceConfig();
+        config.setDriverName(driverName);
+        config.setUrl(url);
+        config.setUsername(username);
+        config.setPassword(password);
+        return config;
+    }
+
+    private DruidDataSource getDataSource(DatasourceConfig datasourceConfig) {
         DruidDataSource druidDataSource = new DruidDataSource();
-        PreCheckUtils.checkEmpty(druidDataSource, "数据源配置不能为空");
+        PreCheckUtils.checkEmpty(datasourceConfig, "数据源配置不能为空");
         druidDataSource.setDriverClassName(datasourceConfig.getDriverName());
         druidDataSource.setUrl(datasourceConfig.getUrl());
         druidDataSource.setUsername(datasourceConfig.getUsername());
@@ -154,11 +166,5 @@ public class DatasourceConfiguration {
         druidDataSource.setPoolPreparedStatements(poolPreparedStatements);
         druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(maxPoolPreparedStatementPerConnectionSize);
         return druidDataSource;
-    }
-
-
-    @PreDestroy
-    public void destroy() {
-        DubboContextHolder.removeFlag();
     }
 }

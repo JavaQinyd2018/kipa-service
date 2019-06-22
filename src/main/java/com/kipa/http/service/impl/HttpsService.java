@@ -6,6 +6,7 @@ import com.kipa.utils.PreCheckUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.testng.collections.Maps;
 
 import java.util.HashMap;
 import java.util.List;
@@ -134,24 +135,41 @@ public class HttpsService extends AbstractHttpServiceImpl implements HttpMetaSer
         return parseHttpResponseToInstance(httpResponse, clazz);
     }
 
+    /**
+     * 上传
+     * @param url 请求的url地址
+     * @param headerMap 消息头
+     * @param fileMap 必须上传filePath：本地文件路径， mediaType文件类型， fileParamJson 带参数的文件上传信息
+     * @param receiveAllInfo
+     * @return
+     */
     @Override
     public Map<String, String> upload(String url, Map<String, String> headerMap, Map<String, String> fileMap, boolean receiveAllInfo) {
-        return null;
+        String filePath = fileMap.get("filePath");
+        String mediaType = fileMap.get("mediaType");
+        PreCheckUtils.checkEmpty(filePath, "上传的文件路径不能为空");
+        PreCheckUtils.checkEmpty(mediaType, "上传的文件mediaType不能为空");
+        HttpResponse httpResponse = httpsInvokeService.file(url, headerMap, fileMap);
+        return parseFileResponseToMap(httpResponse, receiveAllInfo);
     }
 
     @Override
     public Map<String, String> upload(String url, Map<String, String> fileMap, boolean receiveAllInfo) {
-        return null;
+        return upload(url, null, fileMap, receiveAllInfo);
     }
 
     @Override
-    public Map<String, String> download(String url, Map<String, String> headerMap, Map<String, String> fileMap, boolean receiveAllInfo) {
-        return null;
+    public Map<String, String> download(String url, Map<String, String> headerMap, String localDir, boolean receiveAllInfo) {
+        PreCheckUtils.checkEmpty(localDir, "下载保存的本地目录不存在");
+        Map<String, String> fileMap = Maps.newHashMap();
+        fileMap.put("localTargetDir",localDir);
+        HttpResponse httpResponse = httpsInvokeService.file(url, headerMap, fileMap);
+        return parseFileResponseToMap(httpResponse, receiveAllInfo);
     }
 
     @Override
-    public Map<String, String> download(String url, Map<String, String> fileMap, boolean receiveAllInfo) {
-        return null;
+    public Map<String, String> download(String url, String localTargetDir, boolean receiveAllInfo) {
+        return download(url, null, localTargetDir, receiveAllInfo);
     }
 
     @Override
@@ -190,8 +208,8 @@ public class HttpsService extends AbstractHttpServiceImpl implements HttpMetaSer
     }
 
     @Override
-    public Map<String, String> download(String url, Map<String, String> fileMap) {
-        return download(url, fileMap, false);
+    public Map<String, String> download(String url, String localTargetDir) {
+        return download(url, localTargetDir, false);
     }
 
     @Override

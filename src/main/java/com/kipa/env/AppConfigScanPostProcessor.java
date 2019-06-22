@@ -1,19 +1,19 @@
 package com.kipa.env;
 
+import com.google.common.collect.Maps;
 import com.kipa.utils.PackageScanUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-import org.testng.collections.Maps;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -27,68 +27,46 @@ import java.util.Set;
  */
 @Slf4j
 @Component
-public class AppConfigScanPostProcessor implements BeanPostProcessor {
-    @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        Class<?> beanClass = bean.getClass();
-        AppConfigScan appConfigScan = AnnotationUtils.findAnnotation(beanClass, AppConfigScan.class);
-        if (!ObjectUtils.isEmpty(appConfigScan)) {
-            String basePackage = appConfigScan.basePackage();
-            //扫描到所有的带有@Database、@Dubbo、@Http的bean
-            Set<BeanDefinition> definitionSet = PackageScanUtils.getBeanWithAnnotationSet(basePackage, Arrays.asList(Database.class, Dubbo.class, Http.class));
-            if (CollectionUtils.isNotEmpty(definitionSet)) {
-                definitionSet.forEach(beanDefinition -> {
-                    Map<String, Object> datasourceAttributes = getAnnotationAttributes(beanDefinition, Database.class);
-                    if (MapUtils.isNotEmpty(datasourceAttributes)) {
-                        String flag = (String)datasourceAttributes.get("datasourceFlag");
-                        DubboContextHolder.setFlag(flag);
-                    }
-                    Map<String, Object> consumerAttributes = getAnnotationAttributes(beanDefinition, Dubbo.class);
-                    if (MapUtils.isNotEmpty(consumerAttributes)) {
-                        ConsumerContextHolder.setConfig(consumerAttributes);
-                    }
+public class AppConfigScanPostProcessor implements BeanFactoryPostProcessor {
 
-                    Map<String, Object> httpAttributes = getAnnotationAttributes(beanDefinition, Http.class);
-                    if (MapUtils.isNotEmpty(httpAttributes)) {
-                        HttpContextHolder.setFlag((String) httpAttributes.get("httpFlag"));
-                    }
-                });
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
+        Map<String, Object> beansWithAnnotation = configurableListableBeanFactory.getBeansWithAnnotation(AppConfigScan.class);
+        if (MapUtils.isNotEmpty(beansWithAnnotation)) {
+            if (beansWithAnnotation.size() > 1) {
+                throw new RuntimeException("@AppConfigScan注解只允许标注一次");
             }
 
-        }
-        return bean;
-    }
-
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
-    }
-
-    /**
-     * 扫描单一的注解
-     * @param basePackage
-     * @param annotationType
-     * @return
-     */
-    private static Map<String, Object> getAnnotationAttributes(String basePackage, Class<? extends Annotation> annotationType) {
-        Map<String, Object> map = Maps.newHashMap();
-        if (StringUtils.isNotBlank(basePackage)) {
-            Set<BeanDefinition> beanWithAnnotation = PackageScanUtils.getBeanWithAnnotation(basePackage, annotationType);
-            if (CollectionUtils.isNotEmpty(beanWithAnnotation)) {
-                beanWithAnnotation.forEach(beanDefinition -> {
-                    if (beanDefinition instanceof ScannedGenericBeanDefinition) {
-                        ScannedGenericBeanDefinition scannedGenericBeanDefinition = (ScannedGenericBeanDefinition) beanDefinition;
-                        AnnotationMetadata metadata = scannedGenericBeanDefinition.getMetadata();
-                        Map<String, Object> annotationAttributes = metadata.getAnnotationAttributes(annotationType.getName());
-                        if (annotationAttributes != null) {
-                            map.putAll(annotationAttributes);
+            Object bean = beansWithAnnotation.entrySet().iterator().next().getValue();
+            Class<?> beanClass = bean.getClass();
+            AppConfigScan appConfigScan = AnnotationUtils.findAnnotation(beanClass, AppConfigScan.class);
+            if (!ObjectUtils.isEmpty(appConfigScan)) {
+                String basePackage = appConfigScan.basePackage();
+                //扫描到所有的带有@Database、@Dubbo、@Http的bean
+                Set<BeanDefinition> definitionSet = PackageScanUtils.getBeanWithAnnotationSet(basePackage, Arrays.asList(Database.class, Dubbo.class, Http.class));
+                if (CollectionUtils.isNotEmpty(definitionSet)) {
+                    definitionSet.forEach(beanDefinition -> {
+                        Map<String, Object> datasourceAttributes = getAnnotationAttributes(beanDefinition, Database.class);
+                        if (MapUtils.isNotEmpty(datasourceAttributes)) {
+                            String flag = (String)datasourceAttributes.get("datasourceFlag");
+                            DatabaseContextHolder.setFlag(flag);
                         }
-                    }
-                });
+                        Map<String, Object> consumerAttributes = getAnnotationAttributes(beanDefinition, Dubbo.class);
+                        if (MapUtils.isNotEmpty(consumerAttributes)) {
+                            DubboContextHolder.setConfig(consumerAttributes);
+                        }
+
+                        Map<String, Object> httpAttributes = getAnnotationAttributes(beanDefinition, Http.class);
+                        if (MapUtils.isNotEmpty(httpAttributes)) {
+                            HttpContextHolder.setFlag((String) httpAttributes.get("httpFlag"));
+                        }
+                    });
+                }
+
             }
         }
-        return map;
     }
+
 
     /**
      * 根据bean获取注解属性信息

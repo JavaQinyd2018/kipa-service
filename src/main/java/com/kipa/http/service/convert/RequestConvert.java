@@ -1,5 +1,6 @@
 package com.kipa.http.service.convert;
 
+import com.alibaba.fastjson.JSONObject;
 import com.kipa.http.core.HttpRequest;
 import com.kipa.http.emuns.HttpSendMethod;
 import com.kipa.http.emuns.RequestType;
@@ -7,6 +8,7 @@ import com.kipa.http.exception.HttpProcessException;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -60,18 +62,31 @@ public class RequestConvert implements Convert<HttpRequest, Request> {
                 break;
             case FILE:
                 Map<String, String> fileMap = httpRequest.getFileMap();
-                String fileType = fileMap.get("fileType");
-                String type = fileMap.get("mediaType");
-                String filePath = fileMap.get("filePath");
-                String fileName = fileMap.get("fileName");
-                //带参数的文件上传
-                RequestBody fileBody = RequestBody.create(MediaType.parse(type), new File(filePath));
-                RequestBody fileRequestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("type",fileType)
-                        .addFormDataPart("file",fileName, fileBody)
-                        .build();
-                builder.method(HttpSendMethod.POST.getName(), fileRequestBody);
+                String method = fileMap.get("method");
+                if (StringUtils.equalsIgnoreCase(method, HttpSendMethod.UPLOAD.getName())) {
+                    String type = fileMap.get("mediaType");
+                    String filePath = fileMap.get("filePath");
+                    String fileParamJson = fileMap.get("fileParamJson");
+                    //带参数的文件上传
+                    RequestBody fileBody = RequestBody.create(MediaType.parse(type), new File(filePath));
+                    if (StringUtils.isNotBlank(fileParamJson)) {
+                        MultipartBody.Builder fileBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+                        Map<String, String> map = null;
+                        try {
+                            map = JSONObject.parseObject(fileParamJson, Map.class);
+                        } catch (Exception e) {
+                            throw new RuntimeException("文件参数Json转化为map失败",e);
+                        }
+                        map.forEach(fileBuilder::addFormDataPart);
+                        fileBuilder.addPart(fileBody);
+                        builder.method(HttpSendMethod.POST.getName(), fileBuilder.build());
+                    }else {
+                        builder.method(HttpSendMethod.POST.getName(), fileBody);
+                    }
+                }else if (StringUtils.equalsIgnoreCase(method, HttpSendMethod.DOWNLOAD.getName())) {
+                    //文件下载为get请求
+                    builder.get();
+                }
                 break;
                 default:
                     break;

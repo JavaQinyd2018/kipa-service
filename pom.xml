@@ -6,7 +6,7 @@
 
     <groupId>com.kipa</groupId>
     <artifactId>kipa-service</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
 
     <properties>
         <aspectj.version>1.8.10</aspectj.version>
@@ -30,6 +30,7 @@
         <spring.redis.version>2.1.2.RELEASE</spring.redis.version>
         <jedis.version>2.9.0</jedis.version>
         <rocketmq.version>4.3.2</rocketmq.version>
+        <zookeeper.version>3.5.5</zookeeper.version>
     </properties>
     <dependencies>
         <!--spring相关的依赖-->
@@ -193,17 +194,17 @@
                 </exclusion>
             </exclusions>
         </dependency>
-<!--        <dependency>
+        <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
-            <version>3.4.12</version>
+            <version>${zookeeper.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
@@ -216,6 +217,10 @@
                 <exclusion>
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.zookeeper</groupId>
+                    <artifactId>zookeeper</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

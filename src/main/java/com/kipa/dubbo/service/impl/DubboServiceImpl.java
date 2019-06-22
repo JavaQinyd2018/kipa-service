@@ -4,6 +4,7 @@ import com.alibaba.dubbo.remoting.exchange.ResponseCallback;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.kipa.dubbo.entity.DubboRequest;
 import com.kipa.dubbo.entity.DubboResponse;
 import com.kipa.dubbo.service.DubboService;
@@ -12,7 +13,6 @@ import com.kipa.utils.PreCheckUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.testng.collections.Lists;
 
 import java.util.List;
 import java.util.Map;

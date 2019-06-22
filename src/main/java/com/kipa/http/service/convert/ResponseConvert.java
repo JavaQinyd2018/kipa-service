@@ -11,9 +11,16 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Headers;
 import okhttp3.Response;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.testng.collections.Maps;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Map;
 
 /**
@@ -84,6 +91,40 @@ public class ResponseConvert implements Convert<Response, HttpResponse> {
         return httpResponse;
     }
 
+    public HttpResponse convertDownloadFile(Response response, String localTargetDir) {
+        HttpResponse httpResponse = new HttpResponse();
+        httpResponse.setSuccess(false);
+        if (response != null && response.isSuccessful()) {
+            Headers headers = response.headers();
+            httpResponse.setHeaderMap(headers.toMultimap());
+            if (response.body() != null) {
+                InputStream inputStream = response.body().byteStream();
+                File localDir = new File(localTargetDir);
+                if (!localDir.exists() && !localDir.mkdirs()) {
+                    throw new RuntimeException("创建目录："+localTargetDir+"失败了");
+                }
+                FileWriter writer = null;
+                try {
+                    writer = new FileWriter(localDir);
+                    IOUtils.copy(inputStream, writer, Charset.forName("UTF-8"));
+                    httpResponse.setSuccess(true);
+                    httpResponse.setJsonFormat(false);
+                    return httpResponse;
+                } catch (Exception e) {
+                    log.error("文件解析失败，错误原因是：{}",e);
+                }finally {
+                    if (writer != null) {
+                        try {
+                            writer.close();
+                        } catch (IOException e) {
+                           log.error("释放资源失败：{}",e);
+                        }
+                    }
+                }
+            }
+        }
+        return httpResponse;
+    }
 
     @Getter
     @AllArgsConstructor

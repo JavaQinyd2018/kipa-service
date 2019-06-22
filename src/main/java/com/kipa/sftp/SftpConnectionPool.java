@@ -19,7 +19,7 @@ public class SftpConnectionPool extends BaseObjectPool<SftpConnection> {
     private static final int DEFAULT_POOL_SIZE = 5;
     private BlockingQueue<SftpConnection> pool = null;
     private SftpConnectionFactory factory = null;
-    private static final int timeout = 3;
+    private static final int TIME_OUT = 3;
 
     SftpConnectionPool(SftpConnectionFactory factory) {
         this(DEFAULT_POOL_SIZE, factory);
@@ -61,15 +61,15 @@ public class SftpConnectionPool extends BaseObjectPool<SftpConnection> {
             if (channelSftp != null) {
                 if (channelSftp.isConnected()) {
                     if (pool.size() < DEFAULT_POOL_SIZE) {
-                        if (pool.offer(sftpConnection, timeout, TimeUnit.SECONDS)) {
+                        if (pool.offer(sftpConnection, TIME_OUT, TimeUnit.SECONDS)) {
+                            //超时了销毁掉
                             factory.destroy(sftpConnection);
                         }
                     }
                 }else {
+                    //断开连接的销毁掉
                     factory.destroy(sftpConnection);
                 }
-            }else {
-                factory.destroy(sftpConnection);
             }
         }
     }
@@ -85,19 +85,19 @@ public class SftpConnectionPool extends BaseObjectPool<SftpConnection> {
     }
 
     @Override
-    public void addObject() throws Exception, UnsupportedOperationException {
-        pool.offer(factory.create(), timeout, TimeUnit.SECONDS);
+    public void addObject() throws Exception {
+        pool.offer(factory.create(), TIME_OUT, TimeUnit.SECONDS);
     }
 
     @Override
     public void close() {
-        for (SftpConnection sftpConnection : pool) {
+        pool.forEach(sftpConnection -> {
             try {
-                SftpConnection connection = pool.take();
-                factory.destroy(connection);
+                factory.destroy(sftpConnection);
             } catch (Exception e) {
                 throw new RuntimeException("sftp关闭释放资源失败",e);
             }
-        }
+        });
+
     }
 }

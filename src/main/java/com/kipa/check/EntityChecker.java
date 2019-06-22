@@ -38,7 +38,7 @@ final class EntityChecker {
             });
         }
 
-        return CollectionUtils.isNotEmpty(errorMessageList) ? StringUtils.join(errorMessageList, "\n"): "";
+        return CollectionUtils.isNotEmpty(errorMessageList) ? errorMessage + "\n" + StringUtils.join(errorMessageList, "\n"): "";
     }
 
     static <T> String checkEntityCollection(Collection<T> actualCollection, Collection<T> expectCollection) {

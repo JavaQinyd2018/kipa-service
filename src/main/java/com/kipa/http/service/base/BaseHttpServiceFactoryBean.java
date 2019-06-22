@@ -12,6 +12,8 @@ import com.kipa.http.service.execute.HttpSyncExecutor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @Author: Yadong Qin
@@ -58,6 +61,9 @@ public class BaseHttpServiceFactoryBean implements FactoryBean<BaseHttpService> 
 
     class HttpServiceHandler implements InvocationHandler{
 
+        private AtomicBoolean flag = new AtomicBoolean(false);
+        private volatile String localDir = null;
+
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             ServiceType annotation = method.getAnnotation(ServiceType.class);
@@ -82,13 +88,19 @@ public class BaseHttpServiceFactoryBean implements FactoryBean<BaseHttpService> 
                     invokeType = (InvokeType) args[4];
                     httpRequest.setFileMap(fileMap);
                     httpRequest.setType(requestType);
+                    String way = fileMap.get("method");
+                    if (StringUtils.equalsIgnoreCase(way, HttpSendMethod.DOWNLOAD.getName())) {
+                        flag.set(true);
+                        localDir = fileMap.get("localTargetDir");
+                    }
                     break;
             }
 
             Request request = requestConvert.convert(httpRequest);
             if (invokeType == InvokeType.SYNC) {
-                 Response response = httpSyncExecutor.execute(okHttpClient, request, null);
-                 return responseConvert.convert(response);
+                Response response = httpSyncExecutor.execute(okHttpClient, request, null);
+                //如果是下载文件的话，转化为下载文件的结果，其他的get、post、put、delete等操作返回对应的结果
+                return flag.get() ? responseConvert.convertDownloadFile(response, localDir) : responseConvert.convert(response);
             }else if (invokeType == InvokeType.ASYNC) {
                 httpAsyncExecutor.execute(okHttpClient, request, httpRequest.getCallback());
             }

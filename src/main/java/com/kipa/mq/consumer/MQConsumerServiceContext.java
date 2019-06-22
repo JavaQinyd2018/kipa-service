@@ -65,6 +65,7 @@ public class MQConsumerServiceContext implements InitializingBean, SmartLifecycl
     @Override
     public void start() {
         if (initialized && !isRunning()) {
+            running = true;
             synchronized (monitor) {
                 if (MapUtils.isNotEmpty(defaultMQPushConsumerMap)) {
                     defaultMQPushConsumerMap.forEach((topic, defaultMQPushConsumer) -> {

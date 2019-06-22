@@ -19,7 +19,6 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * @Author: Yadong Qin
@@ -36,7 +35,6 @@ public class CSVDataIterator implements Iterator<Object[]> {
 
     public CSVDataIterator(Method method, String csvFilePath) {
         Parameter[] parameters = method.getParameters();
-        log.info("csv文件路径为：{}",csvFilePath);
         if (StringUtils.isBlank(csvFilePath)) {
             throw new IllegalArgumentException("数据驱动的csv文件路径不能为空");
         }
@@ -97,10 +95,6 @@ public class CSVDataIterator implements Iterator<Object[]> {
     @Override
     public void remove() {
         throw new UnsupportedOperationException("迭代过程中不支持移除操作");
-    }
-
-    @Override
-    public void forEachRemaining(Consumer<? super Object[]> action) {
     }
 
     private Object[] convertString2Object(String[] valueArray, Parameter[] parameterArray) {

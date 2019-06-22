@@ -1,11 +1,11 @@
 package com.kipa.utils;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.ReflectionUtils;
-import org.testng.collections.Lists;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -179,7 +179,6 @@ public class ReflectUtils {
                     return method;
                 }else if (StringUtils.startsWithIgnoreCase(methodName, "is")
                         && method.getParameters().length == 0
-                        && method.getReturnType().isAssignableFrom(Boolean.class)
                         && StringUtils.substringAfter(methodName, "is").equalsIgnoreCase(fieldName)) {
                     return method;
                 }
