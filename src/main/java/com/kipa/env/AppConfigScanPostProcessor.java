@@ -5,6 +5,7 @@ import com.kipa.utils.PackageScanUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -48,7 +49,10 @@ public class AppConfigScanPostProcessor implements BeanFactoryPostProcessor {
                     definitionSet.forEach(beanDefinition -> {
                         Map<String, Object> datasourceAttributes = getAnnotationAttributes(beanDefinition, Database.class);
                         if (MapUtils.isNotEmpty(datasourceAttributes)) {
-                            String flag = (String)datasourceAttributes.get("datasourceFlag");
+                            String[] flag = (String[])datasourceAttributes.get("datasourceFlag");
+                            if (ArrayUtils.isNotEmpty(flag) && flag.length != 3) {
+                                throw new RuntimeException("数据源配置信息必须为3个");
+                            }
                             DatabaseContextHolder.setFlag(flag);
                         }
                         Map<String, Object> consumerAttributes = getAnnotationAttributes(beanDefinition, Dubbo.class);

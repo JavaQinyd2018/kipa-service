@@ -5,11 +5,11 @@ import com.kipa.env.DatabaseContextHolder;
 import com.kipa.mybatis.type.DatasourceConfig;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Properties;
@@ -73,12 +73,17 @@ public class DatasourceConfiguration {
     @PostConstruct
     private void init() {
         final Properties properties = PropertiesUtils.loadProperties(DB_FILE);
-        String flag = DatabaseContextHolder.getFlag();
-        datasourceConfig = getConfigByConfig(flag, properties);
-        datasourceConfig1 = getConfigByConfig("dev",properties);
-        datasourceConfig2 = getConfigByConfig("test",properties);
+        String[] flag = DatabaseContextHolder.getFlag();
+        if (ArrayUtils.isNotEmpty(flag)) {
+            datasourceConfig = getConfigByConfig(flag[0], properties);
+            datasourceConfig1 = getConfigByConfig(flag[1],properties);
+            datasourceConfig2 = getConfigByConfig(flag[2],properties);
+        }else {
+            datasourceConfig = getConfigByConfig(null, properties);
+            datasourceConfig1 = getConfigByConfig("env1",properties);
+            datasourceConfig2 = getConfigByConfig("env2",properties);
+        }
     }
-
 
     /**
      *  <!-- 配置初始化大小、最小、最大 -->
