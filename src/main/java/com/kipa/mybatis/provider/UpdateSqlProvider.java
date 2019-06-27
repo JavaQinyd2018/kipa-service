@@ -15,7 +15,7 @@ import java.util.Map;
 public class UpdateSqlProvider {
 
     @SuppressWarnings("all")
-    public String update(Map<String,Object> paramMap) {
+    public synchronized String update(Map<String,Object> paramMap) {
         String tableName = (String) paramMap.get("tableName");
         PreCheckUtils.checkEmpty(tableName, "表名不能为空");
         SQL sql = new SQL().UPDATE(tableName);
@@ -26,7 +26,7 @@ public class UpdateSqlProvider {
         return sql.toString();
     }
 
-    public String updateBySql(Map<String, Object> paramMap) {
+    public synchronized String updateBySql(Map<String, Object> paramMap) {
         String sql = (String) paramMap.get("sql");
         SqlParser.checkSql(sql, SqlType.UPDATE);
         PreCheckUtils.checkEmpty(sql,"sql语句不能为空");

@@ -44,10 +44,22 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
     /**
      * 获取列类型抽象方法
      * @param tableName
-     * @param columnName
      * @return
      */
-    public abstract String getColumnType(String tableName, String columnName);
+    public abstract List<Map<String, Object>> listTableColumn(String tableName);
+
+    private String getColumnType(String tableName, String columnName) {
+        final List<Map<String, Object>> list = listTableColumn(tableName);
+        if (CollectionUtils.isEmpty(list)) {
+            throw  new RuntimeException(tableName+"表字段和数据类型不存在");
+        }
+        for (Map<String, Object> columnAndTypeMap : list) {
+            if (StringUtils.equalsIgnoreCase((String)columnAndTypeMap.get("COLUMN_NAME"), columnName)) {
+                return (String) columnAndTypeMap.get("DATA_TYPE");
+            }
+        }
+        return null;
+    }
 
     /**
      * 插入参数的抽象方法

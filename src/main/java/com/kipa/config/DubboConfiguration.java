@@ -17,8 +17,8 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * @Author: Yadong Qin
- * @Date: 2019/4/6
+ * @Author Yadong Qin
+ * @Date 2019/4/6
  * dubbo整合spring配置文件
  */
 @Configuration
