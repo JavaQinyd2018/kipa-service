@@ -6,7 +6,6 @@ import com.alibaba.dubbo.rpc.protocol.dubbo.FutureAdapter;
 import com.alibaba.dubbo.rpc.service.GenericService;
 import com.kipa.dubbo.entity.WrappedDubboParameter;
 import com.kipa.dubbo.exception.DubboInvokeException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
  * dubbo异步调用
  */
 @Service("dubboAsyncExecutor")
-@Slf4j
 public class DubboAsyncExecutor implements DubboExecutor {
 
     @Override

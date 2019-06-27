@@ -4,10 +4,8 @@ import com.google.common.collect.Maps;
 import com.kipa.config.EnableMultipleDataSource;
 import com.kipa.mybatis.service.condition.EnvFlag;
 import com.kipa.utils.PackageScanUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -28,7 +26,6 @@ import java.util.Set;
  * @date: 2019/4/19 19:30
  * 通过包扫描获取flag切换环境
  */
-@Slf4j
 @Component
 public class AppConfigScanPostProcessor implements BeanFactoryPostProcessor {
 

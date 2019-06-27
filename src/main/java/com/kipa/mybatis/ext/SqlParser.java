@@ -1,7 +1,6 @@
 package com.kipa.mybatis.ext;
 
 import com.kipa.utils.PreCheckUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.omg.CORBA.portable.UnknownException;
 
@@ -11,7 +10,6 @@ import org.omg.CORBA.portable.UnknownException;
  * sql解析器
  */
 
-@Slf4j
 public class SqlParser {
 
     public static void checkSql(String sql, SqlType sqlType) {

@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import com.kipa.http.core.HttpResponse;
 import com.kipa.http.exception.HttpProcessException;
 import com.kipa.http.service.HttpMetaService;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.testng.collections.Maps;
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.Map;
  * @author: Qinyadong
  * @date: 2019/4/1 13:05
  */
-@Slf4j
 public abstract class AbstractHttpServiceImpl implements HttpMetaService {
 
 

@@ -1,7 +1,6 @@
 package com.kipa.http.service.execute;
 
 import com.kipa.http.exception.HttpProcessException;
-import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
  * http同步执行请求
  */
 @Service
-@Slf4j
 public class HttpSyncExecutor implements HttpExecutor {
 
     @Override

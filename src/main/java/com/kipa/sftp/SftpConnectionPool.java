@@ -1,7 +1,6 @@
 package com.kipa.sftp;
 
 import com.jcraft.jsch.ChannelSftp;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.BaseObjectPool;
 import org.springframework.util.ObjectUtils;
 
@@ -13,7 +12,6 @@ import java.util.concurrent.TimeUnit;
  * @Author: Yadong Qin
  * @Date: 2019/4/13
  */
-@Slf4j
 public class SftpConnectionPool extends BaseObjectPool<SftpConnection> {
 
     private static final int DEFAULT_POOL_SIZE = 5;
