@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * @author: Qinyadong
  * @date: 2019/6/27 11:17
- * @since:
+ * 环境标识
  */
 @AllArgsConstructor
 @Getter

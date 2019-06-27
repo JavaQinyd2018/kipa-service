@@ -1,11 +1,11 @@
-package com.kipa.mybatis.type;
+package com.kipa.mybatis.ext;
 
 import lombok.Getter;
 
 /**
  * @Author: Qinyadong
  * @Date: 2018/12/28 17:02
- * @Since:
+ * sql类型
  */
 @Getter
 public enum  SqlType {

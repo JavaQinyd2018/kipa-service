@@ -1,7 +1,7 @@
 package com.kipa.mybatis.provider;
 
-import com.kipa.mybatis.type.SqlParser;
-import com.kipa.mybatis.type.SqlType;
+import com.kipa.mybatis.ext.SqlParser;
+import com.kipa.mybatis.ext.SqlType;
 import com.kipa.utils.PreCheckUtils;
 import org.apache.ibatis.jdbc.SQL;
 

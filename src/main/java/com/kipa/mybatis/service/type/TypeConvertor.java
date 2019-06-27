@@ -13,10 +13,11 @@ import static java.sql.JDBCType.valueOf;
 /**
  * @author: Qinyadong
  * @date: 2019/6/21 21:40
- * @since:
+ * 类型转化器
  */
-public class TypeConvertor {
+public final class TypeConvertor {
 
+    private TypeConvertor() {}
     /**
      * 将属性值转化成sql片段
      * @param value

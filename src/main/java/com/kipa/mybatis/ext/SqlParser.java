@@ -1,4 +1,4 @@
-package com.kipa.mybatis.type;
+package com.kipa.mybatis.ext;
 
 import com.kipa.utils.PreCheckUtils;
 import lombok.extern.slf4j.Slf4j;

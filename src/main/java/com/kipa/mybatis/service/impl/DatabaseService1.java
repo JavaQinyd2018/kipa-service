@@ -2,10 +2,9 @@ package com.kipa.mybatis.service.impl;
 
 import com.google.common.collect.Lists;
 import com.kipa.mybatis.dao.mapper1.*;
-import com.kipa.mybatis.type.SqlParser;
-import com.kipa.mybatis.type.SqlType;
+import com.kipa.mybatis.ext.SqlParser;
+import com.kipa.mybatis.ext.SqlType;
 import com.kipa.utils.PreCheckUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.LinkedHashMap;
@@ -16,7 +15,6 @@ import java.util.Map;
  * @author: Qinyadong
  * @date: 2019/3/22 15:59
  */
-@Slf4j
 public class DatabaseService1 extends AbstractDatabaseServiceImpl {
 
     private static final String TABLE_MESSAGE = "表名不能为空";

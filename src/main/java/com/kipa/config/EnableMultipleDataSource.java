@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 /**
  * @author: Qinyadong
  * @date: 2019/6/25 17:54
- * @since:
+ * 开启多数据源配置注解
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

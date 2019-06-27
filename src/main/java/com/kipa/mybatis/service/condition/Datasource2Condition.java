@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author: Qinyadong
  * @date: 2019/6/25 17:57
- * @since:
+ * 数据源开启condition
  */
 public class Datasource2Condition extends AbstractEnableDatabaseCondition {
     @Override
