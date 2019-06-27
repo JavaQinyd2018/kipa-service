@@ -1,11 +1,11 @@
 package com.kipa.http.service.impl;
 
+import com.google.common.collect.Maps;
 import com.kipa.http.core.HttpResponse;
 import com.kipa.http.service.HttpMetaService;
 import com.kipa.utils.PreCheckUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.testng.collections.Maps;
 
 import java.util.HashMap;
 import java.util.List;

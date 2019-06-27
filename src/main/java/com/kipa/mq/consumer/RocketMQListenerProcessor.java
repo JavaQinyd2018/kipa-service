@@ -1,5 +1,6 @@
 package com.kipa.mq.consumer;
 
+import com.google.common.collect.Maps;
 import com.kipa.config.EnableRocketMQ;
 import com.kipa.utils.PackageScanUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
-import org.testng.collections.Maps;
 
 import java.lang.reflect.Method;
 import java.util.Map;
