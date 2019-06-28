@@ -80,11 +80,7 @@ public class ProduceServiceFactoryBean implements FactoryBean<BaseProducerServic
                 mqProducer.sendOneway(mqMessage.getMessage(), mqMessage.getSelector(),mqMessage.getArg());
                 break;
             case SEND_IN_TRANSACTION:
-                if (mqMessage.getLocalTransactionExecuter() == null) {
-                    sendResult =  mqProducer.sendMessageInTransaction(mqMessage.getMessage(), mqMessage.getArg());
-                }else {
-                    sendResult =  mqProducer.sendMessageInTransaction(mqMessage.getMessage(), mqMessage.getLocalTransactionExecuter(), mqMessage.getArg());
-                }
+                sendResult =  mqProducer.sendMessageInTransaction(mqMessage.getMessage(), mqMessage.getArg());
                 break;
              default:
                 break;

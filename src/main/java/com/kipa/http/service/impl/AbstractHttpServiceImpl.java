@@ -16,7 +16,7 @@ import java.util.Map;
  * @author: Qinyadong
  * @date: 2019/4/1 13:05
  */
-public abstract class AbstractHttpServiceImpl implements HttpMetaService {
+abstract class AbstractHttpServiceImpl implements HttpMetaService {
 
 
     List<Map<String, Object>> parseHttpResponseToMap(HttpResponse httpResponse, boolean receiveAllInfo) {
@@ -73,7 +73,7 @@ public abstract class AbstractHttpServiceImpl implements HttpMetaService {
         }
     }
 
-    public Map<String, String> parseFileResponseToMap(HttpResponse httpResponse, boolean receiveAllInfo) {
+    Map<String, String> parseFileResponseToMap(HttpResponse httpResponse, boolean receiveAllInfo) {
         return receiveAllInfo ? JSONObject.parseObject(JSONObject.toJSONString(httpResponse),Map.class)
                 : JSONObject.parseObject(JSON.toJSONString(httpResponse.getBodyMap().get("data")), Map.class);
     }

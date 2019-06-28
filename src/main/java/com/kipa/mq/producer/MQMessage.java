@@ -30,6 +30,4 @@ public class MQMessage {
 
     private Object arg;
 
-    private LocalTransactionExecuter localTransactionExecuter;
-
 }
