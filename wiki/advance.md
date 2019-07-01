@@ -435,7 +435,56 @@ public class MultipleDatasourceTest extends TestContextConfiguration {
     }
 ```
 
+### 6. 参数List，Map的构建
 
+框架中有很多方法的参数都是list或者map，如果参数很多，数据量很大，推荐使用csv数据文件进行数据驱动，框架提供的CSVUtils工具类可以帮我们转化成对用的list、map；如果参数不是特别多，但是传统的new list或者new map的方式会感觉有很多冗余的编写，基于此框架提供了ParamList和ParamMap的参数构建器，帮助我们减少冗余的代码。具体示例如下：
+
+```java
+
+	//1. 构建list，默认创建的是一个ArrayList，把数据add到里面去
+    @Test
+    public void testBuildList() {
+        List<String> list = ParamList.<String>newList().add("ok").add("yes").add("hello").add("good").build();
+        System.out.println(list);
+    }
+
+    //2. 构建list，自己创建一个ArrayList，把数据add到里面去
+    @Test
+    public void testBuildList2() {
+        List<String> list = ParamList.newList(new ArrayList<String>()).add("ok").add("yes").add("hello").add("good").build();
+        System.out.println(list);
+    }
+
+	//3. 构建map, 默认创建一个ConcurrentHashMap，根据参数的类型可以确定泛型，将需要添加的值put进去
+    @Test
+    public void testBuildMap() {
+        Map<String, Object> paramMap = ParamMap.<String, Object>newMap()
+                .put("username", "mybatis")
+                .put("phone", "1234567890")
+                .put("phone","891379183131")
+                .put("email","mybatis@123.com")
+                .put("createDate",new Date())
+                .put("updateDate",new Date())
+                .build();
+        System.out.println(paramMap);
+    }
+
+	//4. 构建map, 创建map的时候可以传入想要传入map的类型，根据参数的类型可以确定泛型， 将需要添加的值put进去
+	@Test
+    public void testBuildMap1() {
+        Map<String, Object> paramMap = ParamMap.newMap(new HashMap<String, Object>())
+                .put("username", "mybatis")
+                .put("phone", "1234567890")
+                .put("phone","891379183131")
+                .put("email","mybatis@123.com")
+                .put("createDate",new Date())
+                .put("updateDate",new Date())
+                .build();
+        System.out.println(paramMap);
+    }
+```
+
+当然像Arrays.asList()这样的Java提供的一些工具类也可以帮我们简化多参数的代码冗余繁琐的问题，需要灵活运用。
 
 
 
