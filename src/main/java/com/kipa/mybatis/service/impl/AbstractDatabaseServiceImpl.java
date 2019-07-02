@@ -242,6 +242,9 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
                 return;
             }
             String columnType = getColumnType(tableName, columnName);
+            if (StringUtils.isBlank(columnType)) {
+                throw new RuntimeException(String.format("表名为：【%s】的表中查不到列名为：【%s】的数据类型",tableName, columnName));
+            }
             whereConditionList.add(String.format("%s = %s",columnName, TypeConvertor.convertSqlSequence(value, columnType)));
         });
         return whereConditionList;
