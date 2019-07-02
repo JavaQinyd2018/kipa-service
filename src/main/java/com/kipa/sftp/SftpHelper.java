@@ -81,6 +81,7 @@ public final class SftpHelper {
                 } catch (SftpException e1) {
                     log.error("创建或者切换目录失败，错误信息为：{}",e1);
                 }
+            }else {
                 throw new RuntimeException("创建或者切换目录失败",e);
             }
         }

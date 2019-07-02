@@ -2,6 +2,7 @@ package com.kipa.http.service.convert;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Maps;
 import com.kipa.http.core.HeaderConstant;
 import com.kipa.http.core.HttpHeadConstant;
 import com.kipa.http.core.HttpResponse;
@@ -14,7 +15,6 @@ import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import org.testng.collections.Maps;
 
 import java.io.File;
 import java.io.FileWriter;

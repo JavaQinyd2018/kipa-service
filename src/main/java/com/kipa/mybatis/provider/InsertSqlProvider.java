@@ -1,8 +1,8 @@
 package com.kipa.mybatis.provider;
 
 import com.kipa.utils.PreCheckUtils;
-import com.kipa.mybatis.type.SqlParser;
-import com.kipa.mybatis.type.SqlType;
+import com.kipa.mybatis.ext.SqlParser;
+import com.kipa.mybatis.ext.SqlType;
 import org.apache.ibatis.jdbc.SQL;
 import java.util.Map;
 
@@ -13,7 +13,7 @@ import java.util.Map;
 @SuppressWarnings("all")
 public class InsertSqlProvider {
 
-    public String insert(Map<String, Object> paramMap) {
+    public synchronized String insert(Map<String, Object> paramMap) {
         String tableName = (String) paramMap.get("tableName");
         PreCheckUtils.checkEmpty(tableName, "表名不能为空");
         SQL sql = new SQL().INSERT_INTO(tableName);
@@ -23,7 +23,7 @@ public class InsertSqlProvider {
         return sql.toString();
     }
 
-    public String insertBySql(Map<String, Object> paramMap) {
+    public synchronized String insertBySql(Map<String, Object> paramMap) {
         String sql = (String) paramMap.get("sql");
         PreCheckUtils.checkEmpty(sql,"insert的sql语句不能为空");
         SqlParser.checkSql(sql, SqlType.INSERT);

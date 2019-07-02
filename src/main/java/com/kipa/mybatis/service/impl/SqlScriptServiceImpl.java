@@ -46,7 +46,6 @@ public class SqlScriptServiceImpl implements SqlScriptService {
             scriptRunner.setDelimiter(";");
             scriptRunner.runScript(Resources.getResourceAsReader(sqlScriptFilePath));
         } catch (IOException e) {
-            log.error("sql文件脚本执行失败，错误原因是:{}", e);
             throw new RuntimeException("sql文件脚本执行失败，错误原因是：" + e.getMessage());
         } finally {
             if (scriptRunner != null) {

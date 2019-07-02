@@ -7,7 +7,7 @@ package com.kipa.env;
  */
 public class DatabaseContextHolder {
 
-    private static final ThreadLocal<String> contextHolder = new ThreadLocal<>();
+    private static ThreadLocal<String> contextHolder = new ThreadLocal<>();
 
     public static String getFlag() {
         return contextHolder.get();

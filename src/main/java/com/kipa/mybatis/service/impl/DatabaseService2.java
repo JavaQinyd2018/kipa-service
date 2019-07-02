@@ -1,17 +1,11 @@
 package com.kipa.mybatis.service.impl;
 
 import com.google.common.collect.Lists;
-import com.kipa.mybatis.dao.mapper2.DeleteMapper2;
-import com.kipa.mybatis.dao.mapper2.InsertMapper2;
-import com.kipa.mybatis.dao.mapper2.SelectMapper2;
-import com.kipa.mybatis.dao.mapper2.UpdateMapper2;
-import com.kipa.mybatis.service.type.TypeHelper2;
-import com.kipa.mybatis.type.SqlParser;
-import com.kipa.mybatis.type.SqlType;
+import com.kipa.mybatis.dao.mapper2.*;
+import com.kipa.mybatis.ext.SqlParser;
+import com.kipa.mybatis.ext.SqlType;
 import com.kipa.utils.PreCheckUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,14 +15,12 @@ import java.util.Map;
  * @author: Qinyadong
  * @date: 2019/3/22 15:59
  */
-@Service("databaseService2")
-@Slf4j
 public class DatabaseService2 extends AbstractDatabaseServiceImpl {
 
     private static final String TABLE_MESSAGE = "表名不能为空";
 
     @Autowired
-    private TypeHelper2 typeHelper2;
+    private DatabaseInfoMapper2 databaseInfoMapper2;
 
     @Autowired
     private InsertMapper2 insertMapper2;
@@ -43,8 +35,8 @@ public class DatabaseService2 extends AbstractDatabaseServiceImpl {
     private DeleteMapper2 deleteMapper2;
 
     @Override
-    public String getColumnType(String tableName, String columnName) {
-        return typeHelper2.getColumnType(tableName, columnName);
+    public List<Map<String, Object>> listTableColumn(String tableName) {
+        return databaseInfoMapper2.listTableColumn(tableName);
     }
 
     @Override

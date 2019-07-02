@@ -1,8 +1,9 @@
 package com.kipa.env;
 
 import com.google.common.collect.Maps;
+import com.kipa.config.EnableMultipleDataSource;
+import com.kipa.mybatis.service.condition.EnvFlag;
 import com.kipa.utils.PackageScanUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.BeansException;
@@ -25,22 +26,14 @@ import java.util.Set;
  * @date: 2019/4/19 19:30
  * 通过包扫描获取flag切换环境
  */
-@Slf4j
 @Component
 public class AppConfigScanPostProcessor implements BeanFactoryPostProcessor {
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
-        Map<String, Object> beansWithAnnotation = configurableListableBeanFactory.getBeansWithAnnotation(AppConfigScan.class);
-        if (MapUtils.isNotEmpty(beansWithAnnotation)) {
-            if (beansWithAnnotation.size() > 1) {
-                throw new RuntimeException("@AppConfigScan注解只允许标注一次");
-            }
 
-            Object bean = beansWithAnnotation.entrySet().iterator().next().getValue();
-            Class<?> beanClass = bean.getClass();
-            AppConfigScan appConfigScan = AnnotationUtils.findAnnotation(beanClass, AppConfigScan.class);
-            if (!ObjectUtils.isEmpty(appConfigScan)) {
+        AppConfigScan appConfigScan = getAnnotation(configurableListableBeanFactory, AppConfigScan.class);
+        if (!ObjectUtils.isEmpty(appConfigScan)) {
                 String basePackage = appConfigScan.basePackage();
                 //扫描到所有的带有@Database、@Dubbo、@Http的bean
                 Set<BeanDefinition> definitionSet = PackageScanUtils.getBeanWithAnnotationSet(basePackage, Arrays.asList(Database.class, Dubbo.class, Http.class));
@@ -48,7 +41,7 @@ public class AppConfigScanPostProcessor implements BeanFactoryPostProcessor {
                     definitionSet.forEach(beanDefinition -> {
                         Map<String, Object> datasourceAttributes = getAnnotationAttributes(beanDefinition, Database.class);
                         if (MapUtils.isNotEmpty(datasourceAttributes)) {
-                            String flag = (String)datasourceAttributes.get("datasourceFlag");
+                            String flag = (String) datasourceAttributes.get("datasourceFlag");
                             DatabaseContextHolder.setFlag(flag);
                         }
                         Map<String, Object> consumerAttributes = getAnnotationAttributes(beanDefinition, Dubbo.class);
@@ -64,9 +57,29 @@ public class AppConfigScanPostProcessor implements BeanFactoryPostProcessor {
                 }
 
             }
+
+        EnableMultipleDataSource multipleDataSource = getAnnotation(configurableListableBeanFactory, EnableMultipleDataSource.class);
+        if (!ObjectUtils.isEmpty(multipleDataSource)) {
+            EnvFlag[] env = multipleDataSource.env();
+            DatasourceEnvHolder.setFlag(env);
         }
     }
 
+
+    private static <T extends Annotation>  T getAnnotation(ConfigurableListableBeanFactory configurableListableBeanFactory,
+                                                           Class<T> annotationClazz) {
+        Map<String, Object> beansWithAnnotation = configurableListableBeanFactory.getBeansWithAnnotation(annotationClazz);
+        if (MapUtils.isNotEmpty(beansWithAnnotation)) {
+            if (beansWithAnnotation.size() > 1) {
+                throw new RuntimeException("@" + annotationClazz.getSimpleName() + "注解只允许标注一次");
+            }
+
+            Object bean = beansWithAnnotation.entrySet().iterator().next().getValue();
+            Class<?> beanClass = bean.getClass();
+            return AnnotationUtils.findAnnotation(beanClass, annotationClazz);
+        }
+        return null;
+    }
 
     /**
      * 根据bean获取注解属性信息

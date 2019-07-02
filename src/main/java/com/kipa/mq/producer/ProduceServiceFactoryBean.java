@@ -59,36 +59,32 @@ public class ProduceServiceFactoryBean implements FactoryBean<BaseProducerServic
             }
             return null;
         }
-    }
 
-
-    private static SendResult invokeSend(MQProducer mqProducer, MQMessage mqMessage) throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
-        SendResult sendResult = null;
-        String methodName = mqMessage.getMethodName();
-        ProducerMethod method = ProducerMethod.getMethod(methodName);
-        switch (method) {
-            case SEND:
-                sendResult = mqProducer.send(mqMessage.getMessage());
-                break;
-            case ASNYC_SEND:
-                mqProducer.send(mqMessage.getMessage(), mqMessage.getSendCallback());
-                break;
-            case SEND_ONE_WAY:
-                mqProducer.sendOneway(mqMessage.getMessage());
-                break;
-            case SEND_ONE_WAY_ORDER:
-                mqProducer.sendOneway(mqMessage.getMessage(), mqMessage.getSelector(),mqMessage.getArg());
-                break;
-            case SEND_IN_TRANSACTION:
-                if (mqMessage.getLocalTransactionExecuter() == null) {
+        private SendResult invokeSend(MQProducer mqProducer, MQMessage mqMessage) throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
+            SendResult sendResult = null;
+            String methodName = mqMessage.getMethodName();
+            ProducerMethod method = ProducerMethod.getMethod(methodName);
+            switch (method) {
+                case SEND:
+                    sendResult = mqProducer.send(mqMessage.getMessage());
+                    break;
+                case ASNYC_SEND:
+                    mqProducer.send(mqMessage.getMessage(), mqMessage.getSendCallback());
+                    break;
+                case SEND_ONE_WAY:
+                    mqProducer.sendOneway(mqMessage.getMessage());
+                    break;
+                case SEND_ONE_WAY_ORDER:
+                    mqProducer.sendOneway(mqMessage.getMessage(), mqMessage.getSelector(),mqMessage.getArg());
+                    break;
+                case SEND_IN_TRANSACTION:
                     sendResult =  mqProducer.sendMessageInTransaction(mqMessage.getMessage(), mqMessage.getArg());
-                }else {
-                    sendResult =  mqProducer.sendMessageInTransaction(mqMessage.getMessage(), mqMessage.getLocalTransactionExecuter(), mqMessage.getArg());
-                }
-                break;
-             default:
-                break;
+                    break;
+                default:
+                    break;
+            }
+            return sendResult;
         }
-        return sendResult;
     }
+
 }

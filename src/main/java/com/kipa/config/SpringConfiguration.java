@@ -9,7 +9,7 @@ import org.springframework.context.annotation.*;
  */
 @Configuration
 @ComponentScans(value = {
-        @ComponentScan("com.kipa.mybatis.service"),
+        @ComponentScan("com.kipa.mybatis.service.impl"),
         @ComponentScan("com.kipa.http.service"),
         @ComponentScan("com.kipa.dubbo.service"),
         @ComponentScan("com.kipa.log"),

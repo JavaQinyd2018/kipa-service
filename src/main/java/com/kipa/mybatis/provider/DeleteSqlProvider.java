@@ -1,7 +1,7 @@
 package com.kipa.mybatis.provider;
 
-import com.kipa.mybatis.type.SqlParser;
-import com.kipa.mybatis.type.SqlType;
+import com.kipa.mybatis.ext.SqlParser;
+import com.kipa.mybatis.ext.SqlType;
 import com.kipa.utils.PreCheckUtils;
 import org.apache.ibatis.jdbc.SQL;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 @SuppressWarnings("all")
 public class DeleteSqlProvider {
 
-    public String delete(Map<String, Object> paramMap) {
+    public synchronized String delete(Map<String, Object> paramMap) {
         String tableName = (String) paramMap.get("tableName");
         SQL sql = new SQL().DELETE_FROM(tableName);
         List<String> deleteConditionList = (List<String>) paramMap.get("deleteConditionList");
@@ -23,7 +23,7 @@ public class DeleteSqlProvider {
         return sql.toString();
     }
 
-    public String deleteBySql(Map<String, Object> paramMap) {
+    public synchronized String deleteBySql(Map<String, Object> paramMap) {
         String sql = (String) paramMap.get("sql");
         PreCheckUtils.checkEmpty(sql,"sql语句不能为空");
         SqlParser.checkSql(sql, SqlType.DELETE);

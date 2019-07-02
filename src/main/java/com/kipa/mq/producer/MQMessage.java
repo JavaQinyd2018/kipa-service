@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.rocketmq.client.producer.LocalTransactionExecuter;
 import org.apache.rocketmq.client.producer.MessageQueueSelector;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.common.message.Message;
@@ -29,7 +28,5 @@ public class MQMessage {
     private MessageQueueSelector selector;
 
     private Object arg;
-
-    private LocalTransactionExecuter localTransactionExecuter;
 
 }

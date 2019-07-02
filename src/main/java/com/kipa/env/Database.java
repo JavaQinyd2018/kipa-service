@@ -14,12 +14,9 @@ import java.lang.annotation.*;
 @Documented
 public @interface Database {
 
-    @AliasFor("datasourceFlag")
-    String value() default "";
     /**
      * 默认是没有标识，需要特定制定标识的，需要传入标识
      * @return
      */
-    @AliasFor("value")
-    String datasourceFlag() default "";
+    String[] datasourceFlag();
 }

@@ -1,12 +1,11 @@
 package com.kipa.http.service.impl;
 
+import com.google.common.collect.Maps;
 import com.kipa.http.core.HttpResponse;
 import com.kipa.http.service.HttpMetaService;
 import com.kipa.utils.PreCheckUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.testng.collections.Maps;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.Map;
  * @Date: 2019/3/31
  */
 @Service("httpService")
-@Slf4j
 public class HttpService extends AbstractHttpServiceImpl implements HttpMetaService {
 
     private static final String MESSAGE = "回调函数接口不能为空";

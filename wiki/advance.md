@@ -343,3 +343,150 @@ public class RedisTest extends BaseTestContextApplication {
     }
 }
 ```
+
+### 5. 多数据源并行
+
+测试时，有时候会碰到需要操作不同服务器上的数据源，框架除了提供DatabaseService数据库默认的操作之外，还提供了4个并行操作数据库的服务，分别为DatabaseService1， DatabaseService2， DatabaseService3， DatabaseService4，对应4个环境标识的数据源：env1，env2，env3，env4，具体的用法如下：
+
+#### （1）配置
+
+在框架整合的入口类BaseTestContextApplication上面标注@EnableMultipleDataSource注解，同时配置需要开启的环境的标识，EnvFlag.ENV1 表示开启数据源标识为env1配置的数据源，如果有多个会同时开启多个。
+
+```java
+@Configuration
+@Import(BaseConfiguration.class)
+//开启多数据操作 开启了4套：分别为env1，env2，env3，env4
+@EnableMultipleDataSource(env = {EnvFlag.ENV1,EnvFlag.ENV2, EnvFlag.ENV3, EnvFlag.ENV4})
+public class ApplicationConfiguration {
+
+}
+```
+
+框架会去读取db.properties文件中带env1，env2，env3，env4四个标识的数据源配置信息并初始化数据源操作的信息。
+
+```properties
+# 数据源env1
+env1.mybatis.datasource.driver=com.mysql.cj.jdbc.Driver
+env1.mybatis.datasource.url=jdbc:mysql://localhost:3306/mybatisplus?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+env1.mybatis.datasource.username=root
+env1.mybatis.datasource.password=123456
+# 数据源env2
+env2.mybatis.datasource.driver=com.mysql.cj.jdbc.Driver
+env2.mybatis.datasource.url=jdbc:mysql://localhost:3306/51shopping?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+env2.mybatis.datasource.username=root
+env2.mybatis.datasource.password=123456
+# 数据源env3
+env3.mybatis.datasource.driver=com.mysql.cj.jdbc.Driver
+env3.mybatis.datasource.url=jdbc:mysql://localhost:3306/mybatisplus?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+env3.mybatis.datasource.username=root
+env3.mybatis.datasource.password=123456
+# 数据源env4
+env4.mybatis.datasource.driver=com.mysql.cj.jdbc.Driver
+env4.mybatis.datasource.url=jdbc:mysql://localhost:3306/51shopping?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+env4.mybatis.datasource.username=root
+env4.mybatis.datasource.password=123456
+```
+
+#### （2）使用
+
+和DatabaseService使用方式一样，需要注入DatabaseService1、DatabaseService2、DatabaseService3、
+
+DatabaseService4 进行数据crud操作。
+
+```java
+public class MultipleDatasourceTest extends TestContextConfiguration {
+
+    @Autowired
+    private DatabaseService databaseService;
+
+    @Autowired
+    private DatabaseService1 databaseService1;
+
+    @Autowired
+    private DatabaseService2 databaseService2;
+
+    @Autowired
+    private DatabaseService3 databaseService3;
+
+    @Autowired
+    private DatabaseService4 databaseService4;
+
+    @Test
+    public void test() {
+        //test
+        Map<String, Object> map = databaseService.selectOne("select * from tb_user where id = 1");
+        PrintUtils.println(map);
+
+        //mybatis plus
+        Map<String, Object> map1 = databaseService1.selectOne("select * from user where id = 1");
+        PrintUtils.println(map1);
+
+        //51shopping
+        Map<String, Object> map2 = databaseService2.selectOne("select * from tb_user where id = 1");
+        PrintUtils.println(map2);
+
+        //mybatis plus
+        Map<String, Object> map3 = databaseService3.selectOne("select * from user where id = 1");
+        PrintUtils.println(map3);
+
+        //51shopping
+        Map<String, Object> map4 = databaseService4.selectOne("select * from tb_user where id = 1");
+        PrintUtils.println(map4);
+    }
+```
+
+### 6. 参数List，Map的构建
+
+框架中有很多方法的参数都是list或者map，如果参数很多，数据量很大，推荐使用csv数据文件进行数据驱动，框架提供的CSVUtils工具类可以帮我们转化成对用的list、map；如果参数不是特别多，但是传统的new list或者new map的方式会感觉有很多冗余的编写，基于此框架提供了ParamList和ParamMap的参数构建器，帮助我们减少冗余的代码。具体示例如下：
+
+```java
+
+	//1. 构建list，默认创建的是一个ArrayList，把数据add到里面去
+    @Test
+    public void testBuildList() {
+        List<String> list = ParamList.<String>newList().add("ok").add("yes").add("hello").add("good").build();
+        System.out.println(list);
+    }
+
+    //2. 构建list，自己创建一个ArrayList，把数据add到里面去
+    @Test
+    public void testBuildList2() {
+        List<String> list = ParamList.newList(new ArrayList<String>()).add("ok").add("yes").add("hello").add("good").build();
+        System.out.println(list);
+    }
+
+	//3. 构建map, 默认创建一个ConcurrentHashMap，根据参数的类型可以确定泛型，将需要添加的值put进去
+    @Test
+    public void testBuildMap() {
+        Map<String, Object> paramMap = ParamMap.<String, Object>newMap()
+                .put("username", "mybatis")
+                .put("phone", "1234567890")
+                .put("phone","891379183131")
+                .put("email","mybatis@123.com")
+                .put("createDate",new Date())
+                .put("updateDate",new Date())
+                .build();
+        System.out.println(paramMap);
+    }
+
+	//4. 构建map, 创建map的时候可以传入想要传入map的类型，根据参数的类型可以确定泛型， 将需要添加的值put进去
+	@Test
+    public void testBuildMap1() {
+        Map<String, Object> paramMap = ParamMap.newMap(new HashMap<String, Object>())
+                .put("username", "mybatis")
+                .put("phone", "1234567890")
+                .put("phone","891379183131")
+                .put("email","mybatis@123.com")
+                .put("createDate",new Date())
+                .put("updateDate",new Date())
+                .build();
+        System.out.println(paramMap);
+    }
+```
+
+当然像Arrays.asList()这样的Java提供的一些工具类也可以帮我们简化多参数的代码冗余繁琐的问题，需要灵活运用。
+
+
+
+
+

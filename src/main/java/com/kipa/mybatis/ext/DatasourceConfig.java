@@ -1,4 +1,4 @@
-package com.kipa.mybatis.type;
+package com.kipa.mybatis.ext;
 
 import lombok.Data;
 
