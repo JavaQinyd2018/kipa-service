@@ -1,8 +1,6 @@
 package com.kipa.mybatis.provider;
 
 import com.kipa.utils.PreCheckUtils;
-import com.kipa.mybatis.ext.SqlParser;
-import com.kipa.mybatis.ext.SqlType;
 import org.apache.ibatis.jdbc.SQL;
 import java.util.Map;
 
@@ -24,9 +22,6 @@ public class InsertSqlProvider {
     }
 
     public synchronized String insertBySql(Map<String, Object> paramMap) {
-        String sql = (String) paramMap.get("sql");
-        PreCheckUtils.checkEmpty(sql,"insert的sql语句不能为空");
-        SqlParser.checkSql(sql, SqlType.INSERT);
-        return sql;
+        return (String) paramMap.get("sql");
     }
 }

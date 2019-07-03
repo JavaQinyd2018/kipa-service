@@ -28,6 +28,20 @@ public enum  SqlType {
     /**
      * 查询
      */
-    SELECT;
+    SELECT,
+
+    /**
+     * 统计
+     */
+    COUNT,
+
+    /**
+     * 查询字段
+     */
+    SELECT_COLUMN,
+    /**
+     * 分页查询
+     */
+    SELECT_PAGE;
 
 }

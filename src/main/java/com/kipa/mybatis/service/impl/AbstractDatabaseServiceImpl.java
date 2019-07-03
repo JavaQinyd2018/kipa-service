@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.kipa.data.csv.CSVType;
 import com.kipa.data.csv.CSVUtils;
+import com.kipa.mybatis.ext.SqlType;
 import com.kipa.mybatis.service.BaseDatabaseService;
 import com.kipa.mybatis.service.type.TypeConvertor;
 import com.kipa.utils.PreCheckUtils;
@@ -22,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since: 数据库增删改查抽象类
  */
 public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService {
+
 
     @Override
     public int insert(String tableName, Map<String, Object> paramMap) {
@@ -46,7 +48,7 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
      * @param tableName
      * @return
      */
-    public abstract List<Map<String, Object>> listTableColumn(String tableName);
+    abstract List<Map<String, Object>> listTableColumn(String tableName);
 
     private String getColumnType(String tableName, String columnName) {
         final List<Map<String, Object>> list = listTableColumn(tableName);
@@ -67,7 +69,7 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
      * @param insertParamMap
      * @return
      */
-    public abstract int insertParam(String tableName, Map<String,String> insertParamMap);
+    abstract int insertParam(String tableName, Map<String,String> insertParamMap);
 
     @Override
     public int batchInsert(String tableName, String csvFilePath) {
@@ -94,12 +96,23 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
     }
 
 
+    @Override
+    public Map<String, Object> selectOne(String tableName, String condition) {
+        String sql = buildSql(SqlType.SELECT, tableName, null, condition, null, null);
+        return selectOne(sql);
+    }
 
     @Override
     public Map<String, Object> selectOne(String tableName, Map<String, Object> whereConditionMap) {
         PreCheckUtils.checkEmpty(whereConditionMap,"查询条件map不能为空");
         List<String> whereConditionList = buildConditionList(tableName, whereConditionMap);
         return selectOne(tableName, whereConditionList);
+    }
+
+    @Override
+    public List<Map<String, Object>> selectList(String tableName, String condition) {
+        String sql = buildSql(SqlType.SELECT, tableName, null, condition, null, null);
+        return selectList(sql);
     }
 
     @Override
@@ -117,7 +130,7 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
      * @param whereConditionList
      * @return
      */
-    public abstract List<LinkedHashMap<String, Object>> getSelectListByCondition(String tableName, List<String> whereConditionList);
+    abstract List<LinkedHashMap<String, Object>> getSelectListByCondition(String tableName, List<String> whereConditionList);
 
     @Override
     public List<Map<String, Object>> selectList(String tableName, Map<String, Object> whereConditionMap) {
@@ -126,6 +139,11 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
         return selectList(tableName, whereConditionList);
     }
 
+    @Override
+    public Long count(String tableName, String condition) {
+        String sql = buildSql(SqlType.COUNT, tableName, null, condition, null, null);
+        return count(sql);
+    }
 
     @Override
     public Long count(String tableName, Map<String, Object> whereConditionMap) {
@@ -135,10 +153,22 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
     }
 
     @Override
+    public Map<String, Long> countColumn(String tableName, String columnName, String condition) {
+        String sql = buildSql(SqlType.COUNT, tableName, columnName, condition, null, null);
+        return countColumn(sql);
+    }
+
+    @Override
     public Map<String, Long> countColumn(String tableName, String columnName, Map<String, Object> whereConditionMap) {
         PreCheckUtils.checkEmpty(whereConditionMap,"查询条件map不能为空");
         List<String> whereConditionList = buildConditionList(tableName, whereConditionMap);
         return countColumn(tableName, columnName, whereConditionList);
+    }
+
+    @Override
+    public List<Map<String, Object>> selectColumn(String tableName, String columnName, String condition) {
+        String sql = buildSql(SqlType.SELECT_COLUMN, tableName, columnName, condition, null, null);
+        return selectColumn(sql);
     }
 
     @Override
@@ -157,13 +187,19 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
      * @param whereConditionList
      * @return
      */
-    public abstract List<LinkedHashMap<String, Object>> getSelectColumnByCondition(String tableName, List<String> columnNameList, List<String> whereConditionList);
+    abstract List<LinkedHashMap<String, Object>> getSelectColumnByCondition(String tableName, List<String> columnNameList, List<String> whereConditionList);
 
     @Override
     public List<Map<String, Object>> selectColumn(String tableName, List<String> columnNameList, Map<String, Object> whereConditionMap) {
         PreCheckUtils.checkEmpty(whereConditionMap,"查询条件map不能为空");
         List<String> whereConditionList = buildConditionList(tableName, whereConditionMap);
         return selectColumn(tableName, columnNameList, whereConditionList);
+    }
+
+    @Override
+    public List<Map<String, Object>> selectPage(String tableName, String condition, Integer pageNo, Integer pageSize) {
+        String sql = buildSql(SqlType.SELECT_PAGE, tableName, null, condition, pageNo, pageSize);
+        return selectPage(sql);
     }
 
     @Override
@@ -188,7 +224,7 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
      * @param pageSize
      * @return
      */
-    public abstract List<LinkedHashMap<String, Object>> getSelectPageByCondition(String tableName, List<String> whereConditionList, Integer pageNo, Integer pageSize);
+    abstract List<LinkedHashMap<String, Object>> getSelectPageByCondition(String tableName, List<String> whereConditionList, Integer pageNo, Integer pageSize);
 
 
     @Override
@@ -197,6 +233,11 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
         return selectPage(tableName, whereConditionList, pageNo, pageSize);
     }
 
+    @Override
+    public int update(String tableName, String setField, String condition) {
+        String sql = buildSql(SqlType.UPDATE, tableName, setField, condition, null, null);
+        return update(sql);
+    }
 
     @Override
     public int update(String tableName, Map<String, Object> setFiledMap, Map<String, Object> updateConditionMap) {
@@ -207,6 +248,12 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
         return update(tableName, setFieldList, updateConditionList);
     }
 
+
+    @Override
+    public int delete(String tableName, String condition) {
+        String sql = buildSql(SqlType.DELETE, tableName, null, condition, null, null);
+        return delete(sql);
+    }
 
     @Override
     public int delete(String tableName, Map<String, Object> deleteConditionMap) {
@@ -248,6 +295,40 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
             whereConditionList.add(String.format("%s = %s",columnName, TypeConvertor.convertSqlSequence(value, columnType)));
         });
         return whereConditionList;
+    }
+
+    private String buildSql(SqlType sqlType, String tableName, String target, String condition, Integer pageNo, Integer pageSize) {
+        PreCheckUtils.checkEmpty(tableName, "表名不能为空");
+        switch (sqlType) {
+            case SELECT:
+                return String.format("SELECT * FROM %s WHERE %s",tableName, condition);
+            case COUNT:
+                if (StringUtils.isBlank(target)) {
+                    return String.format("SELECT COUNT(*) FROM %s WHERE %s",tableName, condition);
+                }else {
+                    return String.format("SELECT COUNT(%s) FROM %s WHERE %s",target, tableName, condition);
+                }
+            case SELECT_COLUMN:
+                PreCheckUtils.checkEmpty(target, "查询字段的信息不能为空");
+                return String.format("SELECT %s FROM %s WHERE %s",target,tableName, condition);
+            case SELECT_PAGE:
+                if (pageNo == null) {
+                    pageNo = 1;
+                }
+
+                if (pageSize == null) {
+                    pageSize = 10;
+                }
+                Integer start = (pageNo - 1) * pageSize;
+                return String.format("SELECT * FROM %s WHERE %s limit %s,%s", tableName, condition, start, pageSize);
+            case UPDATE:
+                PreCheckUtils.checkEmpty(target, "更新字段的信息不能为空");
+                return String.format("UPDATE %s SET %s WHERE %s",tableName, target, condition);
+            case DELETE:
+                return String.format("DELETE FROM %s WHERE %s",tableName, condition);
+            default:
+                return "";
+        }
     }
 
 }

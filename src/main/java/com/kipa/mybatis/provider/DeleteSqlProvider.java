@@ -1,8 +1,5 @@
 package com.kipa.mybatis.provider;
 
-import com.kipa.mybatis.ext.SqlParser;
-import com.kipa.mybatis.ext.SqlType;
-import com.kipa.utils.PreCheckUtils;
 import org.apache.ibatis.jdbc.SQL;
 
 import java.util.List;
@@ -24,9 +21,6 @@ public class DeleteSqlProvider {
     }
 
     public synchronized String deleteBySql(Map<String, Object> paramMap) {
-        String sql = (String) paramMap.get("sql");
-        PreCheckUtils.checkEmpty(sql,"sql语句不能为空");
-        SqlParser.checkSql(sql, SqlType.DELETE);
-        return sql;
+        return (String) paramMap.get("sql");
     }
 }

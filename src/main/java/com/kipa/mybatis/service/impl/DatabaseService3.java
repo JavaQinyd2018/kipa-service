@@ -35,17 +35,18 @@ public class DatabaseService3 extends AbstractDatabaseServiceImpl {
     private DeleteMapper3 deleteMapper3;
 
     @Override
-    public List<Map<String, Object>> listTableColumn(String tableName) {
+    List<Map<String, Object>> listTableColumn(String tableName) {
         return databaseInfoMapper3.listTableColumn(tableName);
     }
 
     @Override
-    public int insertParam(String tableName, Map<String, String> insertParamMap) {
+    int insertParam(String tableName, Map<String, String> insertParamMap) {
         return insertMapper3.insert(tableName, insertParamMap);
     }
 
     @Override
     public int insert(String sql) {
+        SqlParser.checkSql(sql, SqlType.INSERT);
         return insertMapper3.insertBySql(sql);
     }
 
@@ -56,17 +57,19 @@ public class DatabaseService3 extends AbstractDatabaseServiceImpl {
 
 
     @Override
-    public List<LinkedHashMap<String, Object>> getSelectListByCondition(String tableName, List<String> whereConditionList) {
+    List<LinkedHashMap<String, Object>> getSelectListByCondition(String tableName, List<String> whereConditionList) {
         return selectMapper3.selectListByCondition(tableName, whereConditionList);
     }
 
     @Override
     public Map<String, Object> selectOne(String sql) {
+        SqlParser.checkSql(sql, SqlType.SELECT);
         return selectMapper3.selectOneBySql(sql);
     }
 
     @Override
     public List<Map<String, Object>> selectList(String sql) {
+        SqlParser.checkSql(sql, SqlType.SELECT);
         List<Map<String, Object>> list = Lists.newArrayList();
         List<LinkedHashMap<String, Object>> linkedHashMaps = selectMapper3.selectListBySql(sql);
         list.addAll(linkedHashMaps);
@@ -87,12 +90,12 @@ public class DatabaseService3 extends AbstractDatabaseServiceImpl {
 
 
     @Override
-    public List<LinkedHashMap<String, Object>> getSelectColumnByCondition(String tableName, List<String> columnNameList, List<String> whereConditionList) {
+    List<LinkedHashMap<String, Object>> getSelectColumnByCondition(String tableName, List<String> columnNameList, List<String> whereConditionList) {
         return selectMapper3.selectColumnByCondition(tableName, columnNameList, whereConditionList);
     }
 
     @Override
-    public List<LinkedHashMap<String, Object>> getSelectPageByCondition(String tableName, List<String> whereConditionList, Integer pageNo, Integer pageSize) {
+    List<LinkedHashMap<String, Object>> getSelectPageByCondition(String tableName, List<String> whereConditionList, Integer pageNo, Integer pageSize) {
         return selectMapper3.selectPageByCondition(tableName, whereConditionList, pageNo, pageSize);
     }
 
@@ -122,4 +125,36 @@ public class DatabaseService3 extends AbstractDatabaseServiceImpl {
         SqlParser.checkSql(sql, SqlType.DELETE);
         return deleteMapper3.deleteBySql(sql);
     }
+
+    @Override
+    public Long count(String sql) {
+        SqlParser.checkSql(sql, SqlType.COUNT);
+        return selectMapper3.countBySql(sql);
+    }
+
+
+    @Override
+    public Map<String, Long> countColumn(String sql) {
+        SqlParser.checkSql(sql, SqlType.COUNT);
+        return selectMapper3.countColumnBySql(sql);
+    }
+
+    @Override
+    public List<Map<String, Object>> selectColumn(String sql) {
+        SqlParser.checkSql(sql, SqlType.SELECT_COLUMN);
+        List<Map<String, Object>> list = Lists.newArrayList();
+        List<LinkedHashMap<String, Object>> linkedHashMaps = selectMapper3.selectColumnBySql(sql);
+        list.addAll(linkedHashMaps);
+        return list;
+    }
+
+    @Override
+    public List<Map<String, Object>> selectPage(String sql) {
+        SqlParser.checkSql(sql, SqlType.SELECT_PAGE);
+        List<Map<String, Object>> list = Lists.newArrayList();
+        List<LinkedHashMap<String, Object>> linkedHashMaps = selectMapper3.selectPageBySql(sql);
+        list.addAll(linkedHashMaps);
+        return list;
+    }
+
 }

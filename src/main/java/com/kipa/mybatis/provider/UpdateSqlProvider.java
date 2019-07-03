@@ -1,7 +1,5 @@
 package com.kipa.mybatis.provider;
 
-import com.kipa.mybatis.ext.SqlParser;
-import com.kipa.mybatis.ext.SqlType;
 import com.kipa.utils.PreCheckUtils;
 import org.apache.ibatis.jdbc.SQL;
 
@@ -27,9 +25,6 @@ public class UpdateSqlProvider {
     }
 
     public synchronized String updateBySql(Map<String, Object> paramMap) {
-        String sql = (String) paramMap.get("sql");
-        SqlParser.checkSql(sql, SqlType.UPDATE);
-        PreCheckUtils.checkEmpty(sql,"sql语句不能为空");
-        return sql;
+        return (String) paramMap.get("sql");
     }
 }

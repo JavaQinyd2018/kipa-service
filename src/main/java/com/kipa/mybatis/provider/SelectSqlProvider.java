@@ -1,8 +1,6 @@
 package com.kipa.mybatis.provider;
 
 import com.kipa.utils.PreCheckUtils;
-import com.kipa.mybatis.ext.SqlParser;
-import com.kipa.mybatis.ext.SqlType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.jdbc.SQL;
@@ -38,17 +36,15 @@ public class SelectSqlProvider {
     }
 
     public synchronized String selectOneBySql(final Map<String,Object> paramMap) {
-        String sql = (String) paramMap.get("sql");
-        PreCheckUtils.checkEmpty(sql,"sql语句不能为空");
-        SqlParser.checkSql(sql, SqlType.SELECT);
-        return sql + " limit 0,1";
+        return (String) paramMap.get("sql") + " limit 0,1";
     }
 
     public synchronized String selectListBySql(final Map<String,Object> paramMap) {
-        String sql = (String) paramMap.get("sql");
-        PreCheckUtils.checkEmpty(sql,"sql语句不能为空");
-        SqlParser.checkSql(sql, SqlType.SELECT);
-        return sql;
+        return (String) paramMap.get("sql");
+    }
+
+    public synchronized String countBysql(final Map<String,Object> paramMap) {
+        return (String) paramMap.get("sql");
     }
 
     public synchronized String countByCondition(final Map<String,Object> paramMap) {
@@ -66,6 +62,10 @@ public class SelectSqlProvider {
     }
 
 
+    public synchronized String countColumnBySql(final Map<String,Object> paramMap) {
+        return (String) paramMap.get("sql");
+    }
+
     public synchronized String countColumnByCondition(final Map<String,Object> paramMap) {
         String tableName = (String) paramMap.get("tableName");
         PreCheckUtils.checkEmpty(tableName, "表名不能为空");
@@ -79,6 +79,10 @@ public class SelectSqlProvider {
             conditionList.forEach(sql::WHERE);
         }
         return sql.toString();
+    }
+
+    public synchronized String selectColumnBySql(final Map<String,Object> paramMap) {
+        return (String) paramMap.get("sql");
     }
 
     public synchronized String selectColumnByCondition(final Map<String,Object> paramMap) {
@@ -97,6 +101,10 @@ public class SelectSqlProvider {
             conditionList.forEach(sql::WHERE);
         }
         return sql.toString();
+    }
+
+    public synchronized String selectPageBySql(final Map<String,Object> paramMap) {
+        return (String) paramMap.get("sql");
     }
 
     public synchronized String selectPageByCondition(final Map<String,Object> paramMap) {

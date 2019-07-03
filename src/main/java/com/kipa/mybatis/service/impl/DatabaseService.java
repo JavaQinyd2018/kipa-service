@@ -34,17 +34,18 @@ public class DatabaseService extends AbstractDatabaseServiceImpl {
     private DeleteMapper deleteMapper;
 
     @Override
-    public List<Map<String, Object>> listTableColumn(String tableName) {
+    List<Map<String, Object>> listTableColumn(String tableName) {
         return databaseInfoMapper.listTableColumn(tableName);
     }
 
     @Override
-    public int insertParam(String tableName, Map<String, String> insertParamMap) {
+    int insertParam(String tableName, Map<String, String> insertParamMap) {
         return insertMapper.insert(tableName, insertParamMap);
     }
 
     @Override
     public int insert(String sql) {
+        SqlParser.checkSql(sql, SqlType.INSERT);
         return insertMapper.insertBySql(sql);
     }
 
@@ -64,6 +65,7 @@ public class DatabaseService extends AbstractDatabaseServiceImpl {
 
     @Override
     public Map<String, Object> selectOne(String sql) {
+        SqlParser.checkSql(sql, SqlType.SELECT);
         return selectMapper.selectOneBySql(sql);
     }
 
@@ -76,9 +78,21 @@ public class DatabaseService extends AbstractDatabaseServiceImpl {
     }
 
     @Override
+    public Long count(String sql) {
+        SqlParser.checkSql(sql, SqlType.COUNT);
+        return selectMapper.countBySql(sql);
+    }
+
+    @Override
     public Long count(String tableName, List<String> whereConditionList) {
         PreCheckUtils.checkEmpty(tableName, TABLE_MESSAGE);
         return selectMapper.countByCondition(tableName, whereConditionList);
+    }
+
+    @Override
+    public Map<String, Long> countColumn(String sql) {
+        SqlParser.checkSql(sql, SqlType.COUNT);
+        return selectMapper.countColumnBySql(sql);
     }
 
     @Override
@@ -88,17 +102,35 @@ public class DatabaseService extends AbstractDatabaseServiceImpl {
     }
 
     @Override
-    public List<LinkedHashMap<String, Object>> getSelectListByCondition(String tableName, List<String> whereConditionList) {
+    List<LinkedHashMap<String, Object>> getSelectListByCondition(String tableName, List<String> whereConditionList) {
         return selectMapper.selectListByCondition(tableName, whereConditionList);
     }
 
     @Override
-    public List<LinkedHashMap<String, Object>> getSelectColumnByCondition(String tableName, List<String> columnNameList, List<String> whereConditionList) {
+    public List<Map<String, Object>> selectColumn(String sql) {
+        SqlParser.checkSql(sql, SqlType.SELECT_COLUMN);
+        List<Map<String, Object>> list = Lists.newArrayList();
+        List<LinkedHashMap<String, Object>> linkedHashMaps = selectMapper.selectColumnBySql(sql);
+        list.addAll(linkedHashMaps);
+        return list;
+    }
+
+    @Override
+    List<LinkedHashMap<String, Object>> getSelectColumnByCondition(String tableName, List<String> columnNameList, List<String> whereConditionList) {
         return selectMapper.selectColumnByCondition(tableName, columnNameList, whereConditionList);
     }
 
     @Override
-    public List<LinkedHashMap<String, Object>> getSelectPageByCondition(String tableName, List<String> whereConditionList, Integer pageNo, Integer pageSize) {
+    public List<Map<String, Object>> selectPage(String sql) {
+        SqlParser.checkSql(sql, SqlType.SELECT_PAGE);
+        List<Map<String, Object>> list = Lists.newArrayList();
+        List<LinkedHashMap<String, Object>> linkedHashMaps = selectMapper.selectPageBySql(sql);
+        list.addAll(linkedHashMaps);
+        return list;
+    }
+
+    @Override
+    List<LinkedHashMap<String, Object>> getSelectPageByCondition(String tableName, List<String> whereConditionList, Integer pageNo, Integer pageSize) {
         return selectMapper.selectPageByCondition(tableName, whereConditionList, pageNo, pageSize);
     }
 

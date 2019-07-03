@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * @Author: Qinyadong
  * @Date: 2018/12/28 17:01
- * sql解析器
+ * sql校验器
  */
 
 public final class SqlParser {
@@ -45,8 +45,32 @@ public final class SqlParser {
                     throw new IllegalArgumentException("sql语句格式不合法,查询类型的sql语句必须以select的开始,包含from关键字,\nsql是："+sql);
                 }
                 break;
-                default:
-                    throw new IllegalArgumentException("没有对应类型的sql");
+            case COUNT:
+                if (!(StringUtils.containsIgnoreCase(sql.trim(), "select ")
+                        && StringUtils.containsIgnoreCase(sql.trim()," from")
+                        && StringUtils.startsWithIgnoreCase(sql.trim(), "select")
+                        && StringUtils.containsIgnoreCase(sql.trim(), "count"))) {
+                    throw new IllegalArgumentException("sql语句格式不合法,统计类型的sql语句必须以select的开始,包含count, from关键字,\nsql是："+sql);
+                }
+                break;
+            case SELECT_COLUMN:
+                if (!(StringUtils.containsIgnoreCase(sql.trim(), "select ")
+                        && StringUtils.containsIgnoreCase(sql.trim()," from")
+                        && StringUtils.startsWithIgnoreCase(sql.trim(), "select")
+                        && !StringUtils.containsIgnoreCase(sql.trim(), "*"))) {
+                    throw new IllegalArgumentException("sql语句格式不合法,指定列查询类型的sql语句必须以select的开始,包含from, limit关键字,以及被查询字段信息,\nsql是："+sql);
+                }
+                break;
+            case SELECT_PAGE:
+                if (!(StringUtils.containsIgnoreCase(sql.trim(), "select ")
+                        && StringUtils.containsIgnoreCase(sql.trim()," from")
+                        && StringUtils.startsWithIgnoreCase(sql.trim(), "select")
+                        && StringUtils.containsIgnoreCase(sql.trim(), "limit"))) {
+                    throw new IllegalArgumentException("sql语句格式不合法,分页查询类型的sql语句必须以select的开始,包含from, limit关键字,\nsql是："+sql);
+                }
+                break;
+             default:
+                 throw new IllegalArgumentException("没有对应类型的sql");
         }
     }
 
