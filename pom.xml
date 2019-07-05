@@ -9,6 +9,11 @@
     <version>2.1.0-SNAPSHOT</version>
 
     <properties>
+        <!--项目基础的配置-->
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!--第三方依赖-->
         <aspectj.version>1.8.10</aspectj.version>
         <spring.version>5.1.2.RELEASE</spring.version>
         <mybatis.version>3.4.5</mybatis.version>

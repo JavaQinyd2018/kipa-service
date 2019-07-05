@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
  * @Date: 2019/1/3 13:36
  * 对象反射获取相关数据的工具类
  */
+@SuppressWarnings("all")
 public class ReflectUtils {
 
     private ReflectUtils() {}

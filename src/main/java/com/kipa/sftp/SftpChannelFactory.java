@@ -84,7 +84,7 @@ public class SftpChannelFactory extends BasePooledObjectFactory<Channel> {
             return false;
         }
 
-        if (channel.isClosed() || !channel.isConnected()) {
+        if (channel.isClosed()) {
             return false;
         }
 

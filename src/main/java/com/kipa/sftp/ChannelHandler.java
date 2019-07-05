@@ -21,7 +21,8 @@ class ChannelHandler {
     private SftpChannelPool sftpChannelPool;
 
     ChannelHandler(String env, String channelType) {
-        final SftpChannelFactory sftpConnectionFactory = new SftpChannelFactory(getConfig(env), channelType);
+        final SftpConfig sftpConfig = getConfig(env);
+        final SftpChannelFactory sftpConnectionFactory = new SftpChannelFactory(sftpConfig, channelType);
         sftpChannelPool = new SftpChannelPool(sftpConnectionFactory);
     }
 
@@ -59,6 +60,8 @@ class ChannelHandler {
             sftpChannelPool.returnObject(channel);
         } catch (Exception e) {
             throw new KipaProcessException("释放sftp连接失败",e);
+        }finally {
+            sftpChannelPool.close();
         }
     }
 

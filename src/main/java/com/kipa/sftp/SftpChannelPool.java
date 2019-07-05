@@ -18,7 +18,10 @@ public class SftpChannelPool extends BaseObjectPool<Channel> {
     private static final int DEFAULT_POOL_SIZE = 5;
     private BlockingQueue<Channel> pool;
     private SftpChannelFactory factory;
-    private static final int TIME_OUT = 3;
+    /**
+     * 默认sftp连接5分钟，5分钟之后超时失效
+     */
+    private static final int TIME_OUT = 300;
 
     SftpChannelPool(SftpChannelFactory factory) {
         this(DEFAULT_POOL_SIZE, factory);
@@ -77,7 +80,7 @@ public class SftpChannelPool extends BaseObjectPool<Channel> {
 
     @Override
     public void addObject() throws Exception {
-        assert pool.offer(factory.create(), TIME_OUT, TimeUnit.SECONDS);
+        pool.offer(factory.create(), TIME_OUT, TimeUnit.SECONDS);
     }
 
     @Override
