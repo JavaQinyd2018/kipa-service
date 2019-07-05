@@ -1,5 +1,6 @@
 package com.kipa.data;
 
+import com.kipa.common.KipaProcessException;
 import com.kipa.mock.http.annotation.MockHttp;
 import com.kipa.utils.AnnotationUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -28,7 +29,7 @@ public class DataMetaAnnotationListener implements IInvokedMethodListener2 {
             Set<Method> methodWithAnnotation = AnnotationUtils.getMethodWithAnnotation(declaringClass, MockHttp.class);
             if (CollectionUtils.isNotEmpty(methodWithAnnotation)) {
                 if (methodWithAnnotation.size() > 1) {
-                    throw new RuntimeException("当前类中只允许存在一个被@MockHttp注解标识的方法");
+                    throw new KipaProcessException("当前类中只允许存在一个被@MockHttp注解标识的方法");
                 }
                 Method method = methodWithAnnotation.iterator().next();
                 DataMeta dataMeta = method.getAnnotation(DataMeta.class);
@@ -36,7 +37,7 @@ public class DataMetaAnnotationListener implements IInvokedMethodListener2 {
                     DataParam[] dataParams = dataMeta.value();
                     Parameter[] parameters = method.getParameters();
                     if (dataParams.length != parameters.length) {
-                        throw new RuntimeException("方法"+method.getName()+"参数个数个注解参数个数不一致，注解参数个数为："
+                        throw new KipaProcessException("方法"+method.getName()+"参数个数个注解参数个数不一致，注解参数个数为："
                                 + dataParams.length+"接口参数的个数为："+parameters.length);
                     }
                     if (ArrayUtils.isNotEmpty(dataParams)) {
@@ -46,7 +47,7 @@ public class DataMetaAnnotationListener implements IInvokedMethodListener2 {
                             //调用目标方法，注意：如果target 直接new instance的话，注入进来的spring bean都会为空，导致调用失败
                             ReflectionUtils.invokeMethod(method, iInvokedMethod.getTestMethod().getInstance(), list.toArray());
                         } catch (Exception e) {
-                            throw new RuntimeException("方法"+method.getName()+"调用失败" ,e);
+                            throw new KipaProcessException("方法"+method.getName()+"调用失败" ,e);
                         }
 
                     }
@@ -58,7 +59,7 @@ public class DataMetaAnnotationListener implements IInvokedMethodListener2 {
                             //因此，通过当前测试方法获取当前调用的实例，再去在@Test方法运行之前运行@MockHttp方法，达到在http接口调用之前mock的效果
                             ReflectionUtils.invokeMethod(method, iInvokedMethod.getTestMethod().getInstance(), dataParam.paramValue());
                         } catch (Exception e) {
-                            throw new RuntimeException("方法"+method.getName()+"调用失败",e);
+                            throw new KipaProcessException("方法"+method.getName()+"调用失败",e);
                         }
                     }
                 }

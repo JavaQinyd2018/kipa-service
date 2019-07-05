@@ -2,6 +2,7 @@ package com.kipa.sftp;
 
 import com.google.common.collect.Lists;
 import com.jcraft.jsch.*;
+import com.kipa.common.KipaProcessException;
 import com.kipa.utils.PreCheckUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -19,7 +20,6 @@ import java.util.*;
  */
 @Slf4j
 public final class SftpHelper {
-
 
     private SftpHelper() {}
 
@@ -66,10 +66,11 @@ public final class SftpHelper {
         PreCheckUtils.checkEmpty(directory, "文件上传的目录不能为空");
         PreCheckUtils.checkEmpty(uploadFileName, "上传的文件名称不能为空");
         checkDirIfLegal(directory);
-        ChannelSftp channelSftp = SftpBaseHandler.getSftp(env);
+        ChannelHandler handler = new ChannelHandler(env, "sftp");
+        ChannelSftp channelSftp = handler.borrowChannelSftp();
         File file = new File(localFilePath);
         if (!file.exists()) {
-            throw new RuntimeException("路径为："+localFilePath+"本地文件不存在");
+            throw new KipaProcessException("路径为："+localFilePath+"本地文件不存在");
         }
         try {
             channelSftp.cd(directory);
@@ -82,19 +83,18 @@ public final class SftpHelper {
                     log.error("创建或者切换目录失败，错误信息为：{}",e1);
                 }
             }else {
-                throw new RuntimeException("创建或者切换目录失败",e);
+                throw new KipaProcessException("创建或者切换目录失败",e);
             }
         }
         BufferedInputStream inputStream = null;
         try {
             inputStream = new BufferedInputStream(new FileInputStream(file));
             channelSftp.put(inputStream, uploadFileName,ChannelSftp.OVERWRITE);
-            SftpBaseHandler.returnObject(channelSftp);
         } catch (Exception e) {
-            throw new RuntimeException("文件上传失败.", e);
+            throw new KipaProcessException("文件上传失败.", e);
         }finally {
-            SftpBaseHandler.closeInputStream(inputStream);
-            SftpBaseHandler.closeConnection();
+            closeInputStream(inputStream);
+            handler.returnChannel(channelSftp);
         }
     }
 
@@ -104,9 +104,9 @@ public final class SftpHelper {
         checkDirIfLegal(localDirectory, remoteDirectory);
         File localTargetDir = new File(localDirectory);
         if (!localTargetDir.exists()) {
-            throw new RuntimeException("本地目录"+localDirectory+"不存在");
+            throw new KipaProcessException("本地目录"+localDirectory+"不存在");
         }else if (localTargetDir.isFile()) {
-            throw new RuntimeException(localTargetDir+"不是目录一个文件");
+            throw new KipaProcessException(localTargetDir+"不是目录一个文件");
         }
 
         //recursive 为true的时候回吧文件夹下面的文件以及文件夹的所有文件都扫描到
@@ -119,7 +119,8 @@ public final class SftpHelper {
     public static void download(String env, String remoteFilePath, String localFilePath) {
         PreCheckUtils.checkEmpty(remoteFilePath,"目录参数不能为空");
         PreCheckUtils.checkEmpty(localFilePath, "本地下载的文件路径不能为空");
-        ChannelSftp channelSftp = SftpBaseHandler.getSftp(env);
+        ChannelHandler handler = new ChannelHandler(env, "sftp");
+        ChannelSftp channelSftp = handler.borrowChannelSftp();
         File file = new File(localFilePath);
         String remoteFileName = remoteFilePath.substring(remoteFilePath.lastIndexOf('/') +1);
         long start = System.currentTimeMillis();
@@ -135,17 +136,16 @@ public final class SftpHelper {
         try {
             Vector vector = channelSftp.ls(remoteDirectory);
             if (vector == null) {
-                throw new RuntimeException("sftp服务器上面没有对应的文件路径："+remoteFilePath);
+                throw new KipaProcessException("sftp服务器上面没有对应的文件路径："+remoteFilePath);
             }
             outputStream = new BufferedOutputStream(new FileOutputStream(file));
             channelSftp.get(remoteFilePath, outputStream);
             outputStream.flush();
-            SftpBaseHandler.returnObject(channelSftp);
         } catch (Exception e) {
-            throw new RuntimeException("文件下载失败.",e);
+            throw new KipaProcessException("文件下载失败.",e);
         }finally {
-            SftpBaseHandler.closeOutputStream(outputStream);
-            SftpBaseHandler.closeConnection();
+            closeOutputStream(outputStream);
+            handler.returnChannel(channelSftp);
         }
     }
 
@@ -153,20 +153,21 @@ public final class SftpHelper {
         PreCheckUtils.checkEmpty(remoteDirectory, "参数远程目录不能为空");
         PreCheckUtils.checkEmpty(localDirectory, "参数本地目录不能为空");
         checkDirIfLegal(remoteDirectory, localDirectory);
-        ChannelSftp channelSftp = SftpBaseHandler.getSftp(env);
+        ChannelHandler handler = new ChannelHandler(env, "sftp");
+        ChannelSftp channelSftp = handler.borrowChannelSftp();
         File localTargetDir = new File(localDirectory);
         if (!localTargetDir.exists()) {
             if (!localTargetDir.mkdirs()) {
-                throw new RuntimeException("目录"+localDirectory+"创建失败");
+                throw new KipaProcessException("目录"+localDirectory+"创建失败");
             }
         }else if (localTargetDir.isFile()) {
-            throw new RuntimeException(localTargetDir+"不是目录一个文件");
+            throw new KipaProcessException(localTargetDir+"不是目录一个文件");
         }
 
         try {
             channelSftp.ls(remoteDirectory);
         } catch (SftpException e) {
-            throw new RuntimeException("sftp服务器上面的路径："+remoteDirectory+"不存在",e);
+            throw new KipaProcessException("sftp服务器上面的路径："+remoteDirectory+"不存在",e);
         }
 
         final List<String> fileNameList = listRemoteFile(env, remoteDirectory);
@@ -178,54 +179,54 @@ public final class SftpHelper {
                     download(env, remoteFilePath, localFilePath);
                 });
             }
-            SftpBaseHandler.returnObject(channelSftp);
         } catch (Exception e) {
-            throw new RuntimeException("文件批量下载异常",e);
+            throw new KipaProcessException("文件批量下载异常",e);
         }finally {
-            SftpBaseHandler.closeConnection();
+            handler.returnChannel(channelSftp);
         }
     }
 
 
     public static void remoteDelete(String env, String remoteFilePath) {
         PreCheckUtils.checkEmpty(remoteFilePath, "本地下载的文件路径不能为空");
-        ChannelSftp channelSftp = SftpBaseHandler.getSftp(env);
+        ChannelHandler handler = new ChannelHandler(env, "sftp");
+        ChannelSftp channelSftp = handler.borrowChannelSftp();
         String remoteDirectory = null;
         String remoteFileName = null;
         try {
             remoteDirectory = remoteFilePath.substring(0, remoteFilePath.lastIndexOf('/'));
             remoteFileName = remoteFilePath.substring(remoteFilePath.lastIndexOf('/')+1);
         } catch (Exception e) {
-            throw new RuntimeException("文件路径格式不正确");
+            throw new KipaProcessException("文件路径格式不正确");
         }
         log.info("上传sftp远程服务器的文件目录为：{}，文件名为：{}",remoteDirectory, remoteFileName);
         try {
             channelSftp.cd(remoteDirectory);
         } catch (SftpException e) {
             log.error("切换目录路径为：{}失败，错误信息为：{}",remoteFileName,e);
-            throw new RuntimeException("切换目录路径失败.",e);
+            throw new KipaProcessException("切换目录路径失败.",e);
         }
 
         try {
             channelSftp.rm(remoteFileName);
-            SftpBaseHandler.returnObject(channelSftp);
         } catch (SftpException e) {
-            throw new RuntimeException("远程删除文件失败.",e);
+            throw new KipaProcessException("远程删除文件失败.",e);
         }finally {
-            SftpBaseHandler.closeConnection();
+            handler.returnChannel(channelSftp);
         }
     }
 
     public static boolean isRemoteExist(String env, String remoteFilePath) {
         PreCheckUtils.checkEmpty(remoteFilePath, "本地下载的文件路径不能为空");
-        ChannelSftp channelSftp = SftpBaseHandler.getSftp(env);
+        ChannelHandler handler = new ChannelHandler(env, "sftp");
+        ChannelSftp channelSftp = handler.borrowChannelSftp();
         String remoteDirectory = null;
         String remoteFileName = null;
         try {
             remoteDirectory = remoteFilePath.substring(0, remoteFilePath.lastIndexOf('/'));
             remoteFileName = remoteFilePath.substring(remoteFilePath.lastIndexOf('/')+1);
         } catch (Exception e) {
-            throw new RuntimeException("文件路径格式不正确",e);
+            throw new KipaProcessException("文件路径格式不正确",e);
         }
         try {
             Vector<ChannelSftp.LsEntry> vector = channelSftp.ls(remoteDirectory);
@@ -242,8 +243,7 @@ public final class SftpHelper {
             log.error("列表展开目录文件：{}失败，失败信息为：{}",remoteFilePath, e);
             return false;
         }finally {
-            SftpBaseHandler.returnObject(channelSftp);
-            SftpBaseHandler.closeConnection();
+            handler.returnChannel(channelSftp);
         }
         return false;
     }
@@ -252,9 +252,10 @@ public final class SftpHelper {
         List<String> list = Lists.newArrayList();
         PreCheckUtils.checkEmpty(remoteDirectory, "参数不能为空");
         checkDirIfLegal(remoteDirectory);
-        ChannelSftp sftp = SftpBaseHandler.getSftp(env);
+        ChannelHandler handler = new ChannelHandler(env, "sftp");
+        ChannelSftp channelSftp = handler.borrowChannelSftp();
         try {
-            Vector<ChannelSftp.LsEntry> ls = sftp.ls(remoteDirectory);
+            Vector<ChannelSftp.LsEntry> ls = channelSftp.ls(remoteDirectory);
             for (ChannelSftp.LsEntry entry : ls) {
                 if (StringUtils.equals(entry.getFilename(), ".") || StringUtils.equals(entry.getFilename(), "..")) {
                     continue;
@@ -262,10 +263,9 @@ public final class SftpHelper {
                 list.add(entry.getFilename());
             }
         } catch (SftpException e) {
-            throw new RuntimeException("列表展开目录文件失败." ,e);
+            throw new KipaProcessException("列表展开目录文件失败." ,e);
         }finally {
-            SftpBaseHandler.returnObject(sftp);
-            SftpBaseHandler.closeConnection();
+            handler.returnChannel(channelSftp);
         }
         return list;
     }
@@ -273,7 +273,8 @@ public final class SftpHelper {
     public static boolean remoteMkdir(String env, String remoteDirectory) {
         PreCheckUtils.checkEmpty(remoteDirectory, "参数远程目录不能为空");
         checkDirIfLegal(remoteDirectory);
-        ChannelSftp channelSftp = SftpBaseHandler.getSftp(env);
+        ChannelHandler handler = new ChannelHandler(env, "sftp");
+        ChannelSftp channelSftp = handler.borrowChannelSftp();
         try {
             channelSftp.cd(remoteDirectory);
         } catch (SftpException e) {
@@ -287,14 +288,17 @@ public final class SftpHelper {
                 }
             }
            return false;
+        }finally {
+            handler.returnChannel(channelSftp);
         }
-        throw new RuntimeException("目录'"+remoteDirectory+"'已经存在，不能重复创建");
+        throw new KipaProcessException("目录'"+remoteDirectory+"'已经存在，不能重复创建");
     }
 
     public static boolean remoteRmdir(String env, String remoteDirectory) {
         PreCheckUtils.checkEmpty(remoteDirectory, "参数远程目录不能为空");
         checkDirIfLegal(remoteDirectory);
-        ChannelSftp channelSftp = SftpBaseHandler.getSftp(env);
+        ChannelHandler handler = new ChannelHandler(env, "sftp");
+        ChannelSftp channelSftp = handler.borrowChannelSftp();
         try {
             channelSftp.cd(remoteDirectory);
         } catch (SftpException e) {
@@ -308,6 +312,8 @@ public final class SftpHelper {
         } catch (SftpException e) {
             log.error("创建删除目录失败，错误信息为：{}",e);
             return false;
+        }finally {
+            handler.returnChannel(channelSftp);
         }
         return true;
     }
@@ -316,6 +322,26 @@ public final class SftpHelper {
         for (String dirPath : dirPaths) {
             if (!StringUtils.endsWith(dirPath, "\\") && !StringUtils.endsWith(dirPath,"/")) {
                 throw new IllegalArgumentException("目录'"+dirPath+"'不合法， 目录应该以'\\'或者'/'结束");
+            }
+        }
+    }
+
+    private static void closeInputStream(InputStream inputStream) {
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                throw new KipaProcessException("释放输入流失败",e);
+            }
+        }
+    }
+
+    private static void closeOutputStream(OutputStream outputStream) {
+        if (outputStream != null) {
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                throw new KipaProcessException("释放输入流失败",e);
             }
         }
     }

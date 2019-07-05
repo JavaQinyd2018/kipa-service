@@ -2,6 +2,7 @@ package com.kipa.mybatis.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.kipa.common.KipaProcessException;
 import com.kipa.data.csv.CSVType;
 import com.kipa.data.csv.CSVUtils;
 import com.kipa.mybatis.ext.SqlType;
@@ -36,7 +37,7 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
             }
             String columnType = getColumnType(tableName, columnName);
             if (StringUtils.isBlank(columnType)) {
-                throw new RuntimeException(String.format("表名为：【%s】的表中查不到列名为：【%s】的数据类型",tableName, columnName));
+                throw new KipaProcessException(String.format("表名为：【%s】的表中查不到列名为：【%s】的数据类型",tableName, columnName));
             }
             insertParamMap.put(columnName, TypeConvertor.convertSqlSequence(value, columnType));
         });
@@ -53,7 +54,7 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
     private String getColumnType(String tableName, String columnName) {
         final List<Map<String, Object>> list = listTableColumn(tableName);
         if (CollectionUtils.isEmpty(list)) {
-            throw  new RuntimeException(tableName+"表字段和数据类型不存在");
+            throw  new KipaProcessException(tableName+"表字段和数据类型不存在");
         }
         for (Map<String, Object> columnAndTypeMap : list) {
             if (StringUtils.equalsIgnoreCase((String)columnAndTypeMap.get("COLUMN_NAME"), columnName)) {
@@ -90,7 +91,7 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
             count.set(count.get() + i);
         });
         if (count.get() != paramMapList.size()) {
-            throw new RuntimeException("批量插入数据失败");
+            throw new KipaProcessException("批量插入数据失败");
         }
         return count.get();
     }
@@ -275,7 +276,7 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
             count.set(count.get() + i);
         });
         if (count.get() != tableNameAndConditionMap.size()) {
-            throw new RuntimeException("批量删除数据失败");
+            throw new KipaProcessException("批量删除数据失败");
         }
         return count.get();
     }
@@ -290,7 +291,7 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
             }
             String columnType = getColumnType(tableName, columnName);
             if (StringUtils.isBlank(columnType)) {
-                throw new RuntimeException(String.format("表名为：【%s】的表中查不到列名为：【%s】的数据类型",tableName, columnName));
+                throw new KipaProcessException(String.format("表名为：【%s】的表中查不到列名为：【%s】的数据类型",tableName, columnName));
             }
             whereConditionList.add(String.format("%s = %s",columnName, TypeConvertor.convertSqlSequence(value, columnType)));
         });

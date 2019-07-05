@@ -2,6 +2,7 @@ package com.kipa.config;
 
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.google.common.collect.Lists;
+import com.kipa.common.KipaProcessException;
 import com.kipa.redis.ClusterRedisCondition;
 import com.kipa.redis.RedisConfig;
 import com.kipa.redis.StandAloneRedisCondition;
@@ -80,7 +81,7 @@ public class RedisConfiguration {
         String aloneAddress = PropertiesUtils.getProperty(properties, null, "spring.redis.standalone.address");
         String standAlonePassword = properties.getProperty("spring.redis.standalone.password");
         if (StringUtils.isBlank(clusterAddress) && StringUtils.isBlank(aloneAddress)) {
-            throw new RuntimeException("请配置redis的服务地址");
+            throw new KipaProcessException("请配置redis的服务地址");
         }
 
         try {
@@ -99,7 +100,7 @@ public class RedisConfiguration {
                 redisConfig.setStandAlonePort(standAlonePort);
             }
         } catch (Exception e) {
-            throw new RuntimeException("redis的服务地址格式有误");
+            throw new KipaProcessException("redis的服务地址格式有误");
         }
 
     }

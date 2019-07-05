@@ -1,5 +1,6 @@
 package com.kipa.mq.producer;
 
+import com.kipa.common.KipaProcessException;
 import com.kipa.utils.RunTimeUtil;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.MQProducer;
@@ -40,7 +41,7 @@ public class MQProducerGenerator {
             producer.setInstanceName(RunTimeUtil.getRocketMqUniqeInstanceName());
             return producer;
         }else {
-            throw new RuntimeException("没有对应类型的生产者");
+            throw new KipaProcessException("没有对应类型的生产者");
         }
     }
 

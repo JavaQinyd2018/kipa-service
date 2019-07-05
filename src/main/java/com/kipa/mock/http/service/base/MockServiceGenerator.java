@@ -1,5 +1,6 @@
 package com.kipa.mock.http.service.base;
 
+import com.kipa.common.KipaProcessException;
 import com.kipa.mock.http.entity.MockServerConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.mockserver.integration.ClientAndServer;
@@ -29,7 +30,7 @@ public class MockServiceGenerator {
                 clientAndServer = new ClientAndServer();
             }
         } catch (Exception e) {
-            throw new RuntimeException("clientAndServer创建失败",e);
+            throw new KipaProcessException("clientAndServer创建失败",e);
         }
         return clientAndServer;
     }

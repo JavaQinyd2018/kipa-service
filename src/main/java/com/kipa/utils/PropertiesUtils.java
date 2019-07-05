@@ -1,5 +1,6 @@
 package com.kipa.utils;
 
+import com.kipa.common.KipaProcessException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
@@ -20,7 +21,7 @@ public class PropertiesUtils {
         try {
             return PropertiesLoaderUtils.loadAllProperties(configPath);
         } catch (IOException e) {
-            throw new RuntimeException("解析classpath:"+configPath+"文件错误",e);
+            throw new KipaProcessException("解析classpath:"+configPath+"文件错误",e);
         }
     }
 

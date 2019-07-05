@@ -1,5 +1,6 @@
 package com.kipa.mock.http.service.base;
 
+import com.kipa.common.KipaProcessException;
 import com.kipa.mock.http.annotation.InvokeType;
 import com.kipa.mock.http.annotation.MockMethod;
 import com.kipa.mock.http.annotation.MockType;
@@ -111,7 +112,7 @@ public class MockServiceFactoryBean implements FactoryBean<BaseMockService>, Ini
                         break;
                 }
             } catch (Exception e) {
-                throw new RuntimeException("mock HTTP请求失败",e);
+                throw new KipaProcessException("mock HTTP请求失败",e);
             }
             return null;
         }

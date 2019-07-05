@@ -1,5 +1,6 @@
 package com.kipa.mq.consumer;
 
+import com.kipa.common.KipaProcessException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.listener.ConsumeOrderlyContext;
 import org.apache.rocketmq.client.consumer.listener.ConsumeOrderlyStatus;
@@ -35,7 +36,7 @@ public class MessageListenerOrderlyImpl implements MessageListenerOrderly {
         Class exceptionClass = e.getClass();
         if (exceptionClass.equals(UnsupportedEncodingException.class)) {
             log.error(e.getMessage());
-        } else if (exceptionClass.equals(RuntimeException.class)) {
+        } else if (exceptionClass.equals(KipaProcessException.class)) {
             log.error(e.getMessage());
         }
     }

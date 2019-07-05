@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.kipa.common.KipaProcessException;
 import org.apache.commons.collections4.CollectionUtils;
 import java.util.List;
 import java.util.Map;
@@ -251,7 +252,7 @@ public final class CSVUtils {
         try {
             return JSONArray.parseArray(json, clazz);
         } catch (Exception e) {
-            throw new RuntimeException(MESSAGE, e);
+            throw new KipaProcessException(MESSAGE, e);
         }
     }
 
@@ -269,7 +270,7 @@ public final class CSVUtils {
         try {
             return JSONObject.parseObject(json, clazz);
         } catch (Exception e) {
-            throw new RuntimeException(MESSAGE, e);
+            throw new KipaProcessException(MESSAGE, e);
         }
     }
 
@@ -287,7 +288,7 @@ public final class CSVUtils {
         try {
             return JSONArray.parseArray(json, clazz);
         } catch (Exception e) {
-            throw new RuntimeException(MESSAGE, e);
+            throw new KipaProcessException(MESSAGE, e);
         }
     }
 
@@ -298,7 +299,7 @@ public final class CSVUtils {
         try {
             return JSONObject.parseObject(json, clazz);
         } catch (Exception e) {
-            throw new RuntimeException(MESSAGE, e);
+            throw new KipaProcessException(MESSAGE, e);
         }
     }
 }

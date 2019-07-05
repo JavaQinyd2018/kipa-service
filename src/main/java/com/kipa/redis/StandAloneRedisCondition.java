@@ -1,5 +1,6 @@
 package com.kipa.redis;
 
+import com.kipa.common.KipaProcessException;
 import com.kipa.config.EnableRedis;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -25,7 +26,7 @@ public class StandAloneRedisCondition implements Condition {
         Map<String, Object> beansWithAnnotation = beanFactory.getBeansWithAnnotation(EnableRedis.class);
         if (MapUtils.isNotEmpty(beansWithAnnotation)) {
             if (beansWithAnnotation.size() > 1) {
-                throw new RuntimeException("只允许在主配置类上面配置@EnableRedis注解,只允许开启一次");
+                throw new KipaProcessException("只允许在主配置类上面配置@EnableRedis注解,只允许开启一次");
             }
             beansWithAnnotation.forEach((s, o) -> {
                 Class<?> clazz = o.getClass();

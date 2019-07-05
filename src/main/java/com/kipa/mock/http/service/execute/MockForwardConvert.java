@@ -1,5 +1,6 @@
 package com.kipa.mock.http.service.execute;
 
+import com.kipa.common.KipaProcessException;
 import com.kipa.http.service.convert.Convert;
 import com.kipa.mock.http.entity.BaseMockForward;
 import org.mockserver.model.HttpForward;
@@ -16,7 +17,7 @@ public class MockForwardConvert implements Convert<BaseMockForward, HttpForward>
     @Override
     public HttpForward convert(BaseMockForward baseMockForward) {
         if (baseMockForward == null) {
-            throw new RuntimeException("mock的forward响应不能为空");
+            throw new KipaProcessException("mock的forward响应不能为空");
         }
         HttpForward httpForward = HttpForward.forward();
         httpForward.withHost(baseMockForward.getHost());

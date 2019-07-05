@@ -356,7 +356,7 @@ public class CheckTest extends BaseTestConfiguration {
   		//校验 两个list集合是否相等
         CheckHelper.checkBeanEquals(list, list1, "list不相等");
 =======================================================================
-Exception in thread "main" java.lang.RuntimeException: list不相等:
+Exception in thread "main" java.lang.KipaProcessException: list不相等:
 当前集合第1个元素字段对应的
 实际值为：[username <==> kobe]，期望值为：[username <==> kobe1]
 当前集合第2个元素字段对应的

@@ -3,6 +3,7 @@ package com.kipa.http.service.convert;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
+import com.kipa.common.KipaProcessException;
 import com.kipa.http.core.HeaderConstant;
 import com.kipa.http.core.HttpHeadConstant;
 import com.kipa.http.core.HttpResponse;
@@ -101,7 +102,7 @@ public class ResponseConvert implements Convert<Response, HttpResponse> {
                 InputStream inputStream = response.body().byteStream();
                 File localDir = new File(localTargetDir);
                 if (!localDir.exists() && !localDir.mkdirs()) {
-                    throw new RuntimeException("创建目录："+localTargetDir+"失败了");
+                    throw new KipaProcessException("创建目录："+localTargetDir+"失败了");
                 }
                 FileWriter writer = null;
                 try {

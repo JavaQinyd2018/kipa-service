@@ -1,9 +1,12 @@
 package com.kipa.data.csv;
 
-import com.kipa.check.DataConstant;
+import com.kipa.common.DataConstant;
+import com.kipa.common.KipaProcessException;
+import com.kipa.utils.PreCheckUtils;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.util.List;
@@ -25,7 +28,7 @@ final class AroundHandler {
             csvWriter = new CSVWriter(new FileWriter(file));
             csvWriter.writeAll(list);
         } catch (IOException e) {
-            throw new RuntimeException("数据写入csv文件失败", e);
+            throw new KipaProcessException("数据写入csv文件失败", e);
         }finally {
             closeCsvWriter(csvWriter);
         }
@@ -38,7 +41,7 @@ final class AroundHandler {
             csvReader = new CSVReader(new FileReader(csvFilePath));
             return csvReader.readAll();
         } catch (Exception e) {
-            throw new RuntimeException("从csv文件读取信息失败", e);
+            throw new KipaProcessException("从csv文件读取信息失败", e);
         }finally {
             closeCsvReader(csvReader);
         }
@@ -49,7 +52,7 @@ final class AroundHandler {
         try {
             return new CSVReader(new FileReader(csvFilePath));
         } catch (Exception e) {
-            throw new RuntimeException("从csv文件读取信息失败",e);
+            throw new KipaProcessException("从csv文件读取信息失败",e);
         }finally {
             closeCsvReader(csvReader);
         }
@@ -75,24 +78,41 @@ final class AroundHandler {
         }
     }
 
-    static File checkAndCreateFile(String relativePath) throws IOException {
-        String fullPath = DataConstant.BASE_PATH + relativePath.replace("/","\\");
+    private static File checkAndCreateFile(String relativePath) throws IOException {
+        String fullPath = DataConstant.BASE_PATH + relativePath;
+        File fileDir = new File(fullPath.substring(0, fullPath.lastIndexOf("/")));
+        String csvFileName = fullPath.substring(fullPath.lastIndexOf("/") + 1);
+        if (StringUtils.containsIgnoreCase(System.getProperty("os.name"),"windows")) {
+            fullPath = DataConstant.BASE_PATH + relativePath.replace("/","\\") ;
+            fileDir = new File(fullPath.substring(0, fullPath.lastIndexOf("\\")));
+            csvFileName = fullPath.substring(fullPath.lastIndexOf("\\") + 1);
+        }
         log.debug("csv文件的路径为：{}",fullPath);
-        File fileDir = new File(fullPath.substring(0, fullPath.lastIndexOf("\\")));
-        String csvFileName = fullPath.substring(fullPath.lastIndexOf("\\") + 1);
+
         if (!fileDir.exists() || !fileDir.isDirectory()) {
             if (!fileDir.mkdirs()) {
-                throw new RuntimeException("目录"+fileDir+"创建失败");
+                throw new KipaProcessException("目录"+fileDir+"创建失败");
             }
         }
         File file = new File(fullPath);
         if (!file.exists()) {
             if (!file.createNewFile()) {
-                throw new RuntimeException("文件"+csvFileName+"创建失败");
+                throw new KipaProcessException("文件"+csvFileName+"创建失败");
             }
         }else if (file.length() != 0) {
-            throw new RuntimeException("文件"+csvFileName+"中已经有内容存在了,请确保文件是个空文件");
+            throw new KipaProcessException("文件"+csvFileName+"中已经有内容存在了,请确保文件是个空文件");
         }
         return file;
+    }
+
+    static String getCsvFileAbsolutePath(String csvFilePath) {
+        PreCheckUtils.checkEmpty(csvFilePath, "csv文件的路径不能为空");
+        if (StringUtils.containsIgnoreCase(System.getProperty("os.name"), "windows")) {
+            csvFilePath = String.format("%s%s", DataConstant.BASE_PATH, csvFilePath.replace("/","\\"));
+        }else {
+            csvFilePath =  DataConstant.BASE_PATH + csvFilePath;
+        }
+        log.debug("解析的csv文件的路径为：{}",csvFilePath);
+        return csvFilePath;
     }
 }

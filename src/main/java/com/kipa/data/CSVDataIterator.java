@@ -1,7 +1,8 @@
 package com.kipa.data;
 
 import com.google.common.collect.Lists;
-import com.kipa.check.DataConstant;
+import com.kipa.common.DataConstant;
+import com.kipa.common.KipaProcessException;
 import com.opencsv.CSVReader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -33,7 +34,7 @@ public class CSVDataIterator implements Iterator<Object[]> {
     private int currentRowNum = 0;
     private int totalRow;
 
-    public CSVDataIterator(Method method, String csvFilePath) {
+    CSVDataIterator(Method method, String csvFilePath) {
         Parameter[] parameters = method.getParameters();
         if (StringUtils.isBlank(csvFilePath)) {
             throw new IllegalArgumentException("数据驱动的csv文件路径不能为空");
@@ -46,27 +47,27 @@ public class CSVDataIterator implements Iterator<Object[]> {
             csvReader = new CSVReader(new FileReader(file));
             final List<String[]> strings = csvReader.readAll();
             if (CollectionUtils.isEmpty(strings) || strings.get(0).length == 0) {
-                throw new RuntimeException("数据驱动csv文件数据内容为空");
+                throw new KipaProcessException("数据驱动csv文件数据内容为空");
             }
 
             if (strings.size() < 2) {
-                throw new RuntimeException("数据驱动csv文件数据参数对应的值不能为空，文件中至少存在一行表头和一行值");
+                throw new KipaProcessException("数据驱动csv文件数据参数对应的值不能为空，文件中至少存在一行表头和一行值");
             }
 
             if (strings.get(0).length != parameters.length) {
-                throw new RuntimeException(String.format("数据驱动csv文件的内容参数个数：%s与测试方法参数个数:%s个数不一致",
+                throw new KipaProcessException(String.format("数据驱动csv文件的内容参数个数：%s与测试方法参数个数:%s个数不一致",
                         strings.get(0).length,parameters.length));
             }
             for (int i = 1; i < strings.size(); i++) {
                 String[] row = strings.get(i);
                 if (ArrayUtils.isEmpty(row)) {
-                    throw new RuntimeException("csv文件中不允许存在空行");
+                    throw new KipaProcessException("csv文件中不允许存在空行");
                 }
                 csvDataList.add(convertString2Object(row, parameters));
             }
             totalRow = strings.size()-1;
         } catch (Exception e) {
-            throw new RuntimeException("数据驱动csv文件数据解析失败",e);
+            throw new KipaProcessException("数据驱动csv文件数据解析失败",e);
         }
     }
 
@@ -156,7 +157,7 @@ public class CSVDataIterator implements Iterator<Object[]> {
                                 throw new IllegalArgumentException("日期格式必须符合'yyyy-MM-dd HH:mm:ss'");
                             }
                         } catch (ParseException e) {
-                            throw new RuntimeException(e);
+                            throw new KipaProcessException(e);
                         }
                     }else if (type.isAssignableFrom(String.class)) {
                         objects[i] = value;
@@ -176,7 +177,7 @@ public class CSVDataIterator implements Iterator<Object[]> {
                                 throw new IllegalArgumentException("日期格式必须符合'yyyy-MM-dd HH:mm:ss'");
                             }
                         } catch (ParseException e) {
-                            throw new RuntimeException("日期转化失败", e);
+                            throw new KipaProcessException("日期转化失败", e);
                         }
                     }
                 }else {

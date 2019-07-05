@@ -1,4 +1,6 @@
-package com.kipa.check;
+package com.kipa.common;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,9 +21,10 @@ public interface DataConstant {
 
     List<String> CLASS_NAME = Arrays.asList("java.lang.Enum","java.util.Date","java.lang.String", "java.sql.Date","java.math.BigDecimal");
 
+
     /**
      * 默认的数据文件的base目录
      */
-    String BASE_PATH = System.getProperty("user.dir")+"\\src\\main\\resources\\";
+    String BASE_PATH = System.getProperty("user.dir") + (StringUtils.containsIgnoreCase(System.getProperty("os.name"), "windows") ? "\\src\\main\\resources\\" : "/src/main/resources/");
 
 }

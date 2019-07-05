@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.kipa.check.DataConstant;
+import com.kipa.common.KipaProcessException;
 import com.kipa.utils.CamelToUnderlineUtils;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.ReflectUtils;
@@ -35,23 +35,21 @@ final class TransverseCSVResolver {
 
     static List<Map<String,Object>> parseTransverseCSVFile(String csvFilePath) {
         List<Map<String, Object>> mapList = Lists.newArrayList();
-        PreCheckUtils.checkEmpty(csvFilePath, "csv文件的路径不能为空");
-        csvFilePath = String.format("%s%s", DataConstant.BASE_PATH, csvFilePath.replace("/","\\"));
-        log.debug("解析的csv文件的路径为：{}",csvFilePath);
-        CSVReader csvReader = AroundHandler.getReader(csvFilePath);
+        String csvFileAbsolutePath = AroundHandler.getCsvFileAbsolutePath(csvFilePath);
+        CSVReader csvReader = AroundHandler.getReader(csvFileAbsolutePath);
         try {
             String[] headers = csvReader.readNext();
             List<String[]> list = csvReader.readAll();
             if (ArrayUtils.isEmpty(headers) || CollectionUtils.isEmpty(list)) {
-                throw new RuntimeException("csv内容不能为空");
+                throw new KipaProcessException("csv内容不能为空");
             }
 
             list.forEach(strings -> {
                 if (headers.length != strings.length) {
-                    throw new RuntimeException("csv文件格式不正确");
+                    throw new KipaProcessException("csv文件格式不正确");
                 }
                 if (ArrayUtils.isEmpty(strings)) {
-                    throw new RuntimeException("csv文件中不允许存在空行");
+                    throw new KipaProcessException("csv文件中不允许存在空行");
                 }
                 Map<String, Object> map = Maps.newLinkedHashMap();
                 for (int i = 0; i < headers.length; i++) {
@@ -63,7 +61,7 @@ final class TransverseCSVResolver {
                 mapList.add(map);
             });
         } catch (IOException e) {
-            throw new RuntimeException("解析csv文件失败",e);
+            throw new KipaProcessException("解析csv文件失败",e);
         }
         return mapList;
     }
@@ -76,24 +74,21 @@ final class TransverseCSVResolver {
      */
     static List<Map<String,Object>> parseCSVFileToUnderline(String csvFilePath) {
         List<Map<String, Object>> mapList = Lists.newArrayList();
-        PreCheckUtils.checkEmpty(csvFilePath, "csv文件的路径不能为空");
-        csvFilePath = String.format("%s%s",DataConstant.BASE_PATH, csvFilePath.replace("/","\\"));
-        log.debug("解析的csv文件的路径为：{}",csvFilePath);
-
-        CSVReader csvReader = AroundHandler.getReader(csvFilePath);
+        String csvFileAbsolutePath = AroundHandler.getCsvFileAbsolutePath(csvFilePath);
+        CSVReader csvReader = AroundHandler.getReader(csvFileAbsolutePath);
         try {
             String[] headers = csvReader.readNext();
             List<String[]> list = csvReader.readAll();
             if (ArrayUtils.isEmpty(headers) || CollectionUtils.isEmpty(list)) {
-                throw new RuntimeException("csv内容不能为空");
+                throw new KipaProcessException("csv内容不能为空");
             }
 
             list.forEach(strings -> {
                 if (headers.length != strings.length) {
-                    throw new RuntimeException("csv文件格式不正确");
+                    throw new KipaProcessException("csv文件格式不正确");
                 }
                 if (ArrayUtils.isEmpty(strings)) {
-                    throw new RuntimeException("csv文件中不允许存在空行");
+                    throw new KipaProcessException("csv文件中不允许存在空行");
                 }
                 Map<String, Object> map = Maps.newLinkedHashMap();
                 for (int i = 0; i < headers.length; i++) {
@@ -106,7 +101,7 @@ final class TransverseCSVResolver {
                 mapList.add(map);
             });
         } catch (IOException e) {
-            throw new RuntimeException("解析csv文件失败",e);
+            throw new KipaProcessException("解析csv文件失败",e);
         }
         return mapList;
     }
@@ -198,23 +193,21 @@ final class TransverseCSVResolver {
 
     static List<Map<String, Object>> parseTransverseWithJson2List(String csvFilePath) {
         List<Map<String, Object>> mapList = Lists.newArrayList();
-        PreCheckUtils.checkEmpty(csvFilePath, "csv文件的路径不能为空");
-        csvFilePath = String.format("%s%s", DataConstant.BASE_PATH, csvFilePath.replace("/","\\"));
-        log.debug("解析的csv文件的路径为：{}",csvFilePath);
-        CSVReader csvReader = AroundHandler.getReader(csvFilePath);
+        String csvFileAbsolutePath = AroundHandler.getCsvFileAbsolutePath(csvFilePath);
+        CSVReader csvReader = AroundHandler.getReader(csvFileAbsolutePath);
         try {
             String[] headers = csvReader.readNext();
             List<String[]> list = csvReader.readAll();
             if (ArrayUtils.isEmpty(headers) || CollectionUtils.isEmpty(list)) {
-                throw new RuntimeException("csv内容不能为空");
+                throw new KipaProcessException("csv内容不能为空");
             }
 
             list.forEach(strings -> {
                 if (headers.length != strings.length) {
-                    throw new RuntimeException("csv文件格式不正确");
+                    throw new KipaProcessException("csv文件格式不正确");
                 }
                 if (ArrayUtils.isEmpty(strings)) {
-                    throw new RuntimeException("csv文件中不允许存在空行");
+                    throw new KipaProcessException("csv文件中不允许存在空行");
                 }
                 Map<String, Object> map = new ConcurrentHashMap<>(headers.length);
                 for (int i = 0; i < headers.length; i++) {
@@ -237,7 +230,7 @@ final class TransverseCSVResolver {
                 mapList.add(map);
             });
         } catch (IOException e) {
-            throw new RuntimeException("解析csv文件失败",e);
+            throw new KipaProcessException("解析csv文件失败",e);
         }
         return mapList;
     }

@@ -1,5 +1,6 @@
 package com.kipa.mock.http.service.execute;
 
+import com.kipa.common.KipaProcessException;
 import com.kipa.mock.http.entity.BaseMockError;
 import org.mockserver.model.HttpError;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ public class MockErrorConvert implements MockConvert<BaseMockError, HttpError> {
     @Override
     public HttpError convert(BaseMockError baseMockError) {
         if (baseMockError == null) {
-            throw new RuntimeException("mock的error响应不能为空");
+            throw new KipaProcessException("mock的error响应不能为空");
         }
         HttpError httpError = HttpError.error();
         httpError.withDropConnection(baseMockError.isDropConnection());

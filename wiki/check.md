@@ -30,7 +30,7 @@ public class CheckTest extends BaseTestConfiguration {
   		//校验 两个list集合是否相等
         CheckHelper.checkBeanEquals(list, list1, "list不相等");
 =======================================================================
-Exception in thread "main" java.lang.RuntimeException: list不相等:
+Exception in thread "main" java.lang.KipaProcessException: list不相等:
 当前集合第1个元素字段对应的
 实际值为：[username <==> kobe]，期望值为：[username <==> kobe1]
 当前集合第2个元素字段对应的
@@ -51,7 +51,7 @@ public void testCheck() {
         CheckHelper.checkBeanEquals(request, request1, "对象不相等");
 }
 =====================================================================================
-Exception in thread "main" java.lang.RuntimeException: 对象不相等: 
+Exception in thread "main" java.lang.KipaProcessException: 对象不相等:
 method字段对应的实际值为：[GET]，期望值为：[POST]，二者不相等
 path字段对应的实际值为：[/userInfo/showUserInfo1]，期望值为：[/userInfo/showUserInfo]，二者不相等
 headers字段对应的

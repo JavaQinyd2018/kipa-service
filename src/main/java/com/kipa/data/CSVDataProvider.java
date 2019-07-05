@@ -1,5 +1,6 @@
 package com.kipa.data;
 
+import com.kipa.common.KipaProcessException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,7 +24,7 @@ public class CSVDataProvider {
             String paramName = annotation.paramName();
             String paramValue = annotation.paramValue();
             if (StringUtils.isBlank(paramValue)) {
-                throw new RuntimeException("注解@DataParam参数值为空");
+                throw new KipaProcessException("注解@DataParam参数值为空");
             }
 
             if (StringUtils.isBlank(paramName)) {

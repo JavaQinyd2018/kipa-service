@@ -16,8 +16,8 @@ import java.util.Iterator;
  * @date: 2019/4/8 10:13
  * testng 和spring整合，所有测试用例的入口,能满足基本的测试要求
  * 如果要使用redis或者mq请自行配置测试入口@code 样例是：
- * DemoApplicationConfiguration
- * DemoTestContextConfiguration
+ * @see DemoApplicationConfiguration
+ * @see DemoTestContextConfiguration
  */
 @ContextConfiguration(classes = BaseConfiguration.class)
 @Listeners({DataMetaAnnotationListener.class,MethodOrderInterceptor.class})

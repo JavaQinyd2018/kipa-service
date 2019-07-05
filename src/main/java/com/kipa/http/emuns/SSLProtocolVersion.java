@@ -1,5 +1,6 @@
 package com.kipa.http.emuns;
 
+import com.kipa.common.KipaProcessException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +34,6 @@ public enum SSLProtocolVersion {
                 return sslProtocolVersion;
             }
         }
-        throw new RuntimeException("未支持当前SSL的版本号" +name);
+        throw new KipaProcessException("未支持当前SSL的版本号" +name);
     }
 }

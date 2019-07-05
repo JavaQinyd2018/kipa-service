@@ -1,5 +1,6 @@
 package com.kipa.mock.http.service.execute;
 
+import com.kipa.common.KipaProcessException;
 import com.kipa.mock.http.annotation.MockMethod;
 import com.kipa.mock.http.entity.BaseMockRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +23,11 @@ public class MockRequestConvert implements MockConvert<BaseMockRequest, HttpRequ
         log.debug("mock请求的信息：{}", baseMockRequest);
         HttpRequest httpRequest = new HttpRequest();
         if (baseMockRequest == null) {
-            throw new RuntimeException("mock请求不能为空");
+            throw new KipaProcessException("mock请求不能为空");
         }
         MockMethod mockMethod = baseMockRequest.getMockMethod();
         if (mockMethod == null) {
-            throw new RuntimeException("mock请求的方式不能为空");
+            throw new KipaProcessException("mock请求的方式不能为空");
         }
         if (mockMethod == MockMethod.PARAMETER) {
             Map<String, String> paramMap = baseMockRequest.getRequestParams();

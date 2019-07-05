@@ -1,6 +1,7 @@
 package com.kipa.env;
 
 import com.google.common.collect.Maps;
+import com.kipa.common.KipaProcessException;
 import com.kipa.config.EnableMultipleDataSource;
 import com.kipa.mybatis.service.condition.EnvFlag;
 import com.kipa.utils.PackageScanUtils;
@@ -71,7 +72,7 @@ public class AppConfigScanPostProcessor implements BeanFactoryPostProcessor {
         Map<String, Object> beansWithAnnotation = configurableListableBeanFactory.getBeansWithAnnotation(annotationClazz);
         if (MapUtils.isNotEmpty(beansWithAnnotation)) {
             if (beansWithAnnotation.size() > 1) {
-                throw new RuntimeException("@" + annotationClazz.getSimpleName() + "注解只允许标注一次");
+                throw new KipaProcessException("@" + annotationClazz.getSimpleName() + "注解只允许标注一次");
             }
 
             Object bean = beansWithAnnotation.entrySet().iterator().next().getValue();

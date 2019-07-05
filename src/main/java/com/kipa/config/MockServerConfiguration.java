@@ -1,5 +1,6 @@
 package com.kipa.config;
 
+import com.kipa.common.KipaProcessException;
 import com.kipa.mock.dubbo.MockDubboConfig;
 import com.kipa.mock.http.entity.MockServerConfig;
 import org.apache.commons.lang3.StringUtils;
@@ -77,7 +78,7 @@ public class MockServerConfiguration {
                     this.address = mockAddress;
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new KipaProcessException(e);
             }
     }
 

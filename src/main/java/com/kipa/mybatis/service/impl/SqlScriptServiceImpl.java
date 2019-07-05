@@ -1,5 +1,6 @@
 package com.kipa.mybatis.service.impl;
 
+import com.kipa.common.KipaProcessException;
 import com.kipa.mybatis.service.SqlScriptService;
 import com.kipa.utils.PreCheckUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class SqlScriptServiceImpl implements SqlScriptService {
             scriptRunner.setDelimiter(";");
             scriptRunner.runScript(Resources.getResourceAsReader(sqlScriptFilePath));
         } catch (IOException e) {
-            throw new RuntimeException("sql文件脚本执行失败，错误原因是：" + e.getMessage());
+            throw new KipaProcessException("sql文件脚本执行失败，错误原因是：" + e.getMessage());
         } finally {
             if (scriptRunner != null) {
                 scriptRunner.closeConnection();

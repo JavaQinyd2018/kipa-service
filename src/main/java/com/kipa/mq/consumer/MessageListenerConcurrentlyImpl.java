@@ -1,5 +1,6 @@
 package com.kipa.mq.consumer;
 
+import com.kipa.common.KipaProcessException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
@@ -37,7 +38,7 @@ public class MessageListenerConcurrentlyImpl implements MessageListenerConcurren
         Class exceptionClass = e.getClass();
         if (exceptionClass.equals(UnsupportedEncodingException.class)) {
             log.error(e.getMessage());
-        } else if (exceptionClass.equals(RuntimeException.class)) {
+        } else if (exceptionClass.equals(KipaProcessException.class)) {
             log.error("消息消费调用目标方法失败,错误信息为：{}",e);
         }
     }

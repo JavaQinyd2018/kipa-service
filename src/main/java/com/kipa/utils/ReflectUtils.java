@@ -2,6 +2,7 @@ package com.kipa.utils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.kipa.common.KipaProcessException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -34,7 +35,7 @@ public class ReflectUtils {
             try {
                 return method.invoke(entity);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException("字段"+fieldName+"对应的方法调用失败",e);
+                throw new KipaProcessException("字段"+fieldName+"对应的方法调用失败",e);
             }
         }
         return null;
@@ -47,7 +48,7 @@ public class ReflectUtils {
         }
         Set<Method> getSet = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withPrefix("get"), ReflectionUtils.withParametersCount(0));
         if (CollectionUtils.isEmpty(getSet)) {
-            throw new RuntimeException("该类型没有get方法");
+            throw new KipaProcessException("该类型没有get方法");
         }
         for (Method method : getSet) {
             String get = method.getName().substring(method.getName().indexOf("get") + 3);
@@ -84,7 +85,7 @@ public class ReflectUtils {
         }
         Set<Method> methodSet = ReflectionUtils.getAllMethods(clazz, ReflectionUtils.withPrefix("set"), ReflectionUtils.withParametersCount(1));
         if (CollectionUtils.isEmpty(methodSet)) {
-            throw new RuntimeException("该类型没有set方法");
+            throw new KipaProcessException("该类型没有set方法");
         }
         for (Method method : methodSet) {
             String set = method.getName().substring(method.getName().indexOf("set") + 3);
@@ -109,7 +110,7 @@ public class ReflectUtils {
             try {
                 method.invoke(entity, value);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException("字段"+fieldName+"对应的方法调用失败",e);
+                throw new KipaProcessException("字段"+fieldName+"对应的方法调用失败",e);
             }
         }
     }
@@ -130,7 +131,7 @@ public class ReflectUtils {
                 try {
                     setMethod.invoke(entity, value);
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new RuntimeException("字段"+fieldName+"对应的set方法调用失败",e);
+                    throw new KipaProcessException("字段"+fieldName+"对应的set方法调用失败",e);
                 }
             }
         }
@@ -176,7 +177,7 @@ public class ReflectUtils {
                 }
             }
         }
-        throw new RuntimeException("字段"+ fieldName+"不存在对应的get方法或者is方法");
+        throw new KipaProcessException("字段"+ fieldName+"不存在对应的get方法或者is方法");
     }
 
     public static <T> Object invokeGetOrIsMethod(T entity, Class<?> clazz, String fieldName) {
@@ -185,7 +186,7 @@ public class ReflectUtils {
             try {
                 return getOrIsMethod.invoke(entity);
             } catch (Exception e) {
-                throw new RuntimeException("字段"+fieldName+"调用get或者is方法失败",e);
+                throw new KipaProcessException("字段"+fieldName+"调用get或者is方法失败",e);
             }
         }
         return null;
@@ -235,7 +236,7 @@ public class ReflectUtils {
                     map.put(field.getName(), invoke);
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException("字段"+field.getName()+"获取值失败",e);
+                throw new KipaProcessException("字段"+field.getName()+"获取值失败",e);
             }
 
         }

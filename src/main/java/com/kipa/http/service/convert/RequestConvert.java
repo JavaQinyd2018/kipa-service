@@ -1,6 +1,7 @@
 package com.kipa.http.service.convert;
 
 import com.alibaba.fastjson.JSONObject;
+import com.kipa.common.KipaProcessException;
 import com.kipa.http.core.HttpRequest;
 import com.kipa.http.emuns.HttpSendMethod;
 import com.kipa.http.emuns.RequestType;
@@ -75,7 +76,7 @@ public class RequestConvert implements Convert<HttpRequest, Request> {
                         try {
                             map = JSONObject.parseObject(fileParamJson, Map.class);
                         } catch (Exception e) {
-                            throw new RuntimeException("文件参数Json转化为map失败",e);
+                            throw new KipaProcessException("文件参数Json转化为map失败",e);
                         }
                         map.forEach(fileBuilder::addFormDataPart);
                         fileBuilder.addPart(fileBody);

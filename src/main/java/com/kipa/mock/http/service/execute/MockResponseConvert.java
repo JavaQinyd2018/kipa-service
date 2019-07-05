@@ -1,5 +1,6 @@
 package com.kipa.mock.http.service.execute;
 
+import com.kipa.common.KipaProcessException;
 import com.kipa.mock.http.entity.BaseMockResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -22,7 +23,7 @@ public class MockResponseConvert implements MockConvert<BaseMockResponse, HttpRe
         HttpResponse httpResponse = new HttpResponse();
         log.debug("需要mock的结果是：{}",response);
         if (response == null) {
-            throw new RuntimeException("mock的结果不能为空");
+            throw new KipaProcessException("mock的结果不能为空");
         }
         httpResponse.withBody(response.getBody());
         Map<String, String> cookies = response.getCookies();

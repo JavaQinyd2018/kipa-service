@@ -1,6 +1,7 @@
 package com.kipa.mq.consumer;
 
 import com.google.common.collect.Maps;
+import com.kipa.common.KipaProcessException;
 import com.kipa.config.EnableRocketMQ;
 import com.kipa.utils.PackageScanUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +46,7 @@ public class RocketMQListenerProcessor implements ApplicationContextAware, Initi
         Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(EnableRocketMQ.class);
         if (MapUtils.isNotEmpty(beansWithAnnotation) ){
             if (beansWithAnnotation.size() > 1 ) {
-                throw new RuntimeException("注解@EnableRocketMQ只允许被在配置了开启一次");
+                throw new KipaProcessException("注解@EnableRocketMQ只允许被在配置了开启一次");
             }
             beansWithAnnotation.forEach((beanName, bean) -> {
                 Class<?> beanClass = bean.getClass();
@@ -53,7 +54,7 @@ public class RocketMQListenerProcessor implements ApplicationContextAware, Initi
                 if (rocketMq != null) {
                     String scanPackage = rocketMq.listenerScanPackage();
                     if (StringUtils.isBlank(scanPackage)) {
-                        throw new RuntimeException("扫描注解@EnableRocketMQ的包路径不能为空");
+                        throw new KipaProcessException("扫描注解@EnableRocketMQ的包路径不能为空");
                     }
                     mqListenerMapMap = init(scanPackage);
                 }

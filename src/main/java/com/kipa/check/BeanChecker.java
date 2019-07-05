@@ -3,6 +3,7 @@ package com.kipa.check;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.kipa.common.DataConstant;
 import com.kipa.utils.ReflectUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;

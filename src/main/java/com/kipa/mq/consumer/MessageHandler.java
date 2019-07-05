@@ -1,6 +1,7 @@
 package com.kipa.mq.consumer;
 
 import com.alibaba.fastjson.JSONObject;
+import com.kipa.common.KipaProcessException;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +32,7 @@ public class MessageHandler {
                     methodMap.forEach((method, messageType) -> {
                         Parameter[] parameters = method.getParameters();
                         if (ArrayUtils.isEmpty(parameters) || parameters.length > 1) {
-                            throw new RuntimeException("用@Subcribe标注的方法必须要有入参而且只能有一个入参");
+                            throw new KipaProcessException("用@Subcribe标注的方法必须要有入参而且只能有一个入参");
                         }
                         //根据具体消息类型调用目标方法
                         invoke(method, messageType, messageExt);
@@ -43,7 +44,7 @@ public class MessageHandler {
                     Class<?> messageType = methodMap.get(method);
                     invoke(method, messageType, messageExt);
                 }else {
-                    throw new RuntimeException("未找到相应tag的方法");
+                    throw new KipaProcessException("未找到相应tag的方法");
                 }
             }
         });
@@ -67,7 +68,7 @@ public class MessageHandler {
                 ReflectionUtils.invokeMethod(method, clazz.newInstance(), JSONObject.parseObject(new String(body, StandardCharsets.UTF_8), messageType));
             }
         } catch (Exception e) {
-            throw new RuntimeException("方法"+method.getName()+"执行失败.",e);
+            throw new KipaProcessException("方法"+method.getName()+"执行失败.",e);
         }
     }
 }

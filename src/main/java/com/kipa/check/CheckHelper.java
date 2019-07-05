@@ -1,5 +1,6 @@
 package com.kipa.check;
 
+import com.kipa.common.KipaProcessException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -79,7 +80,7 @@ public final class CheckHelper {
     private static void process(String result, String message) {
         if (StringUtils.isNotBlank(result)) {
             String[] strings = new String[]{message, "==================================================================",result, "=================================================================="};
-            throw new RuntimeException(StringUtils.join(strings, "\n"));
+            throw new KipaProcessException(StringUtils.join(strings, "\n"));
         }
     }
 }
