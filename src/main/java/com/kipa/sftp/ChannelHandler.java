@@ -5,10 +5,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.kipa.common.KipaProcessException;
 import com.kipa.utils.PreCheckUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
-
-import java.io.IOException;
+import com.kipa.utils.PropertiesUtils;
 import java.util.Properties;
 
 /**
@@ -30,21 +27,16 @@ class ChannelHandler {
 
 
     private static SftpConfig getConfig(String env) {
-        try {
-            Properties properties = PropertiesLoaderUtils.loadAllProperties(SFTP_CONFIG);
-            String host = properties.getProperty(StringUtils.isBlank(env) ? "sftp.connection.host" : String.format("%s.sftp.connection.host", env));
-            Integer port = Integer.valueOf(properties.getProperty(StringUtils.isBlank(env) ? "sftp.connection.port" : String.format("%s.sftp.connection.port", env)));
-            String username = properties.getProperty(StringUtils.isBlank(env) ? "sftp.connection.username" : String.format("%s.sftp.connection.username", env));
-            String password = properties.getProperty(StringUtils.isBlank(env) ? "sftp.connection.password" : String.format("%s.sftp.connection.password", env));
-            PreCheckUtils.checkEmpty(host, "sftp的host不能为空");
-            PreCheckUtils.checkEmpty(port, "sftp的端口号不能为空");
-            PreCheckUtils.checkEmpty(username, "sftp主机的用户名不能为空");
-            PreCheckUtils.checkEmpty(password, "sftp主机的密码不能为空");
-            return new SftpConfig(host, port, username, password);
-        } catch (IOException e) {
-            throw new KipaProcessException("获取并解析sftp的配置文件异常",e);
-        }
-
+        final Properties properties = PropertiesUtils.loadProperties(SFTP_CONFIG);
+        String host = PropertiesUtils.getProperty(properties, env, "sftp.connection.host");
+        String port = PropertiesUtils.getProperty(properties, env, "sftp.connection.port");
+        String username = PropertiesUtils.getProperty(properties, env, "sftp.connection.username");
+        String password = PropertiesUtils.getProperty(properties, env, "sftp.connection.password");
+        PreCheckUtils.checkEmpty(host, "sftp的host不能为空");
+        PreCheckUtils.checkEmpty(port, "sftp的端口号不能为空");
+        PreCheckUtils.checkEmpty(username, "sftp主机的用户名不能为空");
+        PreCheckUtils.checkEmpty(password, "sftp主机的密码不能为空");
+        return new SftpConfig(host, Integer.valueOf(port), username, password);
     }
 
     Channel borrowChannel() {
