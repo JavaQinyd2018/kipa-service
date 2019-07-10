@@ -15,7 +15,7 @@ import java.util.Properties;
 /**
  * @author: Qinyadong
  * @date: 2019/4/17 12:54
- * @since:
+ * MQ生产端的配置类
  */
 @Configuration
 @PropertySource("classpath:mq/mq-producer.properties")

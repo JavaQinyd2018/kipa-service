@@ -1,7 +1,5 @@
 package com.kipa.env;
 
-import org.springframework.core.annotation.AliasFor;
-
 import java.lang.annotation.*;
 
 /**
@@ -18,5 +16,5 @@ public @interface Database {
      * 默认是没有标识，需要特定制定标识的，需要传入标识
      * @return
      */
-    String[] datasourceFlag();
+    String datasourceFlag() default "";
 }
