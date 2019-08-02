@@ -28,7 +28,7 @@
         <fastjson.version>1.2.49</fastjson.version>
         <reflections.version>0.9.10</reflections.version>
         <okhttp.version>3.13.1</okhttp.version>
-        <dubbo.version>2.6.2</dubbo.version>
+        <dubbo.version>2.6.6</dubbo.version>
         <curator.version>4.0.1</curator.version>
         <mockserver.version>5.4.1</mockserver.version>
         <jsch.version>0.1.54</jsch.version>
@@ -216,7 +216,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.curator</groupId>
-            <artifactId>curator-framework</artifactId>
+            <artifactId>curator-recipes</artifactId>
             <version>${curator.version}</version>
             <exclusions>
                 <exclusion>
