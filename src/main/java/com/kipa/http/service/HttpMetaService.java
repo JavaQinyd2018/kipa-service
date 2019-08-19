@@ -43,7 +43,7 @@ public interface HttpMetaService {
      * @param receiveAllInfo 是否要获取全部信息：是-全部信息（响应消息头， 响应消息体），否仅仅获得服务端返回的业务数据
      * @return 响应的map集合
      */
-    List<Map<String, Object>> get(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo);
+    String get(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo);
 
     /**
      * get请求
@@ -80,7 +80,7 @@ public interface HttpMetaService {
      * @param receiveAllInfo
      * @return
      */
-    List<Map<String, Object>> post(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo);
+    String post(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo);
 
     /**
      * post请求
@@ -100,7 +100,7 @@ public interface HttpMetaService {
      * @param receiveAllInfo
      * @return
      */
-    List<Map<String, Object>> post(String url, Map<String, String> headerMap, String json, boolean receiveAllInfo);
+    String post(String url, Map<String, String> headerMap, String json, boolean receiveAllInfo);
 
     /**
      * post请求
@@ -142,7 +142,7 @@ public interface HttpMetaService {
      * @param receiveAllInfo
      * @return
      */
-    List<Map<String, Object>> put(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo);
+    String put(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo);
 
     /**
      *
@@ -162,7 +162,7 @@ public interface HttpMetaService {
      * @param receiveAllInfo
      * @return
      */
-    List<Map<String, Object>> put(String url, Map<String, String> headerMap, String json, boolean receiveAllInfo);
+    String put(String url, Map<String, String> headerMap, String json, boolean receiveAllInfo);
 
     /**
      * put
@@ -205,7 +205,7 @@ public interface HttpMetaService {
      * @param receiveAllInfo
      * @return
      */
-    List<Map<String, Object>> delete(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo);
+    String delete(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo);
 
     /**
      *

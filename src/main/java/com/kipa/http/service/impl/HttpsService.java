@@ -44,9 +44,9 @@ public class HttpsService extends AbstractHttpServiceImpl implements HttpMetaSer
      * @return
      */
     @Override
-    public List<Map<String, Object>> get(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo) {
+    public String get(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo) {
         HttpResponse httpResponse = httpsInvokeService.get(url, paramMap, headerMap);
-        return parseHttpResponseToMap(httpResponse, receiveAllInfo);
+        return parseHttpResponseToString(httpResponse, receiveAllInfo);
     }
 
     @Override
@@ -62,9 +62,9 @@ public class HttpsService extends AbstractHttpServiceImpl implements HttpMetaSer
     }
 
     @Override
-    public List<Map<String, Object>> post(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo) {
+    public String post(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo) {
         HttpResponse httpResponse = httpsInvokeService.post(url, paramMap, headerMap);
-        return parseHttpResponseToMap(httpResponse, receiveAllInfo);
+        return parseHttpResponseToString(httpResponse, receiveAllInfo);
     }
 
     @Override
@@ -74,9 +74,9 @@ public class HttpsService extends AbstractHttpServiceImpl implements HttpMetaSer
     }
 
     @Override
-    public List<Map<String, Object>> post(String url, Map<String, String> headerMap, String json, boolean receiveAllInfo) {
+    public String post(String url, Map<String, String> headerMap, String json, boolean receiveAllInfo) {
         HttpResponse httpResponse = httpsInvokeService.post(url, headerMap, json);
-        return parseHttpResponseToMap(httpResponse, receiveAllInfo);
+        return parseHttpResponseToString(httpResponse, receiveAllInfo);
     }
 
     @Override
@@ -92,9 +92,9 @@ public class HttpsService extends AbstractHttpServiceImpl implements HttpMetaSer
     }
 
     @Override
-    public List<Map<String, Object>> put(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo) {
+    public String put(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo) {
         HttpResponse httpResponse = httpsInvokeService.put(url, paramMap, headerMap);
-        return parseHttpResponseToMap(httpResponse, receiveAllInfo);
+        return parseHttpResponseToString(httpResponse, receiveAllInfo);
     }
 
     @Override
@@ -104,9 +104,9 @@ public class HttpsService extends AbstractHttpServiceImpl implements HttpMetaSer
     }
 
     @Override
-    public List<Map<String, Object>> put(String url, Map<String, String> headerMap, String json, boolean receiveAllInfo) {
+    public String put(String url, Map<String, String> headerMap, String json, boolean receiveAllInfo) {
         HttpResponse httpResponse = httpsInvokeService.put(url, headerMap, json);
-        return parseHttpResponseToMap(httpResponse, receiveAllInfo);
+        return parseHttpResponseToString(httpResponse, receiveAllInfo);
     }
 
     @Override
@@ -122,9 +122,9 @@ public class HttpsService extends AbstractHttpServiceImpl implements HttpMetaSer
     }
 
     @Override
-    public List<Map<String, Object>> delete(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo) {
+    public String delete(String url, Map<String, String> headerMap, Map<String, String> paramMap, boolean receiveAllInfo) {
         HttpResponse httpResponse = httpsInvokeService.delete(url, paramMap, headerMap);
-        return parseHttpResponseToMap(httpResponse, receiveAllInfo);
+        return parseHttpResponseToString(httpResponse, receiveAllInfo);
     }
 
     @Override

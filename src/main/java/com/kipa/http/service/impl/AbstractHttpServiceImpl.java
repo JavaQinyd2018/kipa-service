@@ -64,7 +64,7 @@ abstract class AbstractHttpServiceImpl implements HttpMetaService {
 
     String parseHttpResponseToString(HttpResponse httpResponse, boolean receiveAllInfo) {
         if (receiveAllInfo) {
-            return JSONObject.toJSONString(httpResponse, true);
+            return JSONObject.toJSONString(httpResponse);
         }else if(httpResponse.isJsonFormat()){
             Object data = httpResponse.getBodyMap().get("data");
             return JSON.toJSONString(data);
