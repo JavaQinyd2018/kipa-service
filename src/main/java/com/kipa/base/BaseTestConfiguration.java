@@ -1,5 +1,6 @@
 package com.kipa.base;
 
+import com.kipa.common.run.StepInterceptor;
 import com.kipa.data.CSVDataProvider;
 import com.kipa.data.DataMetaAnnotationListener;
 import com.kipa.data.MethodOrderInterceptor;
@@ -29,7 +30,7 @@ import java.util.Iterator;
  */
 @Slf4j
 @ContextConfiguration(classes = BaseConfiguration.class)
-@Listeners({DataMetaAnnotationListener.class,MethodOrderInterceptor.class})
+@Listeners({DataMetaAnnotationListener.class,MethodOrderInterceptor.class, StepInterceptor.class})
 public class BaseTestConfiguration extends AbstractTestNGSpringContextTests {
 
     private static final String BANNER_PATH= "customize/kipa-banner.txt";
