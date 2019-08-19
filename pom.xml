@@ -36,6 +36,7 @@
         <jedis.version>2.9.0</jedis.version>
         <rocketmq.version>4.3.2</rocketmq.version>
         <zookeeper.version>3.5.5</zookeeper.version>
+        <ehcache.version>3.8.0</ehcache.version>
     </properties>
     <dependencies>
         <!--spring相关的依赖-->
@@ -311,7 +312,7 @@
         <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>3.8.0</version>
+            <version>${ehcache.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
