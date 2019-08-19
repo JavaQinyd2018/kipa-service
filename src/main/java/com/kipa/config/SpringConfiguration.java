@@ -1,5 +1,6 @@
 package com.kipa.config;
 
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.*;
 
 /**
@@ -16,9 +17,11 @@ import org.springframework.context.annotation.*;
         @ComponentScan("com.kipa.env"),
         @ComponentScan("com.kipa.mock.http.service"),
         @ComponentScan("com.kipa.mock.dubbo"),
+        @ComponentScan("com.kipa.data.ehcache")
 })
 @PropertySource(value = "classpath:application.properties")
 @EnableAspectJAutoProxy
+@EnableCaching
 public class SpringConfiguration {
 
 }

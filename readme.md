@@ -367,3 +367,9 @@ Exception in thread "main" java.lang.KipaProcessException: list不相等:
 ## 三、高级使用
 其他数据驱动、rocketMq和redis的使用如下：
 [高级配置使用的详细wiki](wiki/advance.md)
+
+
+## 四、测试框架相关的
+实际的测试过程中，我们往往会碰到测试用例需要依赖其他的用例执行之后生成数据，把数据传递给下一条测试用例，或者一个测试用例中间每一个测试步骤需要参数传递，框架整合了Ehcache缓存框架，并提供了GlobalCacheContext。框架定义了@TestCase注解，为了标识测试用例，以及批量执行时候的顺序；定义了@Step注解，为了标识一个测试类里面的每一个测试步骤执行的先后顺序。
+
+[测试框架相关的详细信息wiki](wiki/framework.md)

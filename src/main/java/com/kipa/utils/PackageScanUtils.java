@@ -269,4 +269,17 @@ public class PackageScanUtils {
         return map;
     }
 
+
+    /**
+     * 包扫描子类信息 2.2.0
+     * @param basePackage
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> Set<Class<? extends T>> getClassOfType(String basePackage, Class<T> clazz) {
+        PreCheckUtils.checkEmpty(basePackage, "目录不能为空");
+        Reflections reflections = new Reflections(basePackage, new SubTypesScanner());
+        return reflections.getSubTypesOf(clazz);
+    }
 }

@@ -38,20 +38,17 @@ public class MethodOrderInterceptor implements IMethodInterceptor {
             final Object[] methodInfo = new Object[3];
             ITestNGMethod method = iMethodInstance.getMethod();
             if (method.isTest()) {
-                Test test = method.getConstructorOrMethod().getMethod().getAnnotation(Test.class);
-                if (test.priority() == 0) {
-                    String methodName = method.getMethodName();
-                    //匹配方法后面的数字，比如方法名：hello_1, 按照数字排序进行执行
-                    if (Pattern.matches(METHOD_REGEX, methodName)) {
-                        String[] methodArray = StringUtils.split(methodName, "_");
-                        methodInfo[0] = iMethodInstance;
-                        methodInfo[1] = methodArray[0];
-                        methodInfo[2] = NumberUtils.isDigits(methodArray[1]) ? Integer.valueOf(methodArray[1]) : 0;
-                        methodInfoList.add(methodInfo);
-                    }else {
-                        //不符合规则的直接放到list里面
-                        methodInstanceList.add(iMethodInstance);
-                    }
+                String methodName = method.getMethodName();
+                //匹配方法后面的数字，比如方法名：hello_1, 按照数字排序进行执行
+                if (Pattern.matches(METHOD_REGEX, methodName)) {
+                    String[] methodArray = StringUtils.split(methodName, "_");
+                    methodInfo[0] = iMethodInstance;
+                    methodInfo[1] = methodArray[0];
+                    methodInfo[2] = NumberUtils.isDigits(methodArray[1]) ? Integer.valueOf(methodArray[1]) : 0;
+                    methodInfoList.add(methodInfo);
+                }else {
+                    //不符合规则的直接放到list里面
+                    methodInstanceList.add(iMethodInstance);
                 }
             }
         });
