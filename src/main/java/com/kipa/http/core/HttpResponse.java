@@ -41,5 +41,9 @@ public class HttpResponse {
      */
     private int code;
 
+    /**
+     * 响应的请求信息
+     */
+    private Map<String, Object> requestInfo;
 }
 

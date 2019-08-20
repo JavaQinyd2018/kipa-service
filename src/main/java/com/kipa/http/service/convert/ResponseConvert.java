@@ -1,5 +1,6 @@
 package com.kipa.http.service.convert;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
@@ -71,6 +72,10 @@ public class ResponseConvert implements Convert<Response, HttpResponse> {
                     }
                     map.put("contentLength",response.body().contentLength());
                 }
+                Map<String, Object> requestMap = Maps.newHashMap();
+                requestMap.put("url",response.request().url().url());
+                requestMap.put("headers",response.request().headers());
+                httpResponse.setRequestInfo(requestMap);
                 httpResponse.setBodyMap(map);
                 httpResponse.setCode(response.code());
                 httpResponse.setMessage(ResponseMessage.SUCCESS.getMessage());

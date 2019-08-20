@@ -70,7 +70,7 @@ public class DataMetaAnnotationListener implements IInvokedMethodListener2 {
             DataMeta dataMeta = method.getAnnotation(DataMeta.class);
             if (dataMeta != null ) {
                 throw new UnsupportedOperationException("@Test的测试方法上不支持使用@DataMeta," +
-                        "建议使用@DataParameter和dataprovider组合方式进行数据驱动");
+                        "建议使用@DataParamr和dataprovider组合方式进行数据驱动");
             }
 
         }
