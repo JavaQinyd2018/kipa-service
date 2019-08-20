@@ -13,7 +13,7 @@ public class HeaderConstant {
     public static final String TEXT_XML="text/xml";
     public static final String TEXT_JSON="text/json";
     public static final String CONTENT_CHARSET_ISO_8859_1 = "ISO-8859-1";
-    public static final String CONTENT_CHARSET_UTF8 = "UTF-8";
+    public static final String CONTENT_CHARSET_UTF8 = "utf-8";
     public static final String DEF_PROTOCOL_CHARSET = "US-ASCII";
     public static final String CONN_CLOSE = "close";
     public static final String KEEP_ALIVE = "keep-alive";

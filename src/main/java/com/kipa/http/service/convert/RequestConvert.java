@@ -2,6 +2,7 @@ package com.kipa.http.service.convert;
 
 import com.alibaba.fastjson.JSONObject;
 import com.kipa.common.KipaProcessException;
+import com.kipa.http.core.HeaderConstant;
 import com.kipa.http.core.HttpRequest;
 import com.kipa.http.emuns.HttpSendMethod;
 import com.kipa.http.emuns.RequestType;
@@ -56,8 +57,14 @@ public class RequestConvert implements Convert<HttpRequest, Request> {
                 }
                 break;
             case JSON:
-                MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-                RequestBody requestBody = RequestBody.create(mediaType, httpRequest.getJson());
+                MediaType mediaType = MediaType.parse(String.format("%s; charset=%s",HeaderConstant.APP_FORM_URLENCODED, HeaderConstant.CONTENT_CHARSET_UTF8));
+                String json = httpRequest.getJson();
+                RequestBody requestBody = RequestBody.create(mediaType, json);
+                if (StringUtils.startsWith(json, "{") && StringUtils.endsWith(json, "}") ||
+                        StringUtils.startsWith(json, "[") && StringUtils.endsWith(json, "]")) {
+                    MediaType mediaTypeJSON = MediaType.parse(String.format("%s; charset=%s",HeaderConstant.JSON, HeaderConstant.CONTENT_CHARSET_UTF8));
+                    requestBody = RequestBody.create(mediaTypeJSON, json);
+                }
                 HttpSendMethod httpSendMethod = HttpSendMethod.valueOf(httpRequest.getMethod());
                 builder.method(httpSendMethod.getName(),requestBody);
                 break;
