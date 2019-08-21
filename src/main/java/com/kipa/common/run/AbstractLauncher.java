@@ -40,7 +40,6 @@ public abstract class AbstractLauncher implements Launcher  {
     private final <T> void run(Class<? extends T>... testCaseClass) {
         TestNG testNG = new TestNG();
         testNG.setTestClasses(testCaseClass);
-        TestHTMLReporter reporter = new TestHTMLReporter();
         testNG.run();
         //运行完正常退出
         System.exit(0);
