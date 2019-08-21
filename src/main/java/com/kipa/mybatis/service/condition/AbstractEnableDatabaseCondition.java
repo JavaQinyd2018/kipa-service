@@ -1,6 +1,7 @@
 package com.kipa.mybatis.service.condition;
 
 import com.kipa.config.EnableMultipleDataSource;
+import com.kipa.env.DatasourceEnvHolder;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -25,6 +26,7 @@ public abstract class AbstractEnableDatabaseCondition implements Condition {
         ConfigurableListableBeanFactory beanFactory = conditionContext.getBeanFactory();
         if (beanFactory != null) {
             Map<String, Object> beansWithAnnotation = beanFactory.getBeansWithAnnotation(EnableMultipleDataSource.class);
+            //1. 如果有EnableMultipleDataSource多数据源注解，你们数据源信息由注解控制开启，以及开启的数据源个数
             if (MapUtils.isNotEmpty(beansWithAnnotation)) {
                 Object value = beansWithAnnotation.entrySet().iterator().next().getValue();
                 EnableMultipleDataSource annotation = AnnotationUtils.findAnnotation(value.getClass(), EnableMultipleDataSource.class);
@@ -33,6 +35,12 @@ public abstract class AbstractEnableDatabaseCondition implements Condition {
                     if (ArrayUtils.isNotEmpty(env)) {
                         return matchDatasource(Arrays.asList(env));
                     }
+                }
+            }else {
+                //2. 如果没有注解，你们从环境中尝试获取数据源环境标识，开启数据源配置
+                EnvFlag[] env = DatasourceEnvHolder.getEnv();
+                if (ArrayUtils.isNotEmpty(env)) {
+                    return matchDatasource(Arrays.asList(env));
                 }
             }
         }

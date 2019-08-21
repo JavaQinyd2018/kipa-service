@@ -4,6 +4,8 @@ import com.kipa.common.run.StepInterceptor;
 import com.kipa.data.CSVDataProvider;
 import com.kipa.data.DataMetaAnnotationListener;
 import com.kipa.data.MethodOrderInterceptor;
+import com.kipa.env.DatasourceEnvHolder;
+import com.kipa.mybatis.service.condition.EnvFlag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -46,6 +48,9 @@ public class BaseTestConfiguration extends AbstractTestNGSpringContextTests {
                 log.warn("获取banner信息失败");
             }
         }
+
+        //2.设定数据源（BaseTestConfiguration默认开启两个数据源，一个是默认数据源，一个是标识为env1的数据源）
+        DatasourceEnvHolder.setFlag(new EnvFlag[]{EnvFlag.ENV1});
     }
 
     @DataProvider(name = "csv")
