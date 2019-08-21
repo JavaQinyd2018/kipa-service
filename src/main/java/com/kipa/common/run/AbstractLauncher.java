@@ -41,8 +41,9 @@ public abstract class AbstractLauncher implements Launcher  {
         TestNG testNG = new TestNG();
         testNG.setTestClasses(testCaseClass);
         TestHTMLReporter reporter = new TestHTMLReporter();
-        testNG.addListener(reporter);
         testNG.run();
+        //运行完正常退出
+        System.exit(0);
     }
 
     /**
