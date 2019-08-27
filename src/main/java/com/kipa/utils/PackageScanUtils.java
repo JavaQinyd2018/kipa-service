@@ -1,8 +1,13 @@
 package com.kipa.utils;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.kipa.common.KipaProcessException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -23,11 +28,14 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.util.SystemPropertyUtils;
 import org.testng.collections.Sets;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author: Qinyadong
@@ -281,5 +289,49 @@ public class PackageScanUtils {
         PreCheckUtils.checkEmpty(basePackage, "目录不能为空");
         Reflections reflections = new Reflections(basePackage, new SubTypesScanner());
         return reflections.getSubTypesOf(clazz);
+    }
+
+
+
+
+    public static List<String> getAllPackageName(String selectPackage) {
+        List<String> packageNameList = Lists.newArrayList();
+
+        PreCheckUtils.checkEmpty(selectPackage, "扫描的包路径不能为空");
+        String selectPackagePath = selectPackage.replace(".", "/");
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Enumeration<URL> resources = contextClassLoader.getResources(selectPackagePath);
+            while (resources.hasMoreElements()) {
+                URL url = resources.nextElement();
+                if (url != null) {
+                    String path = url.getPath();
+                    File file = new File(path);
+                    List<String> packageName = getPackageName(file, file.getPath(), selectPackage);
+                    packageNameList.addAll(packageName);
+                }
+            }
+        } catch (IOException e) {
+            throw new KipaProcessException("没扫描到信息");
+        }
+        return packageNameList;
+    }
+
+    private static List<String> getPackageName(File file, String separator, String selectPackage) {
+        List<String> list = Lists.newArrayList();
+        if (!file.exists()) {
+            return list;
+        }
+        Collection<File> files = FileUtils.listFilesAndDirs(file, FileFilterUtils.directoryFileFilter(), DirectoryFileFilter.INSTANCE);
+        if (CollectionUtils.isEmpty(files)) {
+            return list;
+        }
+
+        return files.stream().map(fileTarget -> {
+            String path = fileTarget.getPath();
+            String packagePath = StringUtils.substringAfter(path, separator);
+            String replace = packagePath.replace(File.separator, ".");
+            return selectPackage.concat(replace);
+        }).collect(Collectors.toList());
     }
 }
