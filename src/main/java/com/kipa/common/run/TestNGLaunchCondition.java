@@ -12,7 +12,7 @@ import java.util.List;
  * @since 2.2.0
  */
 @Data
-class TestNGLaunchCondition<T> {
+public class TestNGLaunchCondition<T> {
 
     /**
      * 基于T的基类 类似于BaseTestConfiguration以及自定义配置类
