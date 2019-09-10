@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds" debug="true">
-    <contextName>depository</contextName>
+    <contextName>kipa-service</contextName>
 
     <!-- 日志输出级别 -->
     <property name="DEFAULT_PATTERN"

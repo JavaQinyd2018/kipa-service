@@ -14,7 +14,7 @@ public class CamelToUnderlineUtils {
 
     private CamelToUnderlineUtils() {}
 
-    public static final char UNDERLINE = '_';
+    private static final char UNDERLINE = '_';
 
     /**
      * 驼峰标识转化为下划线
