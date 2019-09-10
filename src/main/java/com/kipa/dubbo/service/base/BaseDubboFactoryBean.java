@@ -86,7 +86,7 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
             referenceConfig.setGeneric(true);
             referenceConfig.setInterface(dubboRequest.getInterfaceName());
 
-            long startTime = System.currentTimeMillis();
+
             ReferenceConfigCache cache = ReferenceConfigCache.getCache(dubboConfig.getAddress(), AbstractConfig::toString);
             WrappedDubboParameter parameter = dubboRequestConvert.convert(dubboRequest);
             Object result = null;
@@ -112,9 +112,6 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
                 default:
                     break;
             }
-
-            long endTime = System.currentTimeMillis();
-            log.info("接口调用执行的总时长为：{}ms",endTime - startTime);
             dubboResponse.setSuccess(true);
             dubboResponse.setResponseData(result);
             dubboResponse.setMessage("dubbo接口rpc调用成功");
