@@ -23,22 +23,17 @@
 (1) 基本配置
 
 ```
-1.直接继承BaseTestConfiguration基类，同时需要配置在resources下面的config目录下配置，项目启动会查找这些文件，如果不存在框架会启动失败。
-A: 数据库配置文件----db.properties
-B：dubbo配置文件----dubbo.properties
-C: http配置文件-----http.properties
-D: mock配置文件-----mockserver.properties
-E：sftp的配置文件---sftp.properties
-2. 需要在项目的resources下面新建配置文件：application.properties，方便我们将自定义配置的常用信息方法该文件中，
+1.直接继承BaseTestConfiguration基类，同时需要配置在resources下面的application.properties数据文件中配置，项目启动会查找该文件，如果不存在框架会启动失败。
+需要配置数据源、http基本配置、dubbo基本配置、sftp基本配置等等，项目启动回去加载这些配置，初始化对应的服务或者工具。
+2. 需要在项目的resources下面config目录中新建配置文件：business.properties，方便我们将自定义配置的常用信息、目标项目的配置信息等等放到该文件中，
 并通过spring提供的@Value注解，获取属性值，如：
-
- shopping.web.base.url=http://127.0.0.1:1234/hello/console
- ==========================================================
- @Value("${shopping.web.base.url}")
- private String baseUrl;
- ==========================================================
-如果不新建项目就会报错：
-java.io.FileNotFoundException: class path resource [application.properties] cannot be opened because it does not exist
+     shopping.web.base.url=http://127.0.0.1:1234/hello/console
+     ==========================================================
+     @Value("${shopping.web.base.url}")
+     private String baseUrl;
+     ==========================================================
+    如果不新建项目就会报错：
+    java.io.FileNotFoundException: class path resource [business.properties] cannot be opened because it does not exist
 3. 需要在resources下面新建data目录，用于放数据驱动的数据文件，当然这个不是必选项，不会影响框架的整体启动，但是推荐这样做。
 ```
 

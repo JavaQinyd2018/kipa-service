@@ -2,6 +2,7 @@ package com.kipa.config;
 
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.google.common.collect.Lists;
+import com.kipa.common.DataConstant;
 import com.kipa.common.KipaProcessException;
 import com.kipa.redis.ClusterRedisCondition;
 import com.kipa.redis.RedisConfig;
@@ -39,8 +40,6 @@ import java.util.Properties;
 @PropertySource("classpath:redis/redis-client.properties")
 public class RedisConfiguration {
 
-    private static final String REDIS_CONFIG = "config/redis.properties";
-
     private RedisConfig redisConfig;
 
     @Value("${spring.redis.timeout}")
@@ -73,7 +72,7 @@ public class RedisConfiguration {
     @PostConstruct
     private void init() {
         redisConfig = new RedisConfig();
-        Properties properties = PropertiesUtils.loadProperties(REDIS_CONFIG);
+        Properties properties = PropertiesUtils.loadProperties(DataConstant.CONFIG_FILE);
         String clusterAddress = PropertiesUtils.getProperty(properties, null, "spring.redis.cluster.address");
         List<String> list = Lists.newArrayList();
         PreCheckUtils.checkEmpty(clusterAddress, "redis服务器的地址不能为空");

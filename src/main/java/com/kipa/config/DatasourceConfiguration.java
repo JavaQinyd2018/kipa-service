@@ -1,6 +1,7 @@
 package com.kipa.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.kipa.common.DataConstant;
 import com.kipa.env.DatabaseContextHolder;
 import com.kipa.env.DatasourceEnvHolder;
 import com.kipa.mybatis.service.condition.*;
@@ -27,8 +28,6 @@ import java.util.Properties;
 @Configuration
 @PropertySource(value = {"classpath:db/mybatis.properties"})
 public class DatasourceConfiguration {
-
-    private static final String DB_FILE = "config/db.properties";
 
     private DatasourceConfig datasourceConfig;
 
@@ -82,7 +81,7 @@ public class DatasourceConfiguration {
 
     @PostConstruct
     private void init() {
-        final Properties properties = PropertiesUtils.loadProperties(DB_FILE);
+        final Properties properties = PropertiesUtils.loadProperties(DataConstant.CONFIG_FILE);
         String flag = DatabaseContextHolder.getFlag();
         datasourceConfig = getConfigByConfig(flag, properties);
         EnvFlag[] env = DatasourceEnvHolder.getEnv();

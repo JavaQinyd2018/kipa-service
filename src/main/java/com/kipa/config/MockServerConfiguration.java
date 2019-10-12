@@ -1,5 +1,6 @@
 package com.kipa.config;
 
+import com.kipa.common.DataConstant;
 import com.kipa.common.KipaProcessException;
 import com.kipa.mock.dubbo.MockDubboConfig;
 import com.kipa.mock.http.entity.MockServerConfig;
@@ -22,8 +23,6 @@ import java.util.Properties;
 @Configuration
 @PropertySource(value = "classpath:mock/mock-server.properties")
 public class MockServerConfiguration {
-
-    private static final String MOCK_CONFIG = "config/mockserver.properties";
 
     @Value("${mock.server.remote.host}")
     private String remoteHost;
@@ -58,7 +57,7 @@ public class MockServerConfiguration {
     @PostConstruct
     private void init() {
             try {
-                Properties properties = PropertiesLoaderUtils.loadAllProperties(MOCK_CONFIG);
+                Properties properties = PropertiesLoaderUtils.loadAllProperties(DataConstant.CONFIG_FILE);
                 String host = (String) properties.get("mock.server.remote.host");
                 remoteHost = StringUtils.isBlank(host) ? null : host;
                 String portStr = (String) properties.get("mock.server.remote.port");

@@ -1,5 +1,6 @@
 package com.kipa.config;
 
+import com.kipa.common.DataConstant;
 import com.kipa.mq.consumer.MQConsumerConfig;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
@@ -22,8 +23,6 @@ import java.util.Properties;
 @ComponentScan("com.kipa.mq.consumer")
 public class MQConsumerConfiguration {
 
-    private static final String MQ_CONFIG = "config/mq.properties";
-
     private String nameServerAddress;
     private String groupName;
 
@@ -36,7 +35,7 @@ public class MQConsumerConfiguration {
 
     @PostConstruct
     public void init() {
-        Properties properties = PropertiesUtils.loadProperties(MQ_CONFIG);
+        Properties properties = PropertiesUtils.loadProperties(DataConstant.CONFIG_FILE);
         groupName = PropertiesUtils.getProperty(properties, null, "rocketmq.consumer.groupName");
         nameServerAddress = PropertiesUtils.getProperty(properties, null, "rocketmq.consumer.nameServerAddress");
         PreCheckUtils.checkEmpty(nameServerAddress, "MQ的消费端的nameServer地址不能为空");

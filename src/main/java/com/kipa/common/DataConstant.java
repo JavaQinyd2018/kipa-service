@@ -28,4 +28,8 @@ public final class DataConstant {
      */
     public static final String BASE_PATH = System.getProperty("user.dir") + (StringUtils.containsIgnoreCase(System.getProperty("os.name"), "windows") ? "\\src\\main\\resources\\" : "/src/main/resources/");
 
+    /**
+     * 框架配置文件名称以及位置：classpath:application.properties
+     */
+    public static final String CONFIG_FILE = "application.properties";
 }

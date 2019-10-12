@@ -1,5 +1,6 @@
 package com.kipa.config;
 
+import com.kipa.common.DataConstant;
 import com.kipa.dubbo.entity.DubboConfig;
 import com.kipa.env.DubboContextHolder;
 import com.kipa.utils.PreCheckUtils;
@@ -24,8 +25,6 @@ import java.util.Properties;
 @Configuration
 @PropertySource(value = {"classpath:dubbo/dubbo-consumer.properties"})
 public class DubboConfiguration {
-
-    private static final String DUBBO_CONFIG = "config/dubbo.properties";
 
     @Value("${dubbo.consumer.application.name}")
     private String applicationName;
@@ -82,7 +81,7 @@ public class DubboConfiguration {
             timeout = (Integer) config.get("timeout");
         }
 
-        Properties properties = PropertiesUtils.loadProperties(DUBBO_CONFIG);
+        Properties properties = PropertiesUtils.loadProperties(DataConstant.CONFIG_FILE);
         if (StringUtils.isNotBlank(flag)) {
             registerProtocol = PropertiesUtils.getProperty(properties, flag,"dubbo.consumer.register.protocol");
             address = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.register.address");
