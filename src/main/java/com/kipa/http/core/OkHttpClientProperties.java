@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-public class OkHttpClientConfig {
+public class OkHttpClientProperties {
     /**
      * http连接超时时间
      */

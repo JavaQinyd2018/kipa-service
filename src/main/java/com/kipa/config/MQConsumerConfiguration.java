@@ -1,7 +1,7 @@
 package com.kipa.config;
 
 import com.kipa.common.DataConstant;
-import com.kipa.mq.consumer.MQConsumerConfig;
+import com.kipa.mq.consumer.MQConsumerProperties;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,14 +43,14 @@ public class MQConsumerConfiguration {
     }
 
     @Bean
-    public MQConsumerConfig mqConsumerConfig() {
-        MQConsumerConfig config = new MQConsumerConfig();
-        config.setNameServerAddress(nameServerAddress);
-        config.setGroupName(groupName);
-        config.setConsumeThreadMax(consumeThreadMax);
-        config.setConsumeThreadMin(consumeThreadMin);
-        config.setConsumeMessageBatchMaxSize(consumeMessageBatchMaxSize);
-        return config;
+    public MQConsumerProperties mqConsumerProperties() {
+        MQConsumerProperties mqConsumerProperties = new MQConsumerProperties();
+        mqConsumerProperties.setNameServerAddress(nameServerAddress);
+        mqConsumerProperties.setGroupName(groupName);
+        mqConsumerProperties.setConsumeThreadMax(consumeThreadMax);
+        mqConsumerProperties.setConsumeThreadMin(consumeThreadMin);
+        mqConsumerProperties.setConsumeMessageBatchMaxSize(consumeMessageBatchMaxSize);
+        return mqConsumerProperties;
     }
 
 }

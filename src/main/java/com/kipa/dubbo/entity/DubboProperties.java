@@ -8,7 +8,7 @@ import lombok.Data;
  * dubbo 消费端配置信息的包装类
  */
 @Data
-public class DubboConfig {
+public class DubboProperties {
 
     /**
      * 应用名称

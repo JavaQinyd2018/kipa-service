@@ -1,7 +1,7 @@
 package com.kipa.http.service.base;
 
 import com.kipa.http.core.HttpConstant;
-import com.kipa.http.core.OkHttpClientConfig;
+import com.kipa.http.core.OkHttpClientProperties;
 import com.kipa.http.ssl.SSLSocketFactoryManager;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class OkHttpClientGenerator{
 
-    public OkHttpClient build(OkHttpClientConfig config) {
+    public OkHttpClient build(OkHttpClientProperties config) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         OkHttpClient.Builder builder = new OkHttpClient.Builder();

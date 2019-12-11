@@ -7,7 +7,7 @@ import lombok.Data;
  * @Date: 2019/3/31
  */
 @Data
-public class DatasourceConfig {
+public class DatasourceProperties {
 
     /**
      * 数据源 驱动名称

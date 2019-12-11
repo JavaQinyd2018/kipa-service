@@ -2,7 +2,7 @@ package com.kipa.http.service.impl;
 
 import com.kipa.http.core.HttpRequest;
 import com.kipa.http.core.HttpResponse;
-import com.kipa.http.core.OkHttpClientConfig;
+import com.kipa.http.core.OkHttpClientProperties;
 import com.kipa.http.emuns.HttpSendMethod;
 import com.kipa.http.emuns.InvokeType;
 import com.kipa.http.service.HttpInvokeService;
@@ -31,11 +31,11 @@ public class HttpsInvokeServiceImpl extends AbstractInvokeServiceImpl implements
     private OkHttpClientGenerator okHttpClientGenerator;
 
     @Autowired
-    private OkHttpClientConfig okHttpClientConfig;
+    private OkHttpClientProperties okHttpClientProperties;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        okHttpClient = okHttpClientGenerator.build(okHttpClientConfig);
+        okHttpClient = okHttpClientGenerator.build(okHttpClientProperties);
     }
 
     @Override

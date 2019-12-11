@@ -5,15 +5,13 @@ import com.kipa.common.DataConstant;
 import com.kipa.env.DatabaseContextHolder;
 import com.kipa.env.DatasourceEnvHolder;
 import com.kipa.mybatis.service.condition.*;
-import com.kipa.mybatis.ext.DatasourceConfig;
+import com.kipa.mybatis.ext.DatasourceProperties;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Arrays;
@@ -29,15 +27,15 @@ import java.util.Properties;
 @PropertySource(value = {"classpath:db/mybatis.properties"})
 public class DatasourceConfiguration {
 
-    private DatasourceConfig datasourceConfig;
+    private DatasourceProperties datasourceProperties;
 
-    private DatasourceConfig datasourceConfig1;
+    private DatasourceProperties datasourceProperties1;
 
-    private DatasourceConfig datasourceConfig2;
+    private DatasourceProperties datasourceProperties2;
 
-    private DatasourceConfig datasourceConfig3;
+    private DatasourceProperties datasourceProperties3;
 
-    private DatasourceConfig datasourceConfig4;
+    private DatasourceProperties datasourceProperties4;
 
 
     /**
@@ -83,14 +81,14 @@ public class DatasourceConfiguration {
     private void init() {
         final Properties properties = PropertiesUtils.loadProperties(DataConstant.CONFIG_FILE);
         String flag = DatabaseContextHolder.getFlag();
-        datasourceConfig = getConfigByConfig(flag, properties);
+        datasourceProperties = getConfigByConfig(flag, properties);
         EnvFlag[] env = DatasourceEnvHolder.getEnv();
         if (ArrayUtils.isNotEmpty(env)) {
             List<EnvFlag> envFlags = Arrays.asList(env);
-            datasourceConfig1 = envFlags.contains(EnvFlag.ENV1) ? getConfigByConfig(EnvFlag.ENV1.getCode(), properties) : null;
-            datasourceConfig2 = envFlags.contains(EnvFlag.ENV2) ? getConfigByConfig(EnvFlag.ENV2.getCode(), properties) : null;
-            datasourceConfig3 = envFlags.contains(EnvFlag.ENV3) ? getConfigByConfig(EnvFlag.ENV3.getCode(), properties) : null;
-            datasourceConfig4 = envFlags.contains(EnvFlag.ENV4) ? getConfigByConfig(EnvFlag.ENV4.getCode(), properties) : null;
+            datasourceProperties1 = envFlags.contains(EnvFlag.ENV1) ? getConfigByConfig(EnvFlag.ENV1.getCode(), properties) : null;
+            datasourceProperties2 = envFlags.contains(EnvFlag.ENV2) ? getConfigByConfig(EnvFlag.ENV2.getCode(), properties) : null;
+            datasourceProperties3 = envFlags.contains(EnvFlag.ENV3) ? getConfigByConfig(EnvFlag.ENV3.getCode(), properties) : null;
+            datasourceProperties4 = envFlags.contains(EnvFlag.ENV4) ? getConfigByConfig(EnvFlag.ENV4.getCode(), properties) : null;
         }
     }
 
@@ -124,32 +122,33 @@ public class DatasourceConfiguration {
      */
 
     @Bean(name = "dataSource",initMethod = "init", destroyMethod = "close")
+    @Primary
     public DruidDataSource dataSource() {
-        return getDataSource(datasourceConfig);
+        return getDataSource(datasourceProperties);
     }
 
     @Conditional({Datasource1Condition.class})
     @Bean(name = "dataSource1",initMethod = "init", destroyMethod = "close")
     public DruidDataSource dataSource1() {
-        return getDataSource(datasourceConfig1);
+        return getDataSource(datasourceProperties1);
     }
 
     @Conditional({Datasource2Condition.class})
     @Bean(name = "dataSource2",initMethod = "init", destroyMethod = "close")
     public DruidDataSource dataSource2() {
-        return getDataSource(datasourceConfig2);
+        return getDataSource(datasourceProperties2);
     }
 
     @Conditional({Datasource3Condition.class})
     @Bean(name = "dataSource3",initMethod = "init", destroyMethod = "close")
     public DruidDataSource dataSource3() {
-        return getDataSource(datasourceConfig3);
+        return getDataSource(datasourceProperties3);
     }
 
     @Conditional({Datasource4Condition.class})
     @Bean(name = "dataSource4",initMethod = "init", destroyMethod = "close")
     public DruidDataSource dataSource4() {
-        return getDataSource(datasourceConfig4);
+        return getDataSource(datasourceProperties4);
     }
 
     @PreDestroy
@@ -158,7 +157,7 @@ public class DatasourceConfiguration {
         DatasourceEnvHolder.removeFlag();
     }
 
-    private DatasourceConfig getConfigByConfig(String flag, Properties properties) {
+    private DatasourceProperties getConfigByConfig(String flag, Properties properties) {
         String driverName = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.driver");
         String url = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.url");
         String username = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.username");
@@ -167,7 +166,7 @@ public class DatasourceConfiguration {
         PreCheckUtils.checkEmpty(url, flag + "环境的数据源配置的url不能为空");
         PreCheckUtils.checkEmpty(username, flag + "环境的数据源配置的username不能为空");
         PreCheckUtils.checkEmpty(password, flag + "环境的数据源配置的password不能为空");
-        DatasourceConfig config = new DatasourceConfig();
+        DatasourceProperties config = new DatasourceProperties();
         config.setDriverName(driverName);
         config.setUrl(url);
         config.setUsername(username);
@@ -175,13 +174,13 @@ public class DatasourceConfiguration {
         return config;
     }
 
-    private DruidDataSource getDataSource(DatasourceConfig datasourceConfig) {
+    private DruidDataSource getDataSource(DatasourceProperties datasourceProperties) {
         DruidDataSource druidDataSource = new DruidDataSource();
-        PreCheckUtils.checkEmpty(datasourceConfig, "数据源配置不能为空");
-        druidDataSource.setDriverClassName(datasourceConfig.getDriverName());
-        druidDataSource.setUrl(datasourceConfig.getUrl());
-        druidDataSource.setUsername(datasourceConfig.getUsername());
-        druidDataSource.setPassword(datasourceConfig.getPassword());
+        PreCheckUtils.checkEmpty(datasourceProperties, "数据源配置不能为空");
+        druidDataSource.setDriverClassName(datasourceProperties.getDriverName());
+        druidDataSource.setUrl(datasourceProperties.getUrl());
+        druidDataSource.setUsername(datasourceProperties.getUsername());
+        druidDataSource.setPassword(datasourceProperties.getPassword());
         druidDataSource.setInitialSize(initialSize);
         druidDataSource.setMinIdle(minIdle);
         druidDataSource.setMaxActive(maxActive);

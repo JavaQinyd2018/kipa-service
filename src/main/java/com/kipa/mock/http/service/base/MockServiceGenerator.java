@@ -1,7 +1,7 @@
 package com.kipa.mock.http.service.base;
 
 import com.kipa.common.KipaProcessException;
-import com.kipa.mock.http.entity.MockServerConfig;
+import com.kipa.mock.http.entity.MockServerProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.mockserver.integration.ClientAndServer;
 import org.springframework.stereotype.Service;
@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
 @Service("mockServiceGenerator")
 public class MockServiceGenerator {
 
-    public ClientAndServer build(MockServerConfig mockServerConfig) {
+    public ClientAndServer build(MockServerProperties mockServerProperties) {
         ClientAndServer clientAndServer = null;
         try {
-            if (mockServerConfig != null) {
-                    String remoteHost = mockServerConfig.getRemoteHost();
-                    Integer remotePort = mockServerConfig.getRemotePort();
-                    Integer localPort = mockServerConfig.getLocalPort();
+            if (mockServerProperties != null) {
+                    String remoteHost = mockServerProperties.getRemoteHost();
+                    Integer remotePort = mockServerProperties.getRemotePort();
+                    Integer localPort = mockServerProperties.getLocalPort();
                     if (StringUtils.isNotBlank(remoteHost) && remotePort != null && localPort != null) {
                         clientAndServer = new ClientAndServer(remoteHost, remotePort, localPort);
                     }else if (localPort != null) {

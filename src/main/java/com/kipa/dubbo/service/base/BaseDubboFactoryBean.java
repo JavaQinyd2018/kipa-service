@@ -9,7 +9,7 @@ import com.kipa.dubbo.entity.DubboResponse;
 import com.kipa.dubbo.entity.WrappedDubboParameter;
 import com.kipa.dubbo.enums.InvokeType;
 import com.kipa.dubbo.annotation.Style;
-import com.kipa.dubbo.entity.DubboConfig;
+import com.kipa.dubbo.entity.DubboProperties;
 import com.kipa.dubbo.exception.DubboInvokeException;
 import com.kipa.dubbo.service.execute.DubboAsyncExecutor;
 import com.kipa.dubbo.service.execute.DubboRequestConvert;
@@ -37,7 +37,7 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
     private ReferenceConfig referenceConfig;
 
     @Autowired
-    private DubboConfig dubboConfig;
+    private DubboProperties dubboProperties;
 
     @Autowired
     private ReferenceConfigGenerator referenceConfigGenerator;
@@ -68,7 +68,7 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
 
     @Override
     public void afterPropertiesSet() throws Exception {
-         referenceConfig = referenceConfigGenerator.build(dubboConfig);
+         referenceConfig = referenceConfigGenerator.build(dubboProperties);
     }
 
     class DubboInvokeHandler implements InvocationHandler{
@@ -87,7 +87,7 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
             referenceConfig.setInterface(dubboRequest.getInterfaceName());
 
 
-            ReferenceConfigCache cache = ReferenceConfigCache.getCache(dubboConfig.getAddress(), AbstractConfig::toString);
+            ReferenceConfigCache cache = ReferenceConfigCache.getCache(dubboProperties.getAddress(), AbstractConfig::toString);
             WrappedDubboParameter parameter = dubboRequestConvert.convert(dubboRequest);
             Object result = null;
             GenericService genericService = null;
@@ -103,8 +103,8 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
                     result = dubboAsyncExecutor.execute(genericService, parameter);
                     break;
                 case DIRECTED_LINK:
-                    String rpcProtocol = StringUtils.isBlank(dubboConfig.getRpcProtocol()) ? "dubbo" : dubboConfig.getRpcProtocol();
-                    String url = String.format("%s://%s", rpcProtocol, dubboConfig.getAddress());
+                    String rpcProtocol = StringUtils.isBlank(dubboProperties.getRpcProtocol()) ? "dubbo" : dubboProperties.getRpcProtocol();
+                    String url = String.format("%s://%s", rpcProtocol, dubboProperties.getAddress());
                     referenceConfig.setUrl(url);
                     genericService = getGenericService(cache, referenceConfig);
                     result = dubboSyncExecutor.execute(genericService, parameter);

@@ -28,7 +28,7 @@ public class MQProducerManagerImpl implements MQProducerManager, InitializingBea
     private BaseProducerService baseProducerService;
 
     @Autowired
-    private MQProducerConfig mqProducerConfig;
+    private MQProducerProperties mqProducerProperties;
 
     @Autowired
     private MQProducerGenerator mqProducerGenerator;
@@ -96,8 +96,8 @@ public class MQProducerManagerImpl implements MQProducerManager, InitializingBea
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        defaultMQProducer = (DefaultMQProducer) mqProducerGenerator.build(mqProducerConfig, ProducerType.DEFAULT_PRODUCER);
-        transactionMQProducer = (TransactionMQProducer) mqProducerGenerator.build(mqProducerConfig, ProducerType.TRANSACTION_PRODUCER);
+        defaultMQProducer = (DefaultMQProducer) mqProducerGenerator.build(mqProducerProperties, ProducerType.DEFAULT_PRODUCER);
+        transactionMQProducer = (TransactionMQProducer) mqProducerGenerator.build(mqProducerProperties, ProducerType.TRANSACTION_PRODUCER);
         initialized = true;
     }
 

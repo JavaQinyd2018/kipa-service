@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 //导入基本的http、dubbo、mock、mybatis的spring配置文件
-@Import(BaseConfiguration.class)
+@Import(SpringIntegrationConfiguration.class)
 //包扫描：扫描带有@Database、@Dubbo、@Http的注解从而动态的切换spring配置
 @AppConfigScan("com.kipa.service")
 //默认开启集群的redis操作，若要开启集群的请添加RedisModel.CLUSTER注解

@@ -21,7 +21,7 @@ public class MQProducerGenerator {
      * @param type
      * @return
      */
-    public MQProducer build(MQProducerConfig config, ProducerType type) {
+    public MQProducer build(MQProducerProperties config, ProducerType type) {
         if (type == ProducerType.DEFAULT_PRODUCER) {
             DefaultMQProducer producer  = new DefaultMQProducer();
             producer.setNamesrvAddr(config.getNameServerAddress());

@@ -1,6 +1,6 @@
 package com.kipa.common.run;
 
-import com.kipa.base.BaseTestConfiguration;
+import com.kipa.base.BasicTestNGSpringContextTests;
 
 /**
  * @author Qinyadong
@@ -15,12 +15,12 @@ public final class TestNGExecutor {
      * @param discovery
      */
     public void execute(TestNGDiscovery discovery) {
-        TestNGLaunchCondition<BaseTestConfiguration> condition = new TestNGLaunchCondition<>();
-        condition.setBaseClass(BaseTestConfiguration.class);
+        TestNGLaunchCondition<BasicTestNGSpringContextTests> condition = new TestNGLaunchCondition<>();
+        condition.setBaseClass(BasicTestNGSpringContextTests.class);
         condition.setFilterClass(discovery.getFilterClass());
         condition.setAnnotationType(discovery.getAnnotationType());
         condition.setSelectPackage(discovery.getSelectPackage());
-        SimpleTestNGLauncher<BaseTestConfiguration> launcher = new SimpleTestNGLauncher<>(condition);
+        SimpleTestNGLauncher<BasicTestNGSpringContextTests> launcher = new SimpleTestNGLauncher<>(condition);
         launcher.setListenerClass(discovery.getListenerClass());
         launcher.launch();
     }
@@ -30,12 +30,12 @@ public final class TestNGExecutor {
      * @param discovery
      */
     public void multiThreadExecute(TestNGDiscovery discovery) {
-        TestNGLaunchCondition<BaseTestConfiguration> condition = new TestNGLaunchCondition<>();
-        condition.setBaseClass(BaseTestConfiguration.class);
+        TestNGLaunchCondition<BasicTestNGSpringContextTests> condition = new TestNGLaunchCondition<>();
+        condition.setBaseClass(BasicTestNGSpringContextTests.class);
         condition.setFilterClass(discovery.getFilterClass());
         condition.setAnnotationType(discovery.getAnnotationType());
         condition.setSelectPackage(discovery.getSelectPackage());
-        MultiThreadTestNGLauncher<BaseTestConfiguration> multiThreadTestNGLauncher = new MultiThreadTestNGLauncher<>(condition);
+        MultiThreadTestNGLauncher<BasicTestNGSpringContextTests> multiThreadTestNGLauncher = new MultiThreadTestNGLauncher<>(condition);
         multiThreadTestNGLauncher.setListenerClass(discovery.getListenerClass());
         multiThreadTestNGLauncher.launch();
     }

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-public class MockDubboConfig {
+public class MockDubboProperties {
 
     /**
      * 应用名称

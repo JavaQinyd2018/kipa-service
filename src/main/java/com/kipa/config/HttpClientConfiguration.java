@@ -2,7 +2,7 @@ package com.kipa.config;
 
 import com.kipa.common.DataConstant;
 import com.kipa.env.HttpContextHolder;
-import com.kipa.http.core.OkHttpClientConfig;
+import com.kipa.http.core.OkHttpClientProperties;
 import com.kipa.utils.PropertiesUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -68,20 +68,20 @@ public class HttpClientConfiguration {
     }
 
     @Bean
-    public OkHttpClientConfig okHttpClientConfig() {
-        OkHttpClientConfig clientConfig = new OkHttpClientConfig();
-        clientConfig.setReadTimeout(readTimeout);
-        clientConfig.setWriteTimeout(writeTimeout);
-        clientConfig.setConnectTimeout(connectTimeout);
-        clientConfig.setFollowRedirects(followRedirects);
-        clientConfig.setRetry(retry);
-        clientConfig.setVerifySSLCertificate(verifySSLCertificate);
-        clientConfig.setCertificatePath(certificatePath);
-        clientConfig.setKeyStorePass(keyStorePass);
-        clientConfig.setKeyStorePath(keyStorePath);
-        clientConfig.setMaxIdleConnections(maxIdleConnections);
-        clientConfig.setKeepAliveDuration(keepAliveDuration);
-        return clientConfig;
+    public OkHttpClientProperties okHttpClientProperties() {
+        OkHttpClientProperties properties = new OkHttpClientProperties();
+        properties.setReadTimeout(readTimeout);
+        properties.setWriteTimeout(writeTimeout);
+        properties.setConnectTimeout(connectTimeout);
+        properties.setFollowRedirects(followRedirects);
+        properties.setRetry(retry);
+        properties.setVerifySSLCertificate(verifySSLCertificate);
+        properties.setCertificatePath(certificatePath);
+        properties.setKeyStorePass(keyStorePass);
+        properties.setKeyStorePath(keyStorePath);
+        properties.setMaxIdleConnections(maxIdleConnections);
+        properties.setKeepAliveDuration(keepAliveDuration);
+        return properties;
     }
 
     @PreDestroy

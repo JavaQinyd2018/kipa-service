@@ -31,9 +31,9 @@ import java.util.Iterator;
  * @see DemoTestContextConfiguration
  */
 @Slf4j
-@ContextConfiguration(classes = BaseConfiguration.class)
+@ContextConfiguration(classes = {SpringIntegrationConfiguration.class})
 @Listeners({DataMetaAnnotationListener.class,MethodOrderInterceptor.class, StepInterceptor.class})
-public class BaseTestConfiguration extends AbstractTestNGSpringContextTests {
+public class BasicTestNGSpringContextTests extends AbstractTestNGSpringContextTests {
 
     private static final String BANNER_PATH= "customize/kipa-banner.txt";
 

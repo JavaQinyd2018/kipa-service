@@ -3,7 +3,7 @@ package com.kipa.dubbo.service.base;
 import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
-import com.kipa.dubbo.entity.DubboConfig;
+import com.kipa.dubbo.entity.DubboProperties;
 import com.kipa.dubbo.enums.RegisterType;
 import com.kipa.utils.PreCheckUtils;
 import org.springframework.stereotype.Service;
@@ -16,24 +16,24 @@ import org.springframework.stereotype.Service;
 @Service("referenceConfigGenerator")
 public class ReferenceConfigGenerator {
 
-    public ReferenceConfig build(DubboConfig dubboConfig) {
-        PreCheckUtils.checkEmpty(dubboConfig, "dubbo的配置信息不能为空");
-        PreCheckUtils.checkEmpty(dubboConfig.getApplicationName(), "dubbo消费端的应用名称不能为空");
+    public ReferenceConfig build(DubboProperties dubboProperties) {
+        PreCheckUtils.checkEmpty(dubboProperties, "dubbo的配置信息不能为空");
+        PreCheckUtils.checkEmpty(dubboProperties.getApplicationName(), "dubbo消费端的应用名称不能为空");
         ReferenceConfig referenceConfig = new ReferenceConfig();
         //1.
         ApplicationConfig applicationConfig = new ApplicationConfig();
-        applicationConfig.setName(dubboConfig.getApplicationName());
-        applicationConfig.setOrganization(dubboConfig.getApplicationOrganization());
-        applicationConfig.setOwner(dubboConfig.getApplicationOwner());
+        applicationConfig.setName(dubboProperties.getApplicationName());
+        applicationConfig.setOrganization(dubboProperties.getApplicationOrganization());
+        applicationConfig.setOwner(dubboProperties.getApplicationOwner());
 
         referenceConfig.setApplication(applicationConfig);
-        String address = dubboConfig.getAddress();
+        String address = dubboProperties.getAddress();
         PreCheckUtils.checkEmpty(address,"注册中心的地址为空");
         RegistryConfig registryConfig = null;
-        String registerProtocol = dubboConfig.getRegisterProtocol();
+        String registerProtocol = dubboProperties.getRegisterProtocol();
         PreCheckUtils.checkEmpty(registerProtocol, "注册协议不能为空");
-        String registerGroup = dubboConfig.getRegisterGroup();
-        String rpcProtocol = dubboConfig.getRpcProtocol();
+        String registerGroup = dubboProperties.getRegisterGroup();
+        String rpcProtocol = dubboProperties.getRpcProtocol();
         RegisterType registerType = RegisterType.getByMessage(registerProtocol);
         if (registerType == null) {
             throw new IllegalArgumentException("注册协议类型不存在");
@@ -74,13 +74,13 @@ public class ReferenceConfigGenerator {
             default:
                 break;
         }
-        referenceConfig.setRetries(dubboConfig.getRetries());
-        referenceConfig.setCluster(dubboConfig.getCluster());
-        referenceConfig.setVersion(dubboConfig.getVersion());
-        referenceConfig.setTimeout(dubboConfig.getTimeout());
-        referenceConfig.setGroup(dubboConfig.getGroup());
-        referenceConfig.setConnections(dubboConfig.getConnections());
-        referenceConfig.setLoadbalance(dubboConfig.getLoadBalance());
+        referenceConfig.setRetries(dubboProperties.getRetries());
+        referenceConfig.setCluster(dubboProperties.getCluster());
+        referenceConfig.setVersion(dubboProperties.getVersion());
+        referenceConfig.setTimeout(dubboProperties.getTimeout());
+        referenceConfig.setGroup(dubboProperties.getGroup());
+        referenceConfig.setConnections(dubboProperties.getConnections());
+        referenceConfig.setLoadbalance(dubboProperties.getLoadBalance());
         return referenceConfig;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -24,28 +25,29 @@ import javax.sql.DataSource;
  * @date 2019/3/21 11:24
  * mybatis 整合spring配置文件
  */
-@Configuration
 /**
  *启注解事务管理，等同于xml配置方式的 <tx:annotation-driven />
  */
-//@EnableTransactionManagement
+@Configuration
+@EnableTransactionManagement
 public class MybatisConfiguration {
 
-/*
     @Bean(name = "transactionManager")
-    public PlatformTransactionManager transactionManager(@Qualifier("dataSource") DruidDataSource dataSource) {
+    @Primary
+    public DataSourceTransactionManager transactionManager(@Qualifier("dataSource") DruidDataSource dataSource) {
         final DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
         transactionManager.setDataSource(dataSource);
         return transactionManager;
     }
-*/
 
     @Bean("sqlSessionFactory")
+    @Primary
     public SqlSessionFactoryBean sqlSessionFactory(@Qualifier(value = "dataSource") DruidDataSource dataSource) {
         return getSqlSessionFactory(dataSource);
     }
 
     @Bean("mapperScannerConfigurer")
+    @Primary
     public MapperScannerConfigurer mapperScannerConfigurer() {
         final MapperScannerConfigurer mapperScannerConfigure = new MapperScannerConfigurer();
         mapperScannerConfigure.setSqlSessionFactoryBeanName("sqlSessionFactory");

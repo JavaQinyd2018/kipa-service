@@ -1,7 +1,7 @@
 package com.kipa.config;
 
 import com.kipa.common.DataConstant;
-import com.kipa.mq.producer.MQProducerConfig;
+import com.kipa.mq.producer.MQProducerProperties;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,14 +56,14 @@ public class MQProducerConfiguration {
     }
 
     @Bean
-    public MQProducerConfig mqProducerConfig() {
-        MQProducerConfig mqProducerConfig = new MQProducerConfig();
-        mqProducerConfig.setNameServerAddress(nameServerAddress);
-        mqProducerConfig.setGroupName(groupName);
-        mqProducerConfig.setMaxMessageSize(maxMessageSize);
-        mqProducerConfig.setRetryTimesWhenSendFailed(retryTimesWhenSendFailed);
-        mqProducerConfig.setSendMsgTimeout(sendMsgTimeout);
-        return mqProducerConfig;
+    public MQProducerProperties mqProducerProperties() {
+        MQProducerProperties mqProducerProperties = new MQProducerProperties();
+        mqProducerProperties.setNameServerAddress(nameServerAddress);
+        mqProducerProperties.setGroupName(groupName);
+        mqProducerProperties.setMaxMessageSize(maxMessageSize);
+        mqProducerProperties.setRetryTimesWhenSendFailed(retryTimesWhenSendFailed);
+        mqProducerProperties.setSendMsgTimeout(sendMsgTimeout);
+        return mqProducerProperties;
     }
 
 }

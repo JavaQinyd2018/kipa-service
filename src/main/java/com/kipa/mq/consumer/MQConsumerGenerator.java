@@ -21,16 +21,16 @@ import java.util.Map;
 @Component
 public class MQConsumerGenerator {
 
-    public MQConsumer createMQConsumer(MQConsumerConfig mqConsumerConfig, SubscribeConfig subscribeConfig) {
-        PreCheckUtils.checkEmpty(mqConsumerConfig, "MQ消费端的配置信息不能为空");
+    public MQConsumer createMQConsumer(MQConsumerProperties mqConsumerProperties, SubscribeConfig subscribeConfig) {
+        PreCheckUtils.checkEmpty(mqConsumerProperties, "MQ消费端的配置信息不能为空");
         PreCheckUtils.checkEmpty(subscribeConfig, "MQ消费端的消息订阅配置不能为空");
         if (subscribeConfig.getPattern() == ConsumePattern.PUSH) {
             DefaultMQPushConsumer consumer = new DefaultMQPushConsumer();
-            consumer.setNamesrvAddr(mqConsumerConfig.getNameServerAddress());
-            consumer.setConsumerGroup(mqConsumerConfig.getGroupName());
-            consumer.setConsumeThreadMin(mqConsumerConfig.getConsumeThreadMin());
-            consumer.setConsumeThreadMax(mqConsumerConfig.getConsumeThreadMax());
-            consumer.setConsumeConcurrentlyMaxSpan(mqConsumerConfig.getConsumeMessageBatchMaxSize());
+            consumer.setNamesrvAddr(mqConsumerProperties.getNameServerAddress());
+            consumer.setConsumerGroup(mqConsumerProperties.getGroupName());
+            consumer.setConsumeThreadMin(mqConsumerProperties.getConsumeThreadMin());
+            consumer.setConsumeThreadMax(mqConsumerProperties.getConsumeThreadMax());
+            consumer.setConsumeConcurrentlyMaxSpan(mqConsumerProperties.getConsumeMessageBatchMaxSize());
             consumer.setConsumeFromWhere(subscribeConfig.getConsumePosition());
             consumer.setMessageModel(subscribeConfig.getMessageModel());
             Map<String, Method> tags = subscribeConfig.getTags();
@@ -51,8 +51,8 @@ public class MQConsumerGenerator {
             return consumer;
         }else if (subscribeConfig.getPattern() == ConsumePattern.PULL) {
             DefaultMQPullConsumer consumer = new DefaultMQPullConsumer();
-            consumer.setNamesrvAddr(mqConsumerConfig.getNameServerAddress());
-            consumer.setConsumerGroup(mqConsumerConfig.getGroupName());
+            consumer.setNamesrvAddr(mqConsumerProperties.getNameServerAddress());
+            consumer.setConsumerGroup(mqConsumerProperties.getGroupName());
             consumer.setMessageModel(subscribeConfig.getMessageModel());
             return consumer;
         }

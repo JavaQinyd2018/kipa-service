@@ -8,7 +8,7 @@ import lombok.Data;
  * mock 服务的配置信息
  */
 @Data
-public class MockServerConfig {
+public class MockServerProperties {
 
     /**
      * 远程host

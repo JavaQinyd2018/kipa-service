@@ -24,7 +24,7 @@ public class MockDubboServiceContainer implements SmartLifecycle, InitializingBe
     private MockDubboServiceRegister mockDubboServiceRegister;
 
     @Autowired
-    private MockDubboConfig mockDubboConfig;
+    private MockDubboProperties mockDubboProperties;
 
     private String interfaceName;
 
@@ -45,7 +45,7 @@ public class MockDubboServiceContainer implements SmartLifecycle, InitializingBe
     public void start() {
         if (initialized.get() && !isRunning()) {
             running.set(true);
-            mockDubboServiceRegister.exportService(mockDubboConfig, interfaceName, mockDubboGenericService);
+            mockDubboServiceRegister.exportService(mockDubboProperties, interfaceName, mockDubboGenericService);
         }
     }
 

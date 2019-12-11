@@ -1,7 +1,7 @@
 package com.kipa.config;
 
 import com.kipa.common.DataConstant;
-import com.kipa.dubbo.entity.DubboConfig;
+import com.kipa.dubbo.entity.DubboProperties;
 import com.kipa.env.DubboContextHolder;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
@@ -103,27 +103,27 @@ public class DubboConfiguration {
         PreCheckUtils.checkEmpty(address, "注册中心地址或者目标服务地址不能为空");
     }
 
-    @Bean("dubboConfig")
-    public DubboConfig dubboConfig() {
-        DubboConfig dubboConfig = new DubboConfig();
-        dubboConfig.setApplicationName(applicationName);
-        dubboConfig.setApplicationOrganization(applicationOrganization);
-        dubboConfig.setApplicationOwner(applicationOwner);
-        dubboConfig.setRegisterProtocol(registerProtocol);
-        dubboConfig.setRegisterGroup(group);
-        dubboConfig.setAddress(address);
-        dubboConfig.setRegisterTimeout(registerTimeout);
-        dubboConfig.setRpcProtocol(rpcProtocol);
-        dubboConfig.setProtocol(protocol);
-        dubboConfig.setVersion(version);
-        dubboConfig.setRetries(retries);
-        dubboConfig.setCluster(cluster);
-        dubboConfig.setGroup(group);
-        dubboConfig.setConnections(connections);
-        dubboConfig.setLoadBalance(loadBalance);
-        dubboConfig.setCheck(check);
-        dubboConfig.setTimeout(timeout);
-        return dubboConfig;
+    @Bean("dubboProperties")
+    public DubboProperties dubboProperties() {
+        DubboProperties dubboProperties = new DubboProperties();
+        dubboProperties.setApplicationName(applicationName);
+        dubboProperties.setApplicationOrganization(applicationOrganization);
+        dubboProperties.setApplicationOwner(applicationOwner);
+        dubboProperties.setRegisterProtocol(registerProtocol);
+        dubboProperties.setRegisterGroup(group);
+        dubboProperties.setAddress(address);
+        dubboProperties.setRegisterTimeout(registerTimeout);
+        dubboProperties.setRpcProtocol(rpcProtocol);
+        dubboProperties.setProtocol(protocol);
+        dubboProperties.setVersion(version);
+        dubboProperties.setRetries(retries);
+        dubboProperties.setCluster(cluster);
+        dubboProperties.setGroup(group);
+        dubboProperties.setConnections(connections);
+        dubboProperties.setLoadBalance(loadBalance);
+        dubboProperties.setCheck(check);
+        dubboProperties.setTimeout(timeout);
+        return dubboProperties;
     }
 
     @PreDestroy

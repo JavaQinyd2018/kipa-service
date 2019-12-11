@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-public class MQProducerConfig {
+public class MQProducerProperties {
 
     private String groupName;
     private String nameServerAddress;

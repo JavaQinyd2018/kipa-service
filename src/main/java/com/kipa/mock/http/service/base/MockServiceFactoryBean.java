@@ -34,7 +34,7 @@ public class MockServiceFactoryBean implements FactoryBean<BaseMockService>, Ini
     private MockServiceGenerator mockServiceGenerator;
 
     @Autowired
-    private MockServerConfig mockServerConfig;
+    private MockServerProperties mockServerProperties;
 
     @Autowired
     private MockRequestConvert mockRequestConvert;
@@ -74,7 +74,7 @@ public class MockServiceFactoryBean implements FactoryBean<BaseMockService>, Ini
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        clientAndServer = mockServiceGenerator.build(mockServerConfig);
+        clientAndServer = mockServiceGenerator.build(mockServerProperties);
     }
 
     class MockServiceHandler implements InvocationHandler{

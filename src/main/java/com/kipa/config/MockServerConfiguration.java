@@ -2,8 +2,8 @@ package com.kipa.config;
 
 import com.kipa.common.DataConstant;
 import com.kipa.common.KipaProcessException;
-import com.kipa.mock.dubbo.MockDubboConfig;
-import com.kipa.mock.http.entity.MockServerConfig;
+import com.kipa.mock.dubbo.MockDubboProperties;
+import com.kipa.mock.http.entity.MockServerProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -82,25 +82,25 @@ public class MockServerConfiguration {
     }
 
     @Bean
-    public MockServerConfig mockServerConfig() {
-        MockServerConfig config = new MockServerConfig();
+    public MockServerProperties mockServerProperties() {
+        MockServerProperties properties = new MockServerProperties();
         init();
-        config.setRemoteHost(remoteHost);
-        config.setRemotePort(remotePort);
-        config.setLocalPort(localPort);
-        return config;
+        properties.setRemoteHost(remoteHost);
+        properties.setRemotePort(remotePort);
+        properties.setLocalPort(localPort);
+        return properties;
     }
 
     @Bean
-    public MockDubboConfig mockDubboConfig() {
-        MockDubboConfig dubboConfig = new MockDubboConfig();
-        dubboConfig.setRegisterProtocol(registerProtocol);
-        dubboConfig.setAddress(address);
-        dubboConfig.setRegisterTimeout(registerTimeout);
+    public MockDubboProperties mockDubboProperties() {
+        MockDubboProperties dubboProperties = new MockDubboProperties();
+        dubboProperties.setRegisterProtocol(registerProtocol);
+        dubboProperties.setAddress(address);
+        dubboProperties.setRegisterTimeout(registerTimeout);
 
-        dubboConfig.setApplicationName(applicationName);
-        dubboConfig.setApplicationOwner(applicationOwner);
-        dubboConfig.setApplicationOrganization(applicationOrganization);
-        return dubboConfig;
+        dubboProperties.setApplicationName(applicationName);
+        dubboProperties.setApplicationOwner(applicationOwner);
+        dubboProperties.setApplicationOrganization(applicationOrganization);
+        return dubboProperties;
     }
 }

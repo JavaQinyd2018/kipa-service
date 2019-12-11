@@ -39,7 +39,7 @@ public class MQConsumerServiceContext implements InitializingBean, SmartLifecycl
     private RocketMQListenerProcessor rocketMQListenerProcessor;
 
     @Autowired
-    private MQConsumerConfig mqConsumerConfig;
+    private MQConsumerProperties mqConsumerProperties;
 
     @Autowired
     private MQConsumerGenerator mqConsumerGenerator;
@@ -161,7 +161,7 @@ public class MQConsumerServiceContext implements InitializingBean, SmartLifecycl
         if (CollectionUtils.isNotEmpty(subscribeConfigList)) {
             subscribeConfigList.forEach(subscribeConfig -> {
                 if (subscribeConfig.getPattern() == ConsumePattern.PUSH) {
-                    DefaultMQPushConsumer mqConsumer = (DefaultMQPushConsumer) mqConsumerGenerator.createMQConsumer(mqConsumerConfig, subscribeConfig);
+                    DefaultMQPushConsumer mqConsumer = (DefaultMQPushConsumer) mqConsumerGenerator.createMQConsumer(mqConsumerProperties, subscribeConfig);
                     if (subscribeConfig.getSubscribeModel() == SubscribeModel.CURRENTLY) {
                         mqConsumer.registerMessageListener(new MessageListenerConcurrentlyImpl(subscribeConfig));
                     }else if (subscribeConfig.getSubscribeModel() == SubscribeModel.ORDERLY) {
@@ -170,7 +170,7 @@ public class MQConsumerServiceContext implements InitializingBean, SmartLifecycl
                     defaultMQPushConsumerMap.put(subscribeConfig.getTopic(), mqConsumer);
                 }else if (subscribeConfig.getPattern() == ConsumePattern.PULL){
                     //todo 暂时先不支持
-                    DefaultMQPullConsumer mqConsumer = (DefaultMQPullConsumer) mqConsumerGenerator.createMQConsumer(mqConsumerConfig, subscribeConfig);
+                    DefaultMQPullConsumer mqConsumer = (DefaultMQPullConsumer) mqConsumerGenerator.createMQConsumer(mqConsumerProperties, subscribeConfig);
                     defaultMQPullConsumerMap.put(subscribeConfig.getTopic(), mqConsumer);
                 }
 
