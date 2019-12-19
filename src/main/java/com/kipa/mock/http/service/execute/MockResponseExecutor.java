@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
  * @date: 2019/4/8 17:20
  * 正常响应执行器
  */
-@Service("mockResponseExecutor")
 public class MockResponseExecutor implements MockExecutor<HttpResponse> {
     @Override
     public void execute(ClientAndServer clientAndServer,

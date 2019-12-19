@@ -1,6 +1,7 @@
 package com.kipa.mock.http.service.execute;
 
 import com.kipa.common.KipaProcessException;
+import com.kipa.common.core.Convertor;
 import com.kipa.mock.http.entity.BaseMockError;
 import org.mockserver.model.HttpError;
 import org.springframework.stereotype.Service;
@@ -11,8 +12,7 @@ import java.util.concurrent.TimeUnit;
  * @author: Qinyadong
  * @date: 2019/4/8 17:44
  */
-@Service("mockErrorConvert")
-public class MockErrorConvert implements MockConvert<BaseMockError, HttpError> {
+public class MockErrorConvert implements Convertor<BaseMockError, HttpError> {
     @Override
     public HttpError convert(BaseMockError baseMockError) {
         if (baseMockError == null) {

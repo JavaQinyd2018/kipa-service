@@ -1,6 +1,7 @@
 package com.kipa.mock.http.service.execute;
 
 import com.kipa.common.KipaProcessException;
+import com.kipa.common.core.Convertor;
 import com.kipa.mock.http.annotation.MockMethod;
 import com.kipa.mock.http.entity.BaseMockRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +17,7 @@ import java.util.Map;
  * @date: 2019/4/8 16:13
  */
 @Slf4j
-@Service("mockRequestConvert")
-public class MockRequestConvert implements MockConvert<BaseMockRequest, HttpRequest> {
+public class MockRequestConvert implements Convertor<BaseMockRequest, HttpRequest> {
     @Override
     public HttpRequest convert(BaseMockRequest baseMockRequest) {
         log.debug("mock请求的信息：{}", baseMockRequest);

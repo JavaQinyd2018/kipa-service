@@ -1,6 +1,7 @@
 package com.kipa.mock.http.service.execute;
 
 import com.kipa.common.KipaProcessException;
+import com.kipa.common.core.Convertor;
 import com.kipa.mock.http.entity.BaseMockResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -14,9 +15,8 @@ import java.util.concurrent.TimeUnit;
  * @author: Qinyadong
  * @date: 2019/4/8 16:47
  */
-@Service("mockResponseConvert")
 @Slf4j
-public class MockResponseConvert implements MockConvert<BaseMockResponse, HttpResponse> {
+public class MockResponseConvert implements Convertor<BaseMockResponse, HttpResponse> {
 
     @Override
     public HttpResponse convert(BaseMockResponse response) {
