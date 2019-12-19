@@ -1,5 +1,6 @@
 package com.kipa.http.service.base;
 
+import com.kipa.common.core.ClientFactory;
 import com.kipa.http.core.HttpConstant;
 import com.kipa.http.core.OkHttpClientProperties;
 import com.kipa.http.ssl.SSLSocketFactoryManager;
@@ -16,16 +17,17 @@ import java.util.concurrent.TimeUnit;
  * @Date: 2019/3/30
  * OkhttpClient生成器
  */
-@Component
-public class OkHttpClientGenerator{
+public class OkHttpClientFactory implements ClientFactory<OkHttpClientProperties, OkHttpClient> {
 
-    public OkHttpClient build(OkHttpClientProperties config) {
+    @Override
+    public OkHttpClient create(OkHttpClientProperties properties) throws Exception {
+        return properties == null ? build() : build(properties);
+    }
+
+    private OkHttpClient build(OkHttpClientProperties config) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        if (config == null) {
-            throw new IllegalArgumentException("http客户端的配置项不能为空");
-        }
         builder.connectTimeout(config.getConnectTimeout() != 0 ? config.getConnectTimeout(): HttpConstant.CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .readTimeout(config.getReadTimeout() != 0 ? config.getReadTimeout() : HttpConstant.READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .writeTimeout(config.getWriteTimeout() != 0 ? config.getWriteTimeout() : HttpConstant.WRITE_TIMEOUT_SECONDS, TimeUnit.SECONDS)
@@ -40,7 +42,7 @@ public class OkHttpClientGenerator{
         return builder.build();
     }
 
-    public OkHttpClient build() {
+    private OkHttpClient build() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 

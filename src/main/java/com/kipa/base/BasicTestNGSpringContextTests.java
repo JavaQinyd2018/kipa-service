@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
 /**
@@ -42,7 +43,7 @@ public class BasicTestNGSpringContextTests extends AbstractTestNGSpringContextTe
         if (!ObjectUtils.isEmpty(resource)) {
             try {
                 InputStream inputStream = resource.getInputStream();
-                String banner = StreamUtils.copyToString(inputStream, Charset.forName("UTF-8"));
+                String banner = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
                 log.debug("框架初始化：\n{}",banner);
             } catch (IOException e) {
                 log.warn("获取banner信息失败");

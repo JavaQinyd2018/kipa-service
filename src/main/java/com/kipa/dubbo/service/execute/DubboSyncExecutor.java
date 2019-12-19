@@ -12,23 +12,9 @@ import org.springframework.stereotype.Service;
  * 同步执行
  */
 @Slf4j
-@Service("dubboSyncExecutor")
-public class DubboSyncExecutor implements DubboExecutor {
-
+public class DubboSyncExecutor extends AbstractDubboExecutor {
     @Override
-    public Object execute(GenericService genericService, WrappedDubboParameter wrappedDubboParameter) {
-        if (genericService == null) {
-            throw new DubboInvokeException("泛化服务生成为空");
-        }
-
-        try {
-            long startTime = System.currentTimeMillis();
-            Object result = genericService.$invoke(wrappedDubboParameter.getMethodName(), wrappedDubboParameter.getParamTypeArray(), wrappedDubboParameter.getValueArray());
-            long endTime = System.currentTimeMillis();
-            log.info("接口调用执行的总时长为：{}ms",endTime - startTime);
-            return result;
-        } catch (Exception exception) {
-            throw new DubboInvokeException("调用接口失败",exception);
-        }
+    Object invoke(GenericService genericService, String methodName, String[] paramTypes, Object[] values) throws Exception{
+        return genericService.$invoke(methodName, paramTypes, values);
     }
 }

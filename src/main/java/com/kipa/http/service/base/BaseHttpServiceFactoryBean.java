@@ -15,6 +15,7 @@ import okhttp3.Response;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,19 +31,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @SuppressWarnings("all")
 @Service("baseHttpService")
-public class BaseHttpServiceFactoryBean implements FactoryBean<BaseHttpService> {
+public class BaseHttpServiceFactoryBean implements FactoryBean<BaseHttpService>, InitializingBean {
 
-    @Autowired
     private HttpSyncExecutor httpSyncExecutor;
-
-    @Autowired
     private HttpAsyncExecutor httpAsyncExecutor;
-
-    @Autowired
     private RequestConvert requestConvert;
-
-    @Autowired
     private ResponseConvert responseConvert;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        httpSyncExecutor = new HttpSyncExecutor();
+        requestConvert = new RequestConvert();
+        responseConvert = new ResponseConvert();
+        httpAsyncExecutor = new HttpAsyncExecutor();
+    }
 
     @Override
     public BaseHttpService getObject() throws Exception {
@@ -98,11 +100,12 @@ public class BaseHttpServiceFactoryBean implements FactoryBean<BaseHttpService> 
 
             Request request = requestConvert.convert(httpRequest);
             if (invokeType == InvokeType.SYNC) {
-                Response response = httpSyncExecutor.execute(okHttpClient, request, null);
+                Response response = httpSyncExecutor.execute(okHttpClient, request);
                 //如果是下载文件的话，转化为下载文件的结果，其他的get、post、put、delete等操作返回对应的结果
                 return flag.get() ? responseConvert.convertDownloadFile(response, localDir) : responseConvert.convert(response);
             }else if (invokeType == InvokeType.ASYNC) {
-                httpAsyncExecutor.execute(okHttpClient, request, httpRequest.getCallback());
+                httpAsyncExecutor.setCallback(httpRequest.getCallback());
+                httpAsyncExecutor.execute(okHttpClient, request);
             }
             return null;
         }

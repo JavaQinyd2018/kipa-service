@@ -16,7 +16,7 @@ import java.io.IOException;
 public interface ResultCallback extends Callback {
     @Override
     default void onFailure(Call call, IOException e) {
-        throw new HttpProcessException("http异步回调异常，错误原因是："+ e);
+        throw new HttpProcessException("http异步回调异常，错误原因是", e);
     }
 
     @Override

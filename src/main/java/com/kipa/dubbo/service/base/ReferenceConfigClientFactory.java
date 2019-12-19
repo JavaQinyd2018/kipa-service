@@ -3,6 +3,7 @@ package com.kipa.dubbo.service.base;
 import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
+import com.kipa.common.core.ClientFactory;
 import com.kipa.dubbo.entity.DubboProperties;
 import com.kipa.dubbo.enums.RegisterType;
 import com.kipa.utils.PreCheckUtils;
@@ -14,9 +15,14 @@ import org.springframework.stereotype.Service;
  * 引用配置的生成器
  */
 @Service("referenceConfigGenerator")
-public class ReferenceConfigGenerator {
+public class ReferenceConfigClientFactory implements ClientFactory<DubboProperties, ReferenceConfig> {
 
-    public ReferenceConfig build(DubboProperties dubboProperties) {
+    @Override
+    public ReferenceConfig create(DubboProperties properties) throws Exception {
+        return build(properties);
+    }
+
+    private ReferenceConfig build(DubboProperties dubboProperties) {
         PreCheckUtils.checkEmpty(dubboProperties, "dubbo的配置信息不能为空");
         PreCheckUtils.checkEmpty(dubboProperties.getApplicationName(), "dubbo消费端的应用名称不能为空");
         ReferenceConfig referenceConfig = new ReferenceConfig();

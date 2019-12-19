@@ -7,7 +7,7 @@ import com.kipa.http.emuns.HttpSendMethod;
 import com.kipa.http.emuns.InvokeType;
 import com.kipa.http.service.HttpInvokeService;
 import com.kipa.http.service.base.BaseHttpService;
-import com.kipa.http.service.base.OkHttpClientGenerator;
+import com.kipa.http.service.base.OkHttpClientFactory;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.InitializingBean;
@@ -28,14 +28,12 @@ public class HttpsInvokeServiceImpl extends AbstractInvokeServiceImpl implements
     private BaseHttpService baseHttpService;
 
     @Autowired
-    private OkHttpClientGenerator okHttpClientGenerator;
-
-    @Autowired
     private OkHttpClientProperties okHttpClientProperties;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        okHttpClient = okHttpClientGenerator.build(okHttpClientProperties);
+        OkHttpClientFactory okHttpClientFactory = new OkHttpClientFactory();
+        okHttpClient = okHttpClientFactory.create(okHttpClientProperties);
     }
 
     @Override

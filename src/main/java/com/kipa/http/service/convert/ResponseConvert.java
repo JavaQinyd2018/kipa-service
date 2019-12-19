@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.kipa.common.KipaProcessException;
+import com.kipa.common.core.Convertor;
 import com.kipa.http.core.HeaderConstant;
 import com.kipa.http.core.HttpHeadConstant;
 import com.kipa.http.core.HttpResponse;
@@ -30,7 +31,7 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-public class ResponseConvert implements Convert<Response, HttpResponse> {
+public class ResponseConvert implements Convertor<Response, HttpResponse> {
 
     private static final String JSON_OBJECT_FLAG = "{";
     private static final String JSON_ARRAY_FLAG = "[";

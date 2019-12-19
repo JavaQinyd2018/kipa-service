@@ -1,6 +1,6 @@
 package com.kipa.http.service.execute;
 
-import com.kipa.http.exception.HttpProcessException;
+import com.kipa.common.core.Executor;
 import okhttp3.*;
 import org.springframework.stereotype.Service;
 
@@ -9,16 +9,9 @@ import org.springframework.stereotype.Service;
  * @Date: 2019/3/30
  * http同步执行请求
  */
-@Service
-public class HttpSyncExecutor implements HttpExecutor {
-
+public class HttpSyncExecutor implements Executor<OkHttpClient, Request, Response> {
     @Override
-    public Response execute(OkHttpClient client, Request request, Callback callback) {
-        Call call = client.newCall(request);
-        try {
-            return call.execute();
-        } catch (Exception e) {
-            throw new HttpProcessException("http调用失败",e);
-        }
+    public Response execute(OkHttpClient client, Request request) throws Exception {
+        return client.newCall(request).execute();
     }
 }

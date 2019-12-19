@@ -2,6 +2,7 @@ package com.kipa.http.service.convert;
 
 import com.alibaba.fastjson.JSONObject;
 import com.kipa.common.KipaProcessException;
+import com.kipa.common.core.Convertor;
 import com.kipa.http.core.HeaderConstant;
 import com.kipa.http.core.HttpRequest;
 import com.kipa.http.emuns.HttpSendMethod;
@@ -22,7 +23,7 @@ import java.util.Map;
  */
 @Component
 @Slf4j
-public class RequestConvert implements Convert<HttpRequest, Request> {
+public class RequestConvert implements Convertor<HttpRequest, Request> {
 
     @Override
     public Request convert(HttpRequest httpRequest) {

@@ -39,16 +39,8 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
     @Autowired
     private DubboProperties dubboProperties;
 
-    @Autowired
-    private ReferenceConfigGenerator referenceConfigGenerator;
-
-    @Autowired
     private DubboSyncExecutor dubboSyncExecutor;
-
-    @Autowired
     private DubboAsyncExecutor dubboAsyncExecutor;
-
-    @Autowired
     private DubboRequestConvert dubboRequestConvert;
 
     @Override
@@ -68,7 +60,11 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
 
     @Override
     public void afterPropertiesSet() throws Exception {
-         referenceConfig = referenceConfigGenerator.build(dubboProperties);
+        ReferenceConfigClientFactory clientFactory = new ReferenceConfigClientFactory();
+        dubboAsyncExecutor = new DubboAsyncExecutor();
+        dubboSyncExecutor = new DubboSyncExecutor();
+        dubboRequestConvert= new DubboRequestConvert();
+        referenceConfig = clientFactory.create(dubboProperties);
     }
 
     class DubboInvokeHandler implements InvocationHandler{
@@ -100,6 +96,7 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
                 case ASYNCHRONOUS:
                     referenceConfig.setAsync(true);
                     genericService = getGenericService(cache, referenceConfig);
+                    dubboAsyncExecutor.setResponseCallback(parameter.getResponseCallback());
                     result = dubboAsyncExecutor.execute(genericService, parameter);
                     break;
                 case DIRECTED_LINK:

@@ -1,20 +1,20 @@
 package com.kipa.http.service.execute;
-
+import lombok.Setter;
 import okhttp3.*;
-import org.springframework.stereotype.Component;
-
+import org.springframework.util.Assert;
 
 /**
  * @Author: Yadong Qin
  * @Date: 2019/3/30
  * http异步执行请求
  */
-@Component
-public class HttpAsyncExecutor implements HttpExecutor {
-    @Override
-    public Response execute(OkHttpClient client, Request request, Callback callback) {
+public class HttpAsyncExecutor extends AbstractHttpExecutor {
+    @Setter
+    private Callback callback;
 
-        Call call = client.newCall(request);
+    @Override
+    Response invoke(Call call) throws Exception {
+        Assert.notNull(callback, "callback接口不能为空");
         call.enqueue(callback);
         return null;
     }

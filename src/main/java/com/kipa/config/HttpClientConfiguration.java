@@ -59,12 +59,12 @@ public class HttpClientConfiguration {
     public void init() {
         String flag = HttpContextHolder.getFlag();
         Properties properties = PropertiesUtils.loadProperties(DataConstant.CONFIG_FILE);
-        verifySSLCertificate = Boolean.valueOf(PropertiesUtils.getProperty(properties, flag,"okhttp.client.verifySSLCertificate"));
+        verifySSLCertificate = Boolean.parseBoolean(PropertiesUtils.getProperty(properties, flag,"okhttp.client.verifySSLCertificate"));
         certificatePath = PropertiesUtils.getProperty(properties, flag, "okhttp.client.certificatePath");
         keyStorePass = PropertiesUtils.getProperty(properties, flag,"okhttp.client.keyStorePass");
         keyStorePath = PropertiesUtils.getProperty(properties, flag, "okhttp.client.keyStorePath");
-        maxIdleConnections = Integer.valueOf(PropertiesUtils.getProperty(properties,flag, "okhttp.client.maxIdleConnections"));
-        keepAliveDuration = Integer.valueOf(PropertiesUtils.getProperty(properties, flag, "okhttp.client.keepAliveDuration"));
+        maxIdleConnections = Integer.parseInt(PropertiesUtils.getProperty(properties,flag, "okhttp.client.maxIdleConnections"));
+        keepAliveDuration = Integer.parseInt(PropertiesUtils.getProperty(properties, flag, "okhttp.client.keepAliveDuration"));
     }
 
     @Bean
