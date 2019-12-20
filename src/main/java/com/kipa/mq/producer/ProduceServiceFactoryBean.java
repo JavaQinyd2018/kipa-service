@@ -39,7 +39,7 @@ public class ProduceServiceFactoryBean implements FactoryBean<BaseProducerServic
         return false;
     }
 
-    private class ProducerInvocationHandler implements InvocationHandler{
+    private static class ProducerInvocationHandler implements InvocationHandler{
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

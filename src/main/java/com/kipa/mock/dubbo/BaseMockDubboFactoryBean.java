@@ -36,9 +36,8 @@ public class BaseMockDubboFactoryBean implements FactoryBean<MockDubboService>{
         return false;
     }
 
-
     
-    class MockDubboInvocationHandler implements InvocationHandler {
+    static class MockDubboInvocationHandler implements InvocationHandler {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
