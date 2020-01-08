@@ -15,7 +15,7 @@ import java.util.Map;
 @SuppressWarnings("all")
 public class SelectSqlProvider {
 
-    public synchronized String selectOneByCondition(final Map<String, Object> paramMap) {
+    public String selectOneByCondition(final Map<String, Object> paramMap) {
         String tableName = (String) paramMap.get("tableName");
         PreCheckUtils.checkEmpty(tableName, "表名不能为空");
         SQL sql = new SQL()
@@ -25,7 +25,7 @@ public class SelectSqlProvider {
         return sql.toString() + " limit 0,1";
     }
 
-    public synchronized String selectListByCondition(final Map<String, Object> paramMap) {
+    public String selectListByCondition(final Map<String, Object> paramMap) {
         String tableName = (String) paramMap.get("tableName");
         PreCheckUtils.checkEmpty(tableName, "表名不能为空");
         SQL sql = new SQL()
@@ -35,19 +35,19 @@ public class SelectSqlProvider {
         return sql.toString();
     }
 
-    public synchronized String selectOneBySql(final Map<String,Object> paramMap) {
+    public String selectOneBySql(final Map<String,Object> paramMap) {
         return (String) paramMap.get("sql") + " limit 0,1";
     }
 
-    public synchronized String selectListBySql(final Map<String,Object> paramMap) {
+    public String selectListBySql(final Map<String,Object> paramMap) {
         return (String) paramMap.get("sql");
     }
 
-    public synchronized String countBysql(final Map<String,Object> paramMap) {
+    public String countBysql(final Map<String,Object> paramMap) {
         return (String) paramMap.get("sql");
     }
 
-    public synchronized String countByCondition(final Map<String,Object> paramMap) {
+    public String countByCondition(final Map<String,Object> paramMap) {
         String tableName = (String) paramMap.get("tableName");
         PreCheckUtils.checkEmpty(tableName, "表名不能为空");
         SQL sql = new SQL()
@@ -62,11 +62,11 @@ public class SelectSqlProvider {
     }
 
 
-    public synchronized String countColumnBySql(final Map<String,Object> paramMap) {
+    public String countColumnBySql(final Map<String,Object> paramMap) {
         return (String) paramMap.get("sql");
     }
 
-    public synchronized String countColumnByCondition(final Map<String,Object> paramMap) {
+    public String countColumnByCondition(final Map<String,Object> paramMap) {
         String tableName = (String) paramMap.get("tableName");
         PreCheckUtils.checkEmpty(tableName, "表名不能为空");
         String columnName = (String) paramMap.get("columnName");
@@ -81,11 +81,11 @@ public class SelectSqlProvider {
         return sql.toString();
     }
 
-    public synchronized String selectColumnBySql(final Map<String,Object> paramMap) {
+    public String selectColumnBySql(final Map<String,Object> paramMap) {
         return (String) paramMap.get("sql");
     }
 
-    public synchronized String selectColumnByCondition(final Map<String,Object> paramMap) {
+    public String selectColumnByCondition(final Map<String,Object> paramMap) {
         String tableName = (String) paramMap.get("tableName");
         if (StringUtils.isBlank(tableName)) {
             throw new IllegalArgumentException("表名不能为空");
@@ -103,11 +103,11 @@ public class SelectSqlProvider {
         return sql.toString();
     }
 
-    public synchronized String selectPageBySql(final Map<String,Object> paramMap) {
+    public String selectPageBySql(final Map<String,Object> paramMap) {
         return (String) paramMap.get("sql");
     }
 
-    public synchronized String selectPageByCondition(final Map<String,Object> paramMap) {
+    public String selectPageByCondition(final Map<String,Object> paramMap) {
         String tableName = (String) paramMap.get("tableName");
         PreCheckUtils.checkEmpty(tableName, "表名不能为空");
         SQL sql = new SQL()
@@ -120,7 +120,7 @@ public class SelectSqlProvider {
         return String.format("%s limit %s,%s", sql.toString(), start, pageSize);
     }
 
-    private synchronized void assmebleWhereSQL(final Map<String,Object> paramMap, SQL sql) {
+    private void assmebleWhereSQL(final Map<String,Object> paramMap, SQL sql) {
         List<String> conditionList = (List)paramMap.get("whereConditionList");
         if (CollectionUtils.isNotEmpty(conditionList)) {
             conditionList.forEach(condition -> {

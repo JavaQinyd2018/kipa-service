@@ -1,7 +1,7 @@
 package com.kipa.http.service.impl;
 
 import com.google.common.collect.Maps;
-import com.kipa.http.core.HttpResponse;
+import com.kipa.http.excute.HttpResponse;
 import com.kipa.http.service.HttpMetaService;
 import com.kipa.utils.PreCheckUtils;
 import org.springframework.beans.factory.annotation.Autowired;

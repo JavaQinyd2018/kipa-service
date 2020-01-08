@@ -13,7 +13,7 @@ import java.util.Map;
 public class UpdateSqlProvider {
 
     @SuppressWarnings("all")
-    public synchronized String update(Map<String,Object> paramMap) {
+    public String update(Map<String,Object> paramMap) {
         String tableName = (String) paramMap.get("tableName");
         PreCheckUtils.checkEmpty(tableName, "表名不能为空");
         SQL sql = new SQL().UPDATE(tableName);
@@ -24,7 +24,7 @@ public class UpdateSqlProvider {
         return sql.toString();
     }
 
-    public synchronized String updateBySql(Map<String, Object> paramMap) {
+    public String updateBySql(Map<String, Object> paramMap) {
         return (String) paramMap.get("sql");
     }
 }

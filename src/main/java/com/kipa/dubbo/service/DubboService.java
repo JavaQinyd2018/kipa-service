@@ -1,8 +1,8 @@
 package com.kipa.dubbo.service;
 
 import com.alibaba.dubbo.remoting.exchange.ResponseCallback;
-import com.kipa.dubbo.entity.DubboRequest;
-import com.kipa.dubbo.entity.DubboResponse;
+import com.kipa.dubbo.excute.DubboRequest;
+import com.kipa.dubbo.excute.DubboResponse;
 
 import java.util.List;
 import java.util.Map;

@@ -12,7 +12,7 @@ import java.util.Map;
 @SuppressWarnings("all")
 public class DeleteSqlProvider {
 
-    public synchronized String delete(Map<String, Object> paramMap) {
+    public String delete(Map<String, Object> paramMap) {
         String tableName = (String) paramMap.get("tableName");
         SQL sql = new SQL().DELETE_FROM(tableName);
         List<String> deleteConditionList = (List<String>) paramMap.get("deleteConditionList");
@@ -20,7 +20,7 @@ public class DeleteSqlProvider {
         return sql.toString();
     }
 
-    public synchronized String deleteBySql(Map<String, Object> paramMap) {
+    public String deleteBySql(Map<String, Object> paramMap) {
         return (String) paramMap.get("sql");
     }
 }

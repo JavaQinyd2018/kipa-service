@@ -5,8 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.kipa.http.core.HttpResponse;
-import com.kipa.http.exception.HttpProcessException;
+import com.kipa.common.KipaProcessException;
+import com.kipa.http.excute.HttpResponse;
 import com.kipa.http.service.HttpMetaService;
 import org.apache.commons.lang3.StringUtils;
 import java.util.List;
@@ -46,7 +46,7 @@ abstract class AbstractHttpServiceImpl implements HttpMetaService {
     <T> List<T> parseHttpResponseToInstance(HttpResponse httpResponse, Class<T> clazz) {
         List<T> list = Lists.newArrayList();
         if (!httpResponse.isJsonFormat()) {
-            throw new HttpProcessException("响应的结果不是一个json格式");
+            throw new KipaProcessException("响应的结果不是一个json格式");
         }
         Object data = httpResponse.getBodyMap().get("data");
         Object dataType = httpResponse.getBodyMap().get("dataType");

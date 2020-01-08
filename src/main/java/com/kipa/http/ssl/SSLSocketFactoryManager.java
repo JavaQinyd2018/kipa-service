@@ -1,7 +1,7 @@
 package com.kipa.http.ssl;
 
+import com.kipa.common.KipaProcessException;
 import com.kipa.http.emuns.SSLProtocolVersion;
-import com.kipa.http.exception.HttpProcessException;
 import com.kipa.utils.PreCheckUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +43,7 @@ public class SSLSocketFactoryManager {
             sslContext.init(null, new TrustManager[]{new SSLSocketFactoryHandler()}, new SecureRandom());
             return sslContext.getSocketFactory();
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            throw new HttpProcessException(e);
+            throw new KipaProcessException(e);
         }
     }
 
@@ -74,7 +74,7 @@ public class SSLSocketFactoryManager {
             sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
             return sslContext.getSocketFactory();
         } catch (CertificateException | KeyStoreException | NoSuchAlgorithmException | IOException | KeyManagementException e) {
-            throw new HttpProcessException(e);
+            throw new KipaProcessException(e);
         } finally {
             close(keyStorePathInputStream);
             close(certificatesInputStream);

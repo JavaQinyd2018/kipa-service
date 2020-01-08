@@ -1,7 +1,7 @@
 package com.kipa.config;
 
 import com.kipa.common.DataConstant;
-import com.kipa.dubbo.entity.DubboProperties;
+import com.kipa.dubbo.excute.DubboProperties;
 import com.kipa.env.DubboContextHolder;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
@@ -86,16 +86,16 @@ public class DubboConfiguration {
             registerProtocol = PropertiesUtils.getProperty(properties, flag,"dubbo.consumer.register.protocol");
             address = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.register.address");
             registerGroup = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.register.group");
-            registerTimeout = Integer.valueOf(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.register.timeout"));
+            registerTimeout = Integer.parseInt(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.register.timeout"));
 
             protocol = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.protocol");
             version = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.version");
-            retries = Integer.valueOf(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.retries"));
+            retries = Integer.parseInt(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.retries"));
             cluster = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.cluster");
-            timeout = Integer.valueOf(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.timeout"));
-            connections = Integer.valueOf(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.connections"));
+            timeout = Integer.parseInt(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.timeout"));
+            connections = Integer.parseInt(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.connections"));
             loadBalance = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.loadBalance");
-            check = Boolean.valueOf(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.check"));
+            check = Boolean.parseBoolean(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.check"));
         }else {
             registerProtocol = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.register.protocol");
             address = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.register.address");

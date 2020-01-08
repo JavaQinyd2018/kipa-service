@@ -1,8 +1,8 @@
 package com.kipa.http.service.base;
 
 import com.kipa.http.annotation.ServiceType;
-import com.kipa.http.core.HttpRequest;
-import com.kipa.http.core.HttpResponse;
+import com.kipa.http.excute.HttpRequest;
+import com.kipa.http.excute.HttpResponse;
 import com.kipa.http.emuns.HttpSendMethod;
 import com.kipa.http.emuns.InvokeType;
 import com.kipa.http.emuns.RequestType;

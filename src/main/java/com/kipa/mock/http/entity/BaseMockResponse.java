@@ -1,5 +1,7 @@
 package com.kipa.mock.http.entity;
 
+import com.kipa.core.InvokeRequest;
+import com.kipa.core.InvokeResponse;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.Map;
@@ -12,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Data
 @NoArgsConstructor
-public class BaseMockResponse {
+public class BaseMockResponse implements InvokeRequest {
     /**
      * 响应的cookie
      */

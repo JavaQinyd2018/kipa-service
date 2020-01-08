@@ -1,6 +1,8 @@
 package com.kipa.mock.http.service.base;
 
-import com.kipa.common.KipaProcessException;
+import com.kipa.core.BaseExecutor;
+import com.kipa.core.InvokeRequest;
+import com.kipa.core.MockInvokeRequest;
 import com.kipa.mock.http.annotation.InvokeType;
 import com.kipa.mock.http.annotation.MockMethod;
 import com.kipa.mock.http.annotation.MockType;
@@ -28,18 +30,17 @@ import java.lang.reflect.Proxy;
 @Service("baseMockService")
 public class MockServiceFactoryBean implements FactoryBean<BaseMockService>, InitializingBean {
 
-    private ClientAndServer clientAndServer;
-
     @Autowired
     private MockServerProperties mockServerProperties;
 
-    private MockRequestConvert mockRequestConvert;
-    private MockForwardConvert mockForwardConvert;
-    private MockErrorConvert mockErrorConvert;
-    private MockResponseConvert mockResponseConvert;
-    private MockResponseExecutor mockResponseExecutor;
-    private MockForwardExecutor mockForwardExecutor;
-    private MockErrorExecutor mockErrorExecutor;
+    private MockRequestConverter mockRequestConvert;
+    private MockForwardConverter mockForwardConvert;
+    private MockErrorConverter mockErrorConvert;
+    private MockResponseConverter mockResponseConvert;
+
+    private BaseExecutor<ClientAndServer, HttpRequest, HttpResponse> responseBaseExecutor;
+    private BaseExecutor<ClientAndServer, HttpRequest, HttpError> errorBaseExecutor;
+    private BaseExecutor<ClientAndServer, HttpRequest, HttpForward> forwardBaseExecutor;
 
     @Override
     public BaseMockService getObject() throws Exception {
@@ -58,15 +59,18 @@ public class MockServiceFactoryBean implements FactoryBean<BaseMockService>, Ini
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        mockRequestConvert = new MockRequestConvert();
-        mockErrorConvert = new MockErrorConvert();
-        mockErrorExecutor = new MockErrorExecutor();
-        mockForwardConvert = new MockForwardConvert();
-        mockResponseConvert = new MockResponseConvert();
-        mockResponseExecutor = new MockResponseExecutor();
-        mockForwardExecutor = new MockForwardExecutor();
-        MockServiceClientFactory clientFactory = new MockServiceClientFactory();
-        clientAndServer = clientFactory.create(mockServerProperties);
+        final MockServiceClientFactory clientFactory = new MockServiceClientFactory();
+        final ClientAndServer clientAndServer = clientFactory.create(mockServerProperties);
+        mockRequestConvert = new MockRequestConverter();
+        mockForwardConvert = new MockForwardConverter();
+        mockErrorConvert = new MockErrorConverter();
+        mockResponseConvert = new MockResponseConverter();
+        final MockResponseInvoker responseInvoker = new MockResponseInvoker();
+        final MockErrorInvoker errorInvoker = new MockErrorInvoker();
+        final MockForwardInvoker forwardInvoker = new MockForwardInvoker();
+        responseBaseExecutor = new BaseExecutor<>(clientAndServer, responseInvoker, mockRequestConvert, null);
+        errorBaseExecutor = new BaseExecutor<>(clientAndServer, errorInvoker, mockRequestConvert, null);
+        forwardBaseExecutor = new BaseExecutor<>(clientAndServer, forwardInvoker, mockRequestConvert, null);
     }
 
     class MockServiceHandler implements InvocationHandler{
@@ -79,22 +83,32 @@ public class MockServiceFactoryBean implements FactoryBean<BaseMockService>, Ini
 
             baseMockRequest.setMockMethod(mockMethod);
             HttpRequest httpRequest = mockRequestConvert.convert(baseMockRequest);
+
             MockType type = annotation.type();
             switch (type) {
                 case RESPONSE:
                     BaseMockResponse baseMockResponse = (BaseMockResponse) args[2];
                     HttpResponse httpResponse = mockResponseConvert.convert(baseMockResponse);
-                    mockResponseExecutor.execute(clientAndServer, httpRequest, httpResponse);
+                    MockInvokeRequest<HttpRequest, HttpResponse> mockInvokeRequest = new MockInvokeRequest<>();
+                    mockInvokeRequest.setMockRequest(httpRequest);
+                    mockInvokeRequest.setMockResult(httpResponse);
+                    responseBaseExecutor.execute(mockInvokeRequest);
                     break;
                 case FORWARD:
                     BaseMockForward baseMockForward = (BaseMockForward) args[2];
                     HttpForward httpForward = mockForwardConvert.convert(baseMockForward);
-                    mockForwardExecutor.execute(clientAndServer, httpRequest, httpForward);
+                    MockInvokeRequest<HttpRequest, HttpForward> errorMockInvokeRequest = new MockInvokeRequest<>();
+                    errorMockInvokeRequest.setMockRequest(httpRequest);
+                    errorMockInvokeRequest.setMockResult(httpForward);
+                    forwardBaseExecutor.execute(errorMockInvokeRequest);
                     break;
                 case ERROR:
                     BaseMockError baseMockError = (BaseMockError) args[2];
+                    MockInvokeRequest<HttpRequest, HttpError> forwardMockInvokeRequest = new MockInvokeRequest<>();
+                    forwardMockInvokeRequest.setMockRequest(httpRequest);
                     HttpError httpError = mockErrorConvert.convert(baseMockError);
-                    mockErrorExecutor.execute(clientAndServer, httpRequest, httpError);
+                    forwardMockInvokeRequest.setMockResult(httpError);
+                    errorBaseExecutor.execute(forwardMockInvokeRequest);
                     break;
                 default:
                     break;

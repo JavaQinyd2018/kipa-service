@@ -1,5 +1,6 @@
 package com.kipa.mock.http.entity;
 
+import com.kipa.core.InvokeRequest;
 import com.kipa.http.emuns.HttpSendMethod;
 import com.kipa.mock.http.annotation.MockMethod;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BaseMockRequest {
+public class BaseMockRequest implements InvokeRequest {
 
     private Map<String, String> cookies;
     private Map<String, String> headers;

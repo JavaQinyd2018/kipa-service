@@ -1,9 +1,11 @@
 package com.kipa.mock.dubbo;
 
 import org.apache.commons.collections4.MapUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.SmartLifecycle;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -15,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * mock dubbo 接口运行容器
  */
 @Service
-public class MockDubboServiceContainer implements SmartLifecycle, InitializingBean {
+public class MockDubboServiceContainer implements ApplicationListener<ContextRefreshedEvent>, DisposableBean, InitializingBean {
 
     private MockDubboGenericService mockDubboGenericService;
     private AtomicBoolean initialized = new AtomicBoolean(false);
@@ -27,6 +29,14 @@ public class MockDubboServiceContainer implements SmartLifecycle, InitializingBe
     private MockDubboProperties mockDubboProperties;
 
     private String interfaceName;
+
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+        if (initialized.get() && !running.get()) {
+            running.set(true);
+            mockDubboServiceRegister.exportService(mockDubboProperties, interfaceName, mockDubboGenericService);
+        }
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -42,40 +52,9 @@ public class MockDubboServiceContainer implements SmartLifecycle, InitializingBe
     }
 
     @Override
-    public void start() {
-        if (initialized.get() && !isRunning()) {
-            running.set(true);
-            mockDubboServiceRegister.exportService(mockDubboProperties, interfaceName, mockDubboGenericService);
-        }
-    }
-
-    @Override
-    public void stop() {
+    public void destroy() throws Exception {
         if (running.get()) {
             running.set(false);
         }
     }
-
-    @Override
-    public boolean isRunning() {
-        return running.get();
-    }
-
-    @Override
-    public boolean isAutoStartup() {
-        return false;
-    }
-
-    @Override
-    public void stop(Runnable callback) {
-        callback.run();
-        stop();
-    }
-
-    @Override
-    public int getPhase() {
-        return Integer.MAX_VALUE;
-    }
-
-
 }

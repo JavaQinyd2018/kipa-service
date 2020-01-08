@@ -1,13 +1,13 @@
 package com.kipa.http.service.impl;
 
-import com.kipa.http.core.HttpRequest;
-import com.kipa.http.core.HttpResponse;
-import com.kipa.http.core.OkHttpClientProperties;
+import com.kipa.http.excute.HttpRequest;
+import com.kipa.http.excute.HttpResponse;
+import com.kipa.http.excute.OkHttpClientProperties;
 import com.kipa.http.emuns.HttpSendMethod;
 import com.kipa.http.emuns.InvokeType;
 import com.kipa.http.service.HttpInvokeService;
 import com.kipa.http.service.base.BaseHttpService;
-import com.kipa.http.service.base.OkHttpClientFactory;
+import com.kipa.http.excute.OkHttpClientFactory;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.InitializingBean;

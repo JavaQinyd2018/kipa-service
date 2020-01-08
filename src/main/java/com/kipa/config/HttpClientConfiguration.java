@@ -2,7 +2,7 @@ package com.kipa.config;
 
 import com.kipa.common.DataConstant;
 import com.kipa.env.HttpContextHolder;
-import com.kipa.http.core.OkHttpClientProperties;
+import com.kipa.http.excute.OkHttpClientProperties;
 import com.kipa.utils.PropertiesUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

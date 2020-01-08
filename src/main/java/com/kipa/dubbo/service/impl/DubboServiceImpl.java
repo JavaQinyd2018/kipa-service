@@ -5,8 +5,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
-import com.kipa.dubbo.entity.DubboRequest;
-import com.kipa.dubbo.entity.DubboResponse;
+import com.kipa.dubbo.excute.DubboRequest;
+import com.kipa.dubbo.excute.DubboResponse;
 import com.kipa.dubbo.service.DubboService;
 import com.kipa.dubbo.service.base.BaseDubboService;
 import com.kipa.utils.PreCheckUtils;
@@ -39,7 +39,7 @@ public class DubboServiceImpl implements DubboService {
     public List<Map<String, Object>> asyncInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair, ResponseCallback responseCallback) {
         PreCheckUtils.checkEmpty(responseCallback, "异步回调接口不能为空");
         DubboRequest dubboRequest = assembleDubboRequest(interfaceName,methodName, typeAndValuePair);
-        dubboRequest.setResponseCallback(responseCallback);
+        dubboRequest.setCallback(responseCallback);
         DubboResponse dubboResponse = baseDubboService.asyncInvoke(dubboRequest);
         return parseDubboResponse(dubboResponse);
     }
@@ -94,7 +94,7 @@ public class DubboServiceImpl implements DubboService {
     @Override
     public DubboResponse asyncInvoke(DubboRequest request,  ResponseCallback responseCallback) {
         checkRequest(request);
-        request.setResponseCallback(responseCallback);
+        request.setCallback(responseCallback);
         return baseDubboService.asyncInvoke(request);
     }
 

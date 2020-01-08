@@ -11,7 +11,7 @@ import java.util.Map;
 @SuppressWarnings("all")
 public class InsertSqlProvider {
 
-    public synchronized String insert(Map<String, Object> paramMap) {
+    public String insert(Map<String, Object> paramMap) {
         String tableName = (String) paramMap.get("tableName");
         PreCheckUtils.checkEmpty(tableName, "表名不能为空");
         SQL sql = new SQL().INSERT_INTO(tableName);
@@ -21,7 +21,7 @@ public class InsertSqlProvider {
         return sql.toString();
     }
 
-    public synchronized String insertBySql(Map<String, Object> paramMap) {
+    public String insertBySql(Map<String, Object> paramMap) {
         return (String) paramMap.get("sql");
     }
 }
