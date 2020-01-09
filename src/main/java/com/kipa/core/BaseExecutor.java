@@ -51,6 +51,7 @@ public class BaseExecutor<C, R, V> implements Executor<C>{
      * @return
      * @throws Exception
      */
+    @SuppressWarnings("all")
     @Override
     public InvokeResponse execute(InvokeRequest invokeRequest) throws Exception {
         if (invoker instanceof SyncInvoker) {

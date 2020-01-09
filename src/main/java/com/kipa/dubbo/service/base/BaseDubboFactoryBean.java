@@ -34,7 +34,7 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
     /**
      * 消费方引用的配置类
      */
-    private ReferenceConfig referenceConfig;
+    private ReferenceConfig<Object> referenceConfig;
     private BaseExecutor<GenericService, WrappedDubboParameter, Object> syncExecutor;
     private BaseExecutor<GenericService, WrappedDubboParameter, Object> asyncExecutor;
 
@@ -117,7 +117,7 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
          * @param referenceConfig
          * @return
          */
-        private GenericService getGenericService(ReferenceConfigCache cache, ReferenceConfig referenceConfig) {
+        private GenericService getGenericService(ReferenceConfigCache cache, ReferenceConfig<Object> referenceConfig) {
             GenericService genericService = null;
             try {
                 genericService = (GenericService) cache.get(referenceConfig);

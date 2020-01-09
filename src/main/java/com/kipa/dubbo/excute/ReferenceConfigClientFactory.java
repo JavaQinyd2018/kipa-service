@@ -12,10 +12,10 @@ import com.kipa.utils.PreCheckUtils;
  * @date: 2019/4/3 18:44
  * 引用配置的生成器 ReferenceConfig
  */
-public class ReferenceConfigClientFactory implements ClientFactory<ReferenceConfig, DubboProperties> {
+public class ReferenceConfigClientFactory implements ClientFactory<ReferenceConfig<Object>, DubboProperties> {
 
     @Override
-    public ReferenceConfig create(DubboProperties properties) throws Exception {
+    public ReferenceConfig<Object> create(DubboProperties properties) throws Exception {
         return build(properties);
     }
 
@@ -24,10 +24,10 @@ public class ReferenceConfigClientFactory implements ClientFactory<ReferenceConf
      * @param dubboProperties dubbo的配置属性对象
      * @return 响应的结果信息
      */
-    private ReferenceConfig build(DubboProperties dubboProperties) {
+    private ReferenceConfig<Object> build(DubboProperties dubboProperties) {
         PreCheckUtils.checkEmpty(dubboProperties, "dubbo的配置信息不能为空");
         PreCheckUtils.checkEmpty(dubboProperties.getApplicationName(), "dubbo消费端的应用名称不能为空");
-        final ReferenceConfig referenceConfig = new ReferenceConfig();
+        final ReferenceConfig<Object> referenceConfig = new ReferenceConfig<>();
         //1.
         ApplicationConfig applicationConfig = new ApplicationConfig();
         applicationConfig.setName(dubboProperties.getApplicationName());

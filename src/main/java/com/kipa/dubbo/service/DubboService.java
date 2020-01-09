@@ -13,6 +13,14 @@ import java.util.Map;
  */
 public interface DubboService {
 
+    /**
+     *
+     * @param interfaceName
+     * @param methodName
+     * @param typeAndValuePair
+     * @return
+     */
+    String invoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair);
 
     /**
      * dubbo接口返回结果是一个对象或者List的时候用改方法简便，
@@ -22,7 +30,7 @@ public interface DubboService {
      * @param typeAndValuePair
      * @return
      */
-    List<Map<String, Object>> invoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair);
+    String invoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair,String version);
 
     /**
      * 如果是一个基础数据类型或者调用该结果失败，用该方法
@@ -32,6 +40,15 @@ public interface DubboService {
      */
     DubboResponse invoke(DubboRequest request);
 
+    /**
+     *
+     * @param interfaceName
+     * @param methodName
+     * @param typeAndValuePair
+     * @param responseCallback
+     * @return
+     */
+    String asyncInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair, ResponseCallback responseCallback);
 
     /**
      *
@@ -41,7 +58,7 @@ public interface DubboService {
      * @param responseCallback 响应回调接口
      * @return
      */
-    List<Map<String, Object>> asyncInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair, ResponseCallback responseCallback);
+    String asyncInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair, String version, ResponseCallback responseCallback);
 
     /**
      * 异步调用
@@ -50,13 +67,22 @@ public interface DubboService {
      * @return
      */
     DubboResponse asyncInvoke(DubboRequest request,  ResponseCallback responseCallback);
+
+    /**
+     *
+     * @param interfaceName
+     * @param methodName
+     * @param typeAndValuePair
+     * @return
+     */
+    String directedInvoke(String interfaceName,String methodName, Map<String, Object> typeAndValuePair);
     /**
      * 直连调用
      * @param interfaceName
      * @param typeAndValuePair
      * @return
      */
-    List<Map<String, Object>> directedInvoke(String interfaceName,String methodName, Map<String, Object> typeAndValuePair);
+    String directedInvoke(String interfaceName,String methodName, Map<String, Object> typeAndValuePair, String version);
 
     /**
      * 直连
