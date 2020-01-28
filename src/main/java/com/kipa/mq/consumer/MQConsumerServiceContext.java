@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author: Qinyadong
@@ -31,21 +32,20 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class MQConsumerServiceContext implements InitializingBean, SmartLifecycle, DisposableBean {
 
-    private volatile boolean initialized = false;
+    private AtomicBoolean initialized = new AtomicBoolean(false);
     private final Object monitor = new Object();
-    private volatile boolean running = false;
+    private AtomicBoolean running = new AtomicBoolean(false);
 
     @Autowired
     private RocketMQListenerProcessor rocketMQListenerProcessor;
 
     @Autowired
-    private MQConsumerProperties mqConsumerProperties;
-
-    @Autowired
     private MQConsumerGenerator mqConsumerGenerator;
 
-    private List<SubscribeConfig> subscribeConfigList = Lists.newArrayList();
-    private Map<RocketMQListener, Map<Method,Subscribe>> mqListenerMapMap = new ConcurrentHashMap<>();
+    @Autowired
+    private MQConsumerProperties mqConsumerProperties;
+
+    private List<SubscribeConfig> subscribeConfigList = Lists.newCopyOnWriteArrayList();
     private Map<String, DefaultMQPushConsumer> defaultMQPushConsumerMap = new ConcurrentHashMap<>();
     private Map<String, DefaultMQPullConsumer> defaultMQPullConsumerMap = new ConcurrentHashMap<>();
 
@@ -54,18 +54,18 @@ public class MQConsumerServiceContext implements InitializingBean, SmartLifecycl
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        mqListenerMapMap = rocketMQListenerProcessor.getMqListenerMapMap();
+        Map<RocketMQListener, Map<Method, Subscribe>> mqListenerMapMap = rocketMQListenerProcessor.getMqListenerMapMap();
         //解析 注解信息和订阅配置信息
         parse(mqListenerMapMap);
         //初始化Consumer
         initMQConsumer();
-        initialized = true;
+        initialized.set(true);
     }
 
     @Override
     public void start() {
-        if (initialized && !isRunning()) {
-            running = true;
+        if (initialized.get() && !isRunning()) {
+            running.set(true);
             synchronized (monitor) {
                 if (MapUtils.isNotEmpty(defaultMQPushConsumerMap)) {
                     defaultMQPushConsumerMap.forEach((topic, defaultMQPushConsumer) -> {
@@ -92,7 +92,7 @@ public class MQConsumerServiceContext implements InitializingBean, SmartLifecycl
         if (isRunning()) {
             if (MapUtils.isNotEmpty(runningConsumerMap)) {
                 runningConsumerMap.forEach((topic, defaultMQPushConsumer) -> {
-                    running = false;
+                    running.set(false);
                     defaultMQPushConsumer.shutdown();
                 });
                 log.debug("=================MQ的监听器已经停止===================");
@@ -102,7 +102,7 @@ public class MQConsumerServiceContext implements InitializingBean, SmartLifecycl
 
     @Override
     public boolean isRunning() {
-        return running;
+        return running.get();
     }
 
     @Override
@@ -181,7 +181,7 @@ public class MQConsumerServiceContext implements InitializingBean, SmartLifecycl
 
     @Override
     public void destroy() throws Exception {
-        initialized = false;
+        initialized.set(false);
         stop();
     }
 

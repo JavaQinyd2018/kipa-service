@@ -34,7 +34,7 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
     /**
      * 消费方引用的配置类
      */
-    private ReferenceConfig<Object> referenceConfig;
+    private ReferenceConfig<GenericService> referenceConfig;
     private BaseExecutor<GenericService, WrappedDubboParameter, Object> syncExecutor;
     private BaseExecutor<GenericService, WrappedDubboParameter, Object> asyncExecutor;
 
@@ -80,20 +80,19 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
             referenceConfig.setVersion(dubboRequest.getVersion());
 
             //ReferenceConfig的实例太重了，需要缓存
-            ReferenceConfigCache cache = ReferenceConfigCache.getCache(dubboProperties.getAddress(), AbstractConfig::toString);
             Object result = null;
-            GenericService genericService = null;
+            GenericService genericService;
             //按照不同的类型配置
             switch (type) {
                 case SYNCHRONOUS:
                     referenceConfig.setAsync(false);
-                    genericService = getGenericService(cache, referenceConfig);
+                    genericService = getGenericService(referenceConfig);
                     syncExecutor.setClient(genericService);
                     result = syncExecutor.execute(dubboRequest);
                     break;
                 case ASYNCHRONOUS:
                     referenceConfig.setAsync(true);
-                    genericService = getGenericService(cache, referenceConfig);
+                    genericService = getGenericService(referenceConfig);
                     asyncExecutor.setClient(genericService);
                     result = asyncExecutor.execute(dubboRequest);
                     break;
@@ -101,7 +100,7 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
                     String rpcProtocol = StringUtils.isBlank(dubboProperties.getRpcProtocol()) ? "dubbo" : dubboProperties.getRpcProtocol();
                     String url = String.format("%s://%s", rpcProtocol, dubboProperties.getAddress());
                     referenceConfig.setUrl(url);
-                    genericService = getGenericService(cache, referenceConfig);
+                    genericService = getGenericService(referenceConfig);
                     syncExecutor.setClient(genericService);
                     result = syncExecutor.execute(dubboRequest);
                     break;
@@ -112,15 +111,15 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
         }
 
         /**
-         * 获取泛化的服务
-         * @param cache
+         * 获取泛化的服务, 如果缓存中有就直接获取，否则先创建，在放到缓存中
          * @param referenceConfig
          * @return
          */
-        private GenericService getGenericService(ReferenceConfigCache cache, ReferenceConfig<Object> referenceConfig) {
+        private GenericService getGenericService(ReferenceConfig<GenericService> referenceConfig) {
             GenericService genericService = null;
             try {
-                genericService = (GenericService) cache.get(referenceConfig);
+                ReferenceConfigCache cache = ReferenceConfigCache.getCache(dubboProperties.getAddress(), AbstractConfig::toString);
+                genericService = cache.get(referenceConfig);
             } catch (Exception e) {
                 throw new KipaProcessException("dubbo服务调用失败，获取泛化服务失败，找不到服务提供者",e);
             }

@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
  * 通过spring 包扫描实现自己的包扫描的工具类
  */
 @Slf4j
-public class PackageScanUtils {
+public final class PackageScanUtils {
 
     private PackageScanUtils() {}
 

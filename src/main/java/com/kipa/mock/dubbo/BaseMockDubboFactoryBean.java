@@ -1,7 +1,9 @@
 package com.kipa.mock.dubbo;
 
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Service;
+import org.testng.collections.Maps;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -16,8 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service("mockDubboService")
 public class BaseMockDubboFactoryBean implements FactoryBean<MockDubboService>{
-
-    private static Map<MockDubboRequest, MockDubboResponse> mockInfoMap = new ConcurrentHashMap<>();
 
     @Override
     public MockDubboService getObject() throws Exception {
@@ -43,8 +43,23 @@ public class BaseMockDubboFactoryBean implements FactoryBean<MockDubboService>{
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             MockDubboRequest request = (MockDubboRequest) args[0];
             MockDubboResponse response = (MockDubboResponse) args[1];
-            mockInfoMap.put(request, response);
-            MockDubboContextHolder.set(mockInfoMap);
+
+            return null;
+        }
+
+        private Map<String, Object> parse(MockDubboRequest request, MockDubboResponse response) {
+            Map<String, Object> mockInfo = Maps.newHashMap();
+            Map<String, Object> classValuePair = request.getClassValuePair();
+            if (MapUtils.isNotEmpty(classValuePair)) {
+                String[] paramTypeArray = new String[classValuePair.size()];
+                Object[] valueArray = new Object[classValuePair.size()];
+                for (int i = 0; i < classValuePair.entrySet().size(); i++) {
+
+                }
+            }
+            mockInfo.put("interface",request.getInterfaceName());
+            mockInfo.put("methodName", request.getMethodName());
+            mockInfo.put("paramTypeArray", "");
             return null;
         }
     }

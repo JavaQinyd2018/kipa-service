@@ -13,7 +13,7 @@ import java.util.Set;
  * @date: 2019/5/14 22:01
  * 注解工具
  */
-public class AnnotationUtils {
+public final class AnnotationUtils {
 
     private AnnotationUtils() {
 

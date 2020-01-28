@@ -3,6 +3,7 @@ package com.kipa.dubbo.excute;
 import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
+import com.alibaba.dubbo.rpc.service.GenericService;
 import com.kipa.core.ClientFactory;
 import com.kipa.dubbo.enums.RegisterType;
 import com.kipa.utils.PreCheckUtils;
@@ -12,10 +13,10 @@ import com.kipa.utils.PreCheckUtils;
  * @date: 2019/4/3 18:44
  * 引用配置的生成器 ReferenceConfig
  */
-public class ReferenceConfigClientFactory implements ClientFactory<ReferenceConfig<Object>, DubboProperties> {
+public class ReferenceConfigClientFactory implements ClientFactory<ReferenceConfig<GenericService>, DubboProperties> {
 
     @Override
-    public ReferenceConfig<Object> create(DubboProperties properties) throws Exception {
+    public ReferenceConfig<GenericService> create(DubboProperties properties) throws Exception {
         return build(properties);
     }
 
@@ -24,10 +25,10 @@ public class ReferenceConfigClientFactory implements ClientFactory<ReferenceConf
      * @param dubboProperties dubbo的配置属性对象
      * @return 响应的结果信息
      */
-    private ReferenceConfig<Object> build(DubboProperties dubboProperties) {
+    private ReferenceConfig<GenericService> build(DubboProperties dubboProperties) {
         PreCheckUtils.checkEmpty(dubboProperties, "dubbo的配置信息不能为空");
         PreCheckUtils.checkEmpty(dubboProperties.getApplicationName(), "dubbo消费端的应用名称不能为空");
-        final ReferenceConfig<Object> referenceConfig = new ReferenceConfig<>();
+        final ReferenceConfig<GenericService> referenceConfig = new ReferenceConfig<>();
         //1.
         ApplicationConfig applicationConfig = new ApplicationConfig();
         applicationConfig.setName(dubboProperties.getApplicationName());
@@ -89,6 +90,7 @@ public class ReferenceConfigClientFactory implements ClientFactory<ReferenceConf
         referenceConfig.setGroup(dubboProperties.getGroup());
         referenceConfig.setConnections(dubboProperties.getConnections());
         referenceConfig.setLoadbalance(dubboProperties.getLoadBalance());
+        referenceConfig.setFilter("mockDubboConsumerFilter");
         return referenceConfig;
     }
 }

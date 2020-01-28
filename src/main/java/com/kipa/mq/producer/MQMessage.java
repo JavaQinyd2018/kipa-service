@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.apache.rocketmq.client.producer.MessageQueueSelector;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.common.message.Message;
+import org.apache.rocketmq.common.message.MessageQueue;
 
 /**
  * @author: Qinyadong
@@ -19,14 +20,37 @@ import org.apache.rocketmq.common.message.Message;
 @Builder
 public class MQMessage {
 
+    /**
+     * 方法名称
+     */
     private String methodName;
 
+    /**
+     * 发送的消息
+     */
     private Message message;
 
+    /**
+     * 异步消息回调接口
+     */
     private SendCallback sendCallback;
 
+    /**
+     * 顺序消息选择器
+     */
     private MessageQueueSelector selector;
 
+    /**
+     * 发送到特定的消息队列
+     */
+    private MessageQueue messageQueue;
+    /**
+     * 各种参数信息对象
+     */
     private Object arg;
 
+    /**
+     * 消息发送超时时间
+     */
+    private long timeout;
 }

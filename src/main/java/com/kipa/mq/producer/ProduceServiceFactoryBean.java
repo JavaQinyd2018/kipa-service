@@ -39,52 +39,105 @@ public class ProduceServiceFactoryBean implements FactoryBean<BaseProducerServic
         return false;
     }
 
-    private static class ProducerInvocationHandler implements InvocationHandler{
+    private static class ProducerInvocationHandler implements InvocationHandler {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             String methodName = method.getName();
+            MQMessage message = (MQMessage) args[1];
+            MessageType messageType = (MessageType) args[2];
             if (StringUtils.equalsIgnoreCase(methodName, "send")) {
                 DefaultMQProducer producer = (DefaultMQProducer) args[0];
-                MQMessage message = (MQMessage) args[1];
-                return invokeSend(producer, message);
-            }else if (StringUtils.equalsIgnoreCase(methodName, "asnycSend")) {
+                return invokeSend(producer, message, messageType);
+            } else if (StringUtils.equalsIgnoreCase(methodName, "asyncSend")) {
                 DefaultMQProducer producer = (DefaultMQProducer) args[0];
-                MQMessage message = (MQMessage) args[1];
-                invokeSend(producer, message);
-            }else if (StringUtils.equalsIgnoreCase(methodName, "sendInTransaction")) {
+                invokeAsyncSend(producer, message, messageType);
+            } else if (StringUtils.equalsIgnoreCase(methodName, "sendInTransaction")) {
                 TransactionMQProducer producer = (TransactionMQProducer) args[0];
-                MQMessage message = (MQMessage) args[1];
-                return invokeSend(producer, message);
+                return producer.sendMessageInTransaction(message.getMessage(), message.getArg());
+            } else if (StringUtils.endsWithIgnoreCase(methodName, "sendOneWay")) {
+                DefaultMQProducer producer = (DefaultMQProducer) args[0];
+                invokeSendOneWay(producer, message, messageType);
             }
             return null;
         }
 
-        private SendResult invokeSend(MQProducer mqProducer, MQMessage mqMessage) throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
-            SendResult sendResult = null;
-            String methodName = mqMessage.getMethodName();
-            ProducerMethod method = ProducerMethod.getMethod(methodName);
-            switch (method) {
-                case SEND:
-                    sendResult = mqProducer.send(mqMessage.getMessage());
+        /**
+         * 同步调用
+         *
+         * @param producer
+         * @param mqMessage
+         * @param messageType
+         * @return
+         * @throws InterruptedException
+         * @throws RemotingException
+         * @throws MQClientException
+         * @throws MQBrokerException
+         */
+        private SendResult invokeSend(DefaultMQProducer producer, MQMessage mqMessage, MessageType messageType) throws InterruptedException, RemotingException, MQClientException, MQBrokerException {
+            switch (messageType) {
+                case NORMAL:
+                    return producer.send(mqMessage.getMessage(), mqMessage.getTimeout());
+                case ORDERLY:
+                    return producer.send(mqMessage.getMessage(), mqMessage.getSelector(), mqMessage.getArg(), mqMessage.getTimeout());
+                case SPECIAL:
+                    return producer.send(mqMessage.getMessage(), mqMessage.getMessageQueue(), mqMessage.getTimeout());
+                default:
                     break;
-                case ASNYC_SEND:
-                    mqProducer.send(mqMessage.getMessage(), mqMessage.getSendCallback());
+            }
+            return null;
+        }
+
+        /**
+         * 异步调用
+         *
+         * @param producer
+         * @param mqMessage
+         * @param messageType
+         * @throws RemotingException
+         * @throws MQClientException
+         * @throws InterruptedException
+         */
+        private void invokeAsyncSend(DefaultMQProducer producer, MQMessage mqMessage, MessageType messageType) throws RemotingException, MQClientException, InterruptedException {
+            switch (messageType) {
+                case NORMAL:
+                    producer.send(mqMessage.getMessage(), mqMessage.getSendCallback(), mqMessage.getTimeout());
                     break;
-                case SEND_ONE_WAY:
-                    mqProducer.sendOneway(mqMessage.getMessage());
+                case ORDERLY:
+                    producer.send(mqMessage.getMessage(), mqMessage.getSelector(), mqMessage.getArg(), mqMessage.getSendCallback());
                     break;
-                case SEND_ONE_WAY_ORDER:
-                    mqProducer.sendOneway(mqMessage.getMessage(), mqMessage.getSelector(),mqMessage.getArg());
-                    break;
-                case SEND_IN_TRANSACTION:
-                    sendResult =  mqProducer.sendMessageInTransaction(mqMessage.getMessage(), mqMessage.getArg());
+                case SPECIAL:
+                    producer.send(mqMessage.getMessage(), mqMessage.getMessageQueue(), mqMessage.getSendCallback(), mqMessage.getTimeout());
                     break;
                 default:
                     break;
             }
-            return sendResult;
+        }
+
+
+        /**
+         * 单向发送
+         * @param producer
+         * @param mqMessage
+         * @param messageType
+         * @throws RemotingException
+         * @throws MQClientException
+         * @throws InterruptedException
+         */
+        private void invokeSendOneWay(DefaultMQProducer producer, MQMessage mqMessage, MessageType messageType) throws RemotingException, MQClientException, InterruptedException {
+            switch (messageType) {
+                case NORMAL:
+                    producer.sendOneway(mqMessage.getMessage());
+                    break;
+                case ORDERLY:
+                    producer.sendOneway(mqMessage.getMessage(), mqMessage.getSelector(), mqMessage.getArg());
+                    break;
+                case SPECIAL:
+                    producer.sendOneway(mqMessage.getMessage(), mqMessage.getMessageQueue());
+                    break;
+                default:
+                    break;
+            }
         }
     }
-
 }

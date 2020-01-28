@@ -12,7 +12,7 @@ import java.util.Properties;
  * @date: 2019/4/19 15:23
  * 属性文件解析工具类
  */
-public class PropertiesUtils {
+public final class PropertiesUtils {
 
     private PropertiesUtils() {}
 

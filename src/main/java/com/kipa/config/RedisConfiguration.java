@@ -106,7 +106,6 @@ public class RedisConfiguration {
 
     @Bean
     public JedisPoolConfig jedisPoolConfig() {
-        init();
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxIdle(maxIdle);
         jedisPoolConfig.setTestOnBorrow(testOnBorrow);

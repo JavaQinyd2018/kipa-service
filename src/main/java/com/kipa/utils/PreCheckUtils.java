@@ -11,7 +11,7 @@ import java.util.Map;
  * @Date: 2018/12/28 12:54
  * 预校验的工具类
  */
-public class PreCheckUtils {
+public final class PreCheckUtils {
 
     private PreCheckUtils() {}
 
