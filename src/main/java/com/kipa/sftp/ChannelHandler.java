@@ -27,11 +27,7 @@ class ChannelHandler {
     }
 
     private static SftpProperties getConfig(String env) {
-        String globalProperties = System.getProperty("globalProperties");
-        if (StringUtils.isBlank(globalProperties)) {
-            globalProperties = DataConstant.CONFIG_FILE;
-        }
-        final Properties properties = PropertiesUtils.loadProperties(globalProperties);
+        final Properties properties = PropertiesUtils.loadProperties(DataConstant.CONFIG_FILE);
         String host = PropertiesUtils.getProperty(properties, env, "sftp.connection.host");
         String port = PropertiesUtils.getProperty(properties, env, "sftp.connection.port");
         String username = PropertiesUtils.getProperty(properties, env, "sftp.connection.username");
