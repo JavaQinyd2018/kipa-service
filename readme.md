@@ -2,6 +2,9 @@
 >
 > 背景：实际的分布式项目测试会涉及http接口、dubbo接口的调用，同时消息、缓存也是我们测试的校验项，本测试框架提供了http接口调用、dubbo接口调用、数据库增删改查、http请求的mock、sftp文件的上传和下载、RocketMQ消息的发送和消费以及redis缓存的基本操作，能够满足分布式系统测试的基本要求，对于测试人员来说，可以极大的减少对于测试代码本身的时间消耗，更多关注业务本身；进而提高测试效率，提升测试质量。
 >
+> > 基本结构
+>
+> ![kipa-structure-head](wiki/png/kipa-struction-head.jpg)
 
 [代码的目录结构](wiki/structure.md)
 # 详细使用
