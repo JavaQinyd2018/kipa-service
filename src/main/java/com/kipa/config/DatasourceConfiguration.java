@@ -1,14 +1,14 @@
 package com.kipa.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.kipa.common.DataConstant;
-import com.kipa.env.DatabaseContextHolder;
 import com.kipa.env.DatasourceEnvHolder;
+import com.kipa.env.GlobalEnvironmentProperties;
 import com.kipa.mybatis.service.condition.*;
 import com.kipa.mybatis.ext.DatasourceProperties;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 
@@ -16,7 +16,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * @Author: Yadong Qin
@@ -77,18 +76,21 @@ public class DatasourceConfiguration {
     @Value("${mybatis.datasource.maxPoolPreparedStatementPerConnectionSize}")
     private int maxPoolPreparedStatementPerConnectionSize;
 
+    @Autowired
+    private GlobalEnvironmentProperties globalEnvironmentProperties;
+
     @PostConstruct
     private void init() {
-        final Properties properties = PropertiesUtils.loadProperties(DataConstant.CONFIG_FILE);
-        String flag = DatabaseContextHolder.getFlag();
-        datasourceProperties = getConfigByConfig(flag, properties);
+        //1. 默认的数据源 初始化
+        datasourceProperties = getConfigByFlag(null, globalEnvironmentProperties);
+        //2. 根据环境的标识初始化其他数据源
         EnvFlag[] env = DatasourceEnvHolder.getEnv();
         if (ArrayUtils.isNotEmpty(env)) {
             List<EnvFlag> envFlags = Arrays.asList(env);
-            datasourceProperties1 = envFlags.contains(EnvFlag.ENV1) ? getConfigByConfig(EnvFlag.ENV1.getCode(), properties) : null;
-            datasourceProperties2 = envFlags.contains(EnvFlag.ENV2) ? getConfigByConfig(EnvFlag.ENV2.getCode(), properties) : null;
-            datasourceProperties3 = envFlags.contains(EnvFlag.ENV3) ? getConfigByConfig(EnvFlag.ENV3.getCode(), properties) : null;
-            datasourceProperties4 = envFlags.contains(EnvFlag.ENV4) ? getConfigByConfig(EnvFlag.ENV4.getCode(), properties) : null;
+            datasourceProperties1 = envFlags.contains(EnvFlag.ENV1) ? getConfigByFlag(EnvFlag.ENV1.getCode(), globalEnvironmentProperties) : null;
+            datasourceProperties2 = envFlags.contains(EnvFlag.ENV2) ? getConfigByFlag(EnvFlag.ENV2.getCode(), globalEnvironmentProperties) : null;
+            datasourceProperties3 = envFlags.contains(EnvFlag.ENV3) ? getConfigByFlag(EnvFlag.ENV3.getCode(), globalEnvironmentProperties) : null;
+            datasourceProperties4 = envFlags.contains(EnvFlag.ENV4) ? getConfigByFlag(EnvFlag.ENV4.getCode(), globalEnvironmentProperties) : null;
         }
     }
 
@@ -153,11 +155,10 @@ public class DatasourceConfiguration {
 
     @PreDestroy
     public void destroy() {
-        DatabaseContextHolder.removeFlag();
         DatasourceEnvHolder.removeFlag();
     }
 
-    private DatasourceProperties getConfigByConfig(String flag, Properties properties) {
+    private DatasourceProperties getConfigByFlag(String flag, GlobalEnvironmentProperties properties) {
         String driverName = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.driver");
         String url = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.url");
         String username = PropertiesUtils.getProperty(properties, flag, "mybatis.datasource.username");

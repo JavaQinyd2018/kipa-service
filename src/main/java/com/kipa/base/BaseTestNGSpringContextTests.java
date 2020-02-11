@@ -1,14 +1,14 @@
 package com.kipa.base;
 
+import com.kipa.common.run.StepInterceptor;
 import com.kipa.data.CSVDataProvider;
 import com.kipa.data.DataMetaAnnotationListener;
-import com.kipa.env.Database;
-import com.kipa.env.Dubbo;
-import com.kipa.env.Http;
+import com.kipa.data.MethodOrderInterceptor;
+import com.kipa.env.DatasourceEnvHolder;
+import com.kipa.mybatis.service.condition.EnvFlag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
@@ -18,21 +18,22 @@ import org.testng.annotations.Listeners;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
 /**
- * @Author: Yadong Qin
- * @Date: 2019/4/19
- * 框架高级用法整合样例，切勿直接继承该类
+ * @author qinyadong
+ * @date 2019.03.02
+ *
+ * <p> Spring整合TestNG的入口类 </p>
+ * 1. 整合了TestNG
+ * 2. 打印了Banner
+ * 3. 设置了默认数据源
+ * 4. 添加了默认数据驱动
  */
 @Slf4j
-@Database(datasourceFlag = "dev")
-@Http(httpFlag = "dev")
-@Dubbo(configFlag = "dev",version = "1.0.0",timeout = 120000)
-@Listeners({DataMetaAnnotationListener.class})
-@ContextConfiguration(classes = DemoApplicationConfiguration.class)
-public class DemoTestContextConfiguration extends AbstractTestNGSpringContextTests {
+@Listeners({DataMetaAnnotationListener.class, MethodOrderInterceptor.class, StepInterceptor.class})
+public class BaseTestNGSpringContextTests extends AbstractTestNGSpringContextTests {
 
     private static final String BANNER_PATH= "customize/kipa-banner.txt";
 
@@ -41,12 +42,15 @@ public class DemoTestContextConfiguration extends AbstractTestNGSpringContextTes
         if (!ObjectUtils.isEmpty(resource)) {
             try {
                 InputStream inputStream = resource.getInputStream();
-                String banner = StreamUtils.copyToString(inputStream, Charset.forName("UTF-8"));
-                log.debug("框架初始化：\n{}",banner);
+                String banner = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+                log.info("框架初始化：\n{}",banner);
             } catch (IOException e) {
                 log.warn("获取banner信息失败");
             }
         }
+
+        //2.设定数据源（BaseTestConfiguration默认开启两个数据源，一个是默认数据源，一个是标识为env1的数据源）
+        DatasourceEnvHolder.setFlag(new EnvFlag[]{EnvFlag.ENV1});
     }
 
     @DataProvider(name = "csv")

@@ -73,7 +73,7 @@ MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 http提供了httpService和HttpsService两个服务类，可以帮助我们发起http请求，目前支持get、post、put、delete、以及文件的上传和下载等功能，能够满足测试需要，支持同步调用和异步调用，如下是同步调用的样例：
 
 ```java
-public class HttpTest extends BaseTestConfiguration {
+public class HttpTest extends BasicTestNGSpringContextTests {
 
  	//注入http服务
     @Autowired

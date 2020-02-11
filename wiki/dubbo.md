@@ -3,7 +3,7 @@
 dubbo接口调用需要传的参数有：接口名称（接口全路径、方法名称、参数类型名称全路径与参数值），如果dubbo接口是没有参数的，参数名称全路径和参数值不用传，否则会报错或者找不到服务提供者。dubbo调用有三种方式：同步调用、异步调用、直连调用。样例如下：
 
 ```java
-public class DubboTest extends BaseTestConfiguration {
+public class DubboTest extends BasicTestNGSpringContextTests {
 
     @Autowired
     DubboService dubboService;

@@ -1,17 +1,17 @@
 package com.kipa.config;
 
-import com.kipa.common.DataConstant;
+import com.kipa.env.GlobalEnvironmentProperties;
 import com.kipa.mq.producer.MQProducerProperties;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-
 import javax.annotation.PostConstruct;
-import java.util.Properties;
 
 /**
  * @author: Qinyadong
@@ -26,8 +26,10 @@ public class MQProducerConfiguration {
     /**
      * 发送同一类消息的设置为同一个group，保证唯一,默认不需要设置，rocketmq会使用ip@pid(pid代表jvm名字)作为唯一标示
      */
+    @Value("${rocketmq.producer.groupName}")
     private String groupName;
 
+    @Value("${rocketmq.producer.nameServerAddress}")
     private String nameServerAddress;
     /**
      * 消息最大大小，默认4M
@@ -45,24 +47,28 @@ public class MQProducerConfiguration {
     @Value("${rocketmq.producer.retryTimesWhenSendFailed}")
     private Integer retryTimesWhenSendFailed;
 
+    @Autowired
+    private GlobalEnvironmentProperties globalEnvironmentProperties;
+
+    private MQProducerProperties initMqProducerProperties;
 
     @PostConstruct
     public void init() {
-        Properties properties = PropertiesUtils.loadProperties(DataConstant.CONFIG_FILE);
-        nameServerAddress = PropertiesUtils.getProperty(properties, null, "rocketmq.producer.nameServerAddress");
-        groupName = PropertiesUtils.getProperty(properties, null, "rocketmq.producer.groupName");
-        PreCheckUtils.checkEmpty(nameServerAddress, "MQ的nameServer地址不能为空");
-        PreCheckUtils.checkEmpty(groupName, "MQ的groupName地址不能为空");
+        initMqProducerProperties = new MQProducerProperties();
+        initMqProducerProperties.setNameServerAddress(PropertiesUtils.getProperty(globalEnvironmentProperties, "rocketmq.producer.nameServerAddress"));
+        initMqProducerProperties.setGroupName(PropertiesUtils.getProperty(globalEnvironmentProperties, "rocketmq.producer.groupName"));
     }
 
     @Bean
     public MQProducerProperties mqProducerProperties() {
         MQProducerProperties mqProducerProperties = new MQProducerProperties();
-        mqProducerProperties.setNameServerAddress(nameServerAddress);
-        mqProducerProperties.setGroupName(groupName);
+        mqProducerProperties.setNameServerAddress(StringUtils.isNotBlank(initMqProducerProperties.getNameServerAddress())? initMqProducerProperties.getNameServerAddress(): nameServerAddress);
+        mqProducerProperties.setGroupName(StringUtils.isNotBlank(initMqProducerProperties.getGroupName()) ? initMqProducerProperties.getGroupName(): groupName);
         mqProducerProperties.setMaxMessageSize(maxMessageSize);
         mqProducerProperties.setRetryTimesWhenSendFailed(retryTimesWhenSendFailed);
         mqProducerProperties.setSendMsgTimeout(sendMsgTimeout);
+        PreCheckUtils.checkEmpty(nameServerAddress, "MQ的nameServer地址不能为空");
+        PreCheckUtils.checkEmpty(groupName, "MQ的groupName地址不能为空");
         return mqProducerProperties;
     }
 

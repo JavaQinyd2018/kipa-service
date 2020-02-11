@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Data
 @NoArgsConstructor
-public class RedisConfig {
+public class RedisProperties {
     /**
      * redis集群信息集合
      */

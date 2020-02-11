@@ -1,19 +1,16 @@
 package com.kipa.config;
 
-import com.kipa.common.DataConstant;
-import com.kipa.common.KipaProcessException;
+import com.kipa.env.GlobalEnvironmentProperties;
 import com.kipa.mock.dubbo.MockDubboProperties;
 import com.kipa.mock.http.entity.MockServerProperties;
+import com.kipa.utils.PropertiesUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
-
 import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.util.Properties;
 
 /**
  * @author: Qinyadong
@@ -54,48 +51,41 @@ public class MockServerConfiguration {
     @Value("${mock.server.dubbo.timeout}")
     private int registerTimeout;
 
+    @Autowired
+    private GlobalEnvironmentProperties globalEnvironmentProperties;
+
+    private MockServerProperties initMockServerProperties;
+
+    private MockDubboProperties initMockDubboProperties;
+
     @PostConstruct
     private void init() {
-            try {
-                Properties properties = PropertiesLoaderUtils.loadAllProperties(DataConstant.CONFIG_FILE);
-                String host = (String) properties.get("mock.server.remote.host");
-                remoteHost = StringUtils.isBlank(host) ? null : host;
-                String portStr = (String) properties.get("mock.server.remote.port");
-                remotePort = StringUtils.isBlank(portStr) ? null : Integer.valueOf(portStr);
-                String localPortStr = properties.getProperty("mock.server.local.port");
-                if (StringUtils.isNotBlank(localPortStr)) {
-                    localPort = Integer.valueOf(localPortStr);
-                }
+        //http mock配置信息
+        initMockServerProperties = new MockServerProperties();
+        initMockServerProperties.setRemoteHost(PropertiesUtils.getProperty(globalEnvironmentProperties, "mock.server.remote.host"));
+        initMockServerProperties.setRemotePort(PropertiesUtils.getIntegerProperty(globalEnvironmentProperties, "mock.server.remote.port"));
+        initMockServerProperties.setLocalPort(PropertiesUtils.getIntegerProperty(globalEnvironmentProperties,"mock.server.local.port"));
 
-                //mock dubbo的配置
-                String protocol = properties.getProperty("mock.server.dubbo.protocol");
-                if (StringUtils.isNotBlank(protocol)) {
-                    registerProtocol = protocol;
-                }
-                String mockAddress = properties.getProperty("mock.server.dubbo.address");
-                if (StringUtils.isNotBlank(mockAddress)) {
-                    this.address = mockAddress;
-                }
-            } catch (IOException e) {
-                throw new KipaProcessException(e);
-            }
+        //mock dubbo的配置
+        initMockDubboProperties = new MockDubboProperties();
+        initMockDubboProperties.setRegisterProtocol(PropertiesUtils.getProperty(globalEnvironmentProperties,"mock.server.dubbo.protocol"));
+        initMockDubboProperties.setAddress(PropertiesUtils.getProperty(globalEnvironmentProperties,"mock.server.dubbo.address"));
     }
 
     @Bean
     public MockServerProperties mockServerProperties() {
         MockServerProperties properties = new MockServerProperties();
-        init();
-        properties.setRemoteHost(remoteHost);
-        properties.setRemotePort(remotePort);
-        properties.setLocalPort(localPort);
+        properties.setRemoteHost(StringUtils.isNotBlank(initMockServerProperties.getRemoteHost()) ? initMockServerProperties.getRemoteHost() : remoteHost);
+        properties.setRemotePort(initMockServerProperties.getRemotePort() != 0 ? initMockServerProperties.getRemotePort() : remotePort);
+        properties.setLocalPort(initMockServerProperties.getLocalPort() != 0 ? initMockServerProperties.getLocalPort() : localPort);
         return properties;
     }
 
     @Bean
     public MockDubboProperties mockDubboProperties() {
         MockDubboProperties dubboProperties = new MockDubboProperties();
-        dubboProperties.setRegisterProtocol(registerProtocol);
-        dubboProperties.setAddress(address);
+        dubboProperties.setRegisterProtocol(StringUtils.isNotBlank(initMockDubboProperties.getRegisterProtocol()) ? initMockDubboProperties.getRegisterProtocol(): registerProtocol);
+        dubboProperties.setAddress(StringUtils.isNotBlank(initMockDubboProperties.getAddress()) ? initMockDubboProperties.getAddress(): address);
         dubboProperties.setRegisterTimeout(registerTimeout);
 
         dubboProperties.setApplicationName(applicationName);

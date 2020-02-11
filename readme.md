@@ -20,52 +20,71 @@
 
 ### 2. 配置
 
-(1) 基本配置
+**(1) 基本配置**
 
-```
-1.直接继承BaseTestConfiguration基类，同时需要配置在resources下面的application.properties数据文件中配置，项目启动会查找该文件，如果不存在框架会启动失败。
-需要配置数据源、http基本配置、dubbo基本配置、sftp基本配置等等，项目启动回去加载这些配置，初始化对应的服务或者工具。
-2. 需要在项目的resources下面config目录中新建配置文件：business.properties，方便我们将自定义配置的常用信息、目标项目的配置信息等等放到该文件中，
-并通过spring提供的@Value注解，获取属性值，如：
-     shopping.web.base.url=http://127.0.0.1:1234/hello/console
-     ==========================================================
-     @Value("${shopping.web.base.url}")
-     private String baseUrl;
-     ==========================================================
-    如果不新建项目就会报错：
-    java.io.FileNotFoundException: class path resource [business.properties] cannot be opened because it does not exist
-3. 需要在resources下面新建data目录，用于放数据驱动的数据文件，当然这个不是必选项，不会影响框架的整体启动，但是推荐这样做。
+A.  直接继承BasicTestNGSpringContextTests基类，默认会读取application.properties框架数据配置文件启动整个kipa-service框架，如果没有该文件，框架会启动失败。
+
+B . 需要在application.properties配置框架加载的基本配置信息：数据源配置、http基本配置、dubbo基本配置、sftp基本配置等等，项目启动回去加载这些配置，初始化对应的服务或者工具。
+
+C. 需要在项目的resources下面config目录中新建配置文件：business.properties，方便我们将自定义配置的常用信息、目标项目的配置信息等等放到该文件中，
+
+```properties
+ # 业务的数据配置信息
+ shopping.web.base.url=http://127.0.0.1:1234/hello/console
 ```
 
-(2) 自定义配置（高级配置，支持Redis、RocketMQ）
-
-```tex
-A:整合BaseConfiguration框架总的配置类
-B:通过继承AbstractTestNGSpringContextTests（spring整合testng入口类）
-C:选择配置redis，通过添加@EnableRedis注解开启redis，RedisModel默认是集群模式的redis，可以自定义配置STAND_ALONE（单机模式的）redis
-D:选择配置rocketMq,通过添加@EnableRocketMQ开启rocketMq的配置，需要配置扫描消息消费监听的路径listenerScanPackage，扫描带有@RocketMQListener注解的类，将其加入消费监听容器中
+```java
+//可以通过Spring @Value注解进行获取，并初始化
+ @Value("${shopping.web.base.url}")
+ private String baseUrl;
 ```
+
+D. 需要在resources下面新建data目录，用于放数据驱动的数据文件，当然这个不是必选项，不会影响框架的整体启动，但是推荐这样做。
+
+**(2) 自定义配置（高级配置，支持Redis、RocketMQ）**
+
+A. 继承框架提供的BaseSpringIntegrationConfiguration配置类：他是Spring的基于@Configuration注解的配置类。
+B. 继承框架提供的 BaseTestNGSpringContextTests基类，它是spring整合TestNG的入口类，通过@ContextConfiguration 注解去加载Spring的配置类，从而运行整个测试框架
+
+C. 选择配置Redis，在Spring配置类（eg: DemoSpringIntegrationConfiguration）中添加@EnableRedis注解开启redis，RedisModel默认是集群模式的redis，可以自定义配置STAND_ALONE（单机模式的）redis
+
+D:选择配置RocketMq,在在Spring配置类（eg: DemoSpringIntegrationConfiguration添加@EnableRocketMQ开启rocketMq的配置，需要配置扫描消息消费监听的路径listenerScanPackage，扫描带有@RocketMQListener注解的类，将其加入消费监听容器中
+
+E. 选择配置多数据，在在Spring配置类（eg: DemoSpringIntegrationConfiguration）配置类中开启@EnableMultipleDataSource(env = {EnvFlag.ENV1, EnvFlag.ENV2, EnvFlag.ENV3, EnvFlag.ENV4})同时最多可以开启5个数据源。
+
+F. 配置业务的数据文件：通过Spring提供的@PropertySource注解进行配置
 
 > 整合配置如下：
 >
 > ```java
-> @Configuration
-> @Import(BaseConfiguration.class)
-> //包扫描：扫描带有@Database、@Dubbo、@Http的注解从而动态的切换spring配置
-> @AppConfigScan("com.kipa.service")
-> //默认开启集群的redis操作，若要开启集群的请设置model为RedisModel.CLUSTER。
+> /*
+>  * <p>自定义配置的样例，切记这仅仅是样例，需要根据自己的项目需要进行配置</>
+>  * <p>所有配置的总配置类：http、dubbo、mock、mybatis、redis、mq</p>
+>  * <p>切勿直接继承!!!!! </p>
+>  */
+>
+> //1. 开启特定的测试环境- 测试
+> @EnableEnvironmentSwitch(env = EnvironmentType.TEST)
+> //2. 默认开启集群的redis操作，若要开启集群的请添加RedisModel.CLUSTER注解
 > @EnableRedis(model = RedisModel.STAND_ALONE)
-> //开启MQ
+> //3. 开启RocketMQ的配置
 > @EnableRocketMQ(listenerScanPackage = "com.kipa.service")
-> public class ApplicationConfiguration {
+> //4. 开启多数据源
+> @EnableMultipleDataSource(env = {EnvFlag.ENV1, EnvFlag.ENV2, EnvFlag.ENV3, EnvFlag.ENV4})
+> //5. 默认的业务数据文件，通过Spring提供的原生的 @PropertySource 注解
+> @PropertySource("classpath:config/business.properties")
+> public class DemoSpringIntegrationConfiguration extends BaseSpringIntegrationConfiguration{
 > }
 > ```
 >
 > ```java
-> @ContextConfiguration(classes = ApplicationConfiguration.class)
-> public class BaseTestContextApplication extends AbstractTestNGSpringContextTests {
+> /* 
+>  * <p>框架高级用法整合样例，切勿直接继承该类</p>
+>  * <p>切勿直接继承!!!!! </p>
+>  */
+> @ContextConfiguration(classes = DemoSpringIntegrationConfiguration.class)
+> public class DemoTestNGSpringContextTests extends BaseTestNGSpringContextTests {
 > }
->
 > ```
 
 整个的配置情况如下图：
@@ -79,7 +98,7 @@ D:选择配置rocketMq,通过添加@EnableRocketMQ开启rocketMq的配置，需�
 /**
 * 直接继承框架提供的测试基类
 */
-public class HelloTest extends BaseTestConfiguration {
+public class HelloTest extends BaseTestNGSpringContextTests {
 
     @Test
     public void hello() {
@@ -100,14 +119,14 @@ public class HelloTest extends BaseTestContextApplication {
 }
 ```
 
-### 2. http使用
+### 2. Http使用
 
 关于http的操作，框架提供了http和https两种类型的的操作，如果需要使用https需要在http.properties的配置文件中配置相关的安全证书信息
 
 http提供了httpService和HttpsService两个服务类，可以帮助我们发起http请求，目前支持get、post、put、delete、以及文件的上传和下载等功能，能够满足测试需要，支持同步调用和异步调用，如下是同步调用的样例：
 
 ```java
-public class HttpTest extends BaseTestConfiguration {
+public class HttpTest extends BaseTestNGSpringContextTests {
 
  	//注入http服务
     @Autowired
@@ -150,7 +169,7 @@ public class HttpTest extends BaseTestConfiguration {
             paramMap.put("email","root@123.com");
             paramMap.put("phone","4747474747");
             String jsonString = JSON.toJSONString(paramMap);
-            List<Map<String, Object>> result = httpService.put("http://localhost:8989/user/update", headMap, jsonString, true);
+            String result = httpService.put("http://localhost:8989/user/update", headMap, jsonString, true);
             System.out.println(result);
         }
 
@@ -158,19 +177,19 @@ public class HttpTest extends BaseTestConfiguration {
         public void testDelete() {
             Map<String, String> paramMap = Maps.newHashMap();
             paramMap.put("ids","104,91,92,93");
-             String result = httpService.delete("http://localhost:8989/user/delete", paramMap, true);
+            String result = httpService.delete("http://localhost:8989/user/delete", paramMap, true);
             System.out.println(result);
         }
 
 ```
 [http使用的详细wiki](wiki/http.md)
 
-### 3. dubbo使用
+### 3. Dubbo使用
 
 dubbo接口调用需要传的参数有：接口名称（接口全路径、方法名称、参数类型名称全路径与参数值），如果dubbo接口是没有参数的，参数名称全路径和参数值不用传，否则会报错或者找不到服务提供者。dubbo调用有三种方式：同步调用、异步调用、直连调用。样例如下：
 
 ```java
-public class DubboTest extends BaseTestConfiguration {
+public class DubboTest extends BaseTestNGSpringContextTests {
 
     @Autowired
     DubboService dubboService;
@@ -179,7 +198,7 @@ public class DubboTest extends BaseTestConfiguration {
     public void testSyncParam() {
         Map<String, Object> paramMap = Maps.newHashMap();
         paramMap.put(String.class.getName(),"16323232223");
-        List<Map<String, Object>> result = dubboService.invoke("com.learn.springboot.springbootssmp.dubbo.UserInfoDubboService", "queryUserInfoByPhoneNo", paramMap);
+        String result = dubboService.invoke("com.learn.springboot.springbootssmp.dubbo.UserInfoDubboService", "queryUserInfoByPhoneNo", paramMap);
         System.out.println(result);
     }
 
@@ -189,18 +208,18 @@ public class DubboTest extends BaseTestConfiguration {
         String json = "{\"phone\":\"16323232223\",\"email\":\"jordan@huawei.com\"}";
         Map<String, Object> paramMap = Maps.newHashMap();
         paramMap.put("com.learn.springboot.springbootssmp.ro.UserRo", JSONObject.parseObject(json));
-        List<Map<String, Object>> result = dubboService.invoke("com.learn.springboot.springbootssmp.dubbo.UserInfoDubboService", "getInfo", paramMap);
+        String result = dubboService.invoke("com.learn.springboot.springbootssmp.dubbo.UserInfoDubboService", "getInfo", paramMap);
         System.out.println(result);
     }
 }
 ```
 [dubbo使用的详细wiki](wiki/dubbo.md)
 
-### 4. mock使用
+### 4. Mock使用
 框架提供的mock功能只支持mock http请求，需要传入http请求的相关信息和http响应的相关信息，会在本地分配出来一个端口mock服务，默认是6231。当然，端口可以自己在mockserver.properties进行配置。
 
 ```java
-public class MockTest extends BaseTestConfiguration {
+public class MockTest extends BaseTestNGSpringContextTests {
 
     @Autowired
     private MockService mockService;
@@ -231,12 +250,12 @@ public class MockTest extends BaseTestConfiguration {
 ```
 [mock使用的详细wiki](wiki/mock.md)
 
-### 5. sftp使用
+### 5. Sftp使用
 
 项目中常常存在生成话单或者账单文件等业务进行数据传递或者业务交互，框架提供了SftpHelper工具用于文件的上传、下载到sftp服务器。 常用的操作有：文件的长传、下载、删除、是否存在等操作。
 
 ```java
-public class SftpTest  extends BaseTestConfiguration {
+public class SftpTest  extends BaseTestNGSpringContextTests {
 
     @Test
     public void testUpload() {
@@ -251,10 +270,10 @@ public class SftpTest  extends BaseTestConfiguration {
 
 框架对于数据库的操作，封装了mybatis的一些简单的CRUD操作，传入参数或者sql语句就可以实现和数据库的交互。
 
-##### （1）基本的增删改查操作
+##### 基本的增删改查操作
 
 ```java
-public class DatabaseTest  extends BaseTestConfiguration {
+public class DatabaseTest  extends BaseTestNGSpringContextTests {
 
   		//直接注入DatabaseService服务进行数据库增删改查的操作
         @Autowired
@@ -326,7 +345,7 @@ public class DatabaseTest  extends BaseTestConfiguration {
 #### 校验普通基础数据类型，包括list、map、数组
 
 ```java
-public class CheckTest extends BaseTestConfiguration {
+public class CheckTest extends BaseTestNGSpringContextTests {
 
     	List<Map<String, Object>> list = Lists.newArrayList();
         Map<String, Object> map = Maps.newHashMap();
@@ -360,11 +379,13 @@ Exception in thread "main" java.lang.KipaProcessException: list不相等:
 [对象校验使用的详细wiki](wiki/check.md)
 
 ## 三、高级使用
-其他数据驱动、rocketMq和redis的使用如下：
+其他数据驱动、RocketMq、Redis、多数据源切换，多环境切换的使用如下：
 [高级配置使用的详细wiki](wiki/advance.md)
 
 
 ## 四、测试框架相关的
-实际的测试过程中，我们往往会碰到测试用例需要依赖其他的用例执行之后生成数据，把数据传递给下一条测试用例，或者一个测试用例中间每一个测试步骤需要参数传递，框架整合了Ehcache缓存框架，并提供了GlobalCacheContext。框架定义了@TestCase注解，为了标识测试用例，以及批量执行时候的顺序；定义了@Step注解，为了标识一个测试类里面的每一个测试步骤执行的先后顺序。
+实际的测试过程中，我们往往会碰到测试用例需要依赖其他的用例执行之后生成数据，把数据传递给下一条测试用例，或者一个测试用例中间每一个测试步骤需要参数传递，框架整合了Ehcache缓存框架，并提供了GlobalCacheContext。
+
+框架定义了@TestCase注解，为了标识测试用例，以及批量执行时候的顺序；定义了@Step注解，为了标识一个测试类里面的每一个测试步骤执行的先后顺序。
 
 [测试框架相关的详细信息wiki](wiki/framework.md)

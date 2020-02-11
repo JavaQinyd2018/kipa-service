@@ -120,7 +120,7 @@ http://127.0.0.1:6231,/userInfo/showUserInfo,phone,16323232223
 ```
 
 ```java
-public class CsvDataTest extends BaseTestConfiguration{
+public class CsvDataTest extends BasicTestNGSpringContextTests{
 
     @Autowired
     private HttpService httpService;
@@ -139,7 +139,7 @@ public class CsvDataTest extends BaseTestConfiguration{
 框架提供了注解@DataMeta和@DataParam, 当标识有@MockHttp注解的方法需要进行数据驱动的时候，单一的参数可以直接通过@DataParam注入数据，多参数的方法需要通过@DataMeta进行数据驱动，具体用法如下：
 
 ```java
-public class DataHelloTest extends BaseTestConfiguration {
+public class DataHelloTest extends BasicTestNGSpringContextTests {
 
     @Autowired
     private MockService mockService;
@@ -170,46 +170,51 @@ public class DataHelloTest extends BaseTestConfiguration {
 
 ### 2. 环境的切换
 
-在实际的测试过程中，我们可能会有多套环境，比如开发环境（dev）、测试环境（qa），预生产环境（preqa）,生产环境，框架提供了@AppConfigScan用于扫描配置注解@Database、@Dubbo、@Http。
+在实际的测试过程中，我们可能会有多套环境，比如开发环境（dev）、测试环境（qa），预生产环境（preqa）,生产环境：框架提供了 @EnableEnvironmentSwitch 注解进行环境切换，根据不同的环境切换不同的配置文件。
 
-其中：
-
-@Database注解是数据源配置注解，用于数据源的切换
-
-@Dubbo注解是用于dubbo接口调用的消费端的配置
-
-@Http注解是用于http和https等安全证书的环境切换配置
+eg: 如果是TEST环境，那么框架会自动读取resources目录下面的application-test.properties文件，并初始化配置。
 
 配置在总的框架的总配置类上面， 具体配置情况如下：
 
 ```java
-@Configuration
-//导入基本的http、dubbo、mock、mybatis的spring配置文件
-@Import(BaseConfiguration.class)
-//包扫描：扫描带有@Database、@Dubbo、@Http的注解从而动态的切换spring配置
-@AppConfigScan("com.kipa.service")
-public class DemoApplicationConfiguration {
+@AllArgsConstructor
+@Getter
+public enum EnvironmentType {
+
+    /**
+     * 默认的环境
+     */
+    DEFAULT("def"),
+    /**
+     * 测试环境
+     */
+    TEST("test"),
+
+    /**
+     * 开发环境
+     */
+    DEVELOPMENT("dev"),
+
+    /**
+     * 预生产
+     */
+    PRE_PRODUCT("pre"),
+
+    /**
+     * 生产
+     */
+    PRODUCT("prod");
+
+    private String remark;
 
 }
 
-/*
- * 这三个注解推荐配置到测试的入口类上面，需要修改的时候直接修改入口配置类，这样会方便很多
- * 框架高级用法整合样例，切勿直接继承该类
- */
-@Database(datasourceFlag = "dev")
-@Http(httpFlag = "dev")
-@Dubbo(configFlag = "dev",version = "1.0.0",timeout = 120000)
-@Listeners({DataMetaAnnotationListener.class})
-@ContextConfiguration(classes = DemoApplicationConfiguration.class)
-public class DemoTestContextConfiguration extends AbstractTestNGSpringContextTests {
+//1. 开启特定的测试环境- 测试
+@EnableEnvironmentSwitch(env = EnvironmentType.TEST)
+//2. 默认开启集群的redis操作，若要开启集群的请添加RedisModel.CLUSTER注解
+public class DemoSpringIntegrationConfiguration extends BaseSpringIntegrationConfiguration{
 
-    @DataProvider(name = "csv")
-    public Iterator<Object[]> providerData(Method method) {
-        CSVDataProvider csvDataProvider = new CSVDataProvider();
-        return csvDataProvider.providerData(method);
-    }
 }
-
 ```
 
 ### 3. RocketMQ的使用
@@ -221,12 +226,14 @@ public class DemoTestContextConfiguration extends AbstractTestNGSpringContextTes
 #### （1）配置主配置类
 
 ```java
-@Configuration
-@Import(BaseConfiguration.class)
-//添加@EnableRocketMQ注解，开启RocketMQ，listenerScanPackage必须要填写，标识扫描对应路径下面
-//所有的带@RocketMQListener注解的类，并开启消费监听
-@EnableRocketMQ(listenerScanPackage = "service.mq")
-public class ApplicationConfiguration {
+//3. 开启RocketMQ的配置
+@EnableRocketMQ(listenerScanPackage = "com.kipa.service")
+public class DemoSpringIntegrationConfiguration extends BaseSpringIntegrationConfiguration{
+
+}
+
+@ContextConfiguration(classes = DemoSpringIntegrationConfiguration.class)
+public class DemoTestNGSpringContextTests extends BaseTestNGSpringContextTests {
 
 }
 ```
@@ -298,13 +305,13 @@ public class ConsumerService {
 #### （1）配置主配置类
 
 ```java
-@Configuration
-@Import(BaseConfiguration.class)
-//添加开启@EnableRedis注解，开启redis的配置,RedisModel如果是STAND_ALONE代表单机版的redis
-//RedisModel如果是CLUSTER代表集群版的redis,默认是集群版的redis
+//2. 默认开启集群的redis操作，若要开启集群的请添加RedisModel.CLUSTER注解
 @EnableRedis(model = RedisModel.STAND_ALONE)
-public class ApplicationConfiguration {
+public class DemoSpringIntegrationConfiguration extends BaseSpringIntegrationConfiguration{
+}
 
+@ContextConfiguration(classes = DemoSpringIntegrationConfiguration.class)
+public class DemoTestNGSpringContextTests extends BaseTestNGSpringContextTests {
 }
 ```
 
@@ -353,12 +360,14 @@ public class RedisTest extends BaseTestContextApplication {
 在框架整合的入口类BaseTestContextApplication上面标注@EnableMultipleDataSource注解，同时配置需要开启的环境的标识，EnvFlag.ENV1 表示开启数据源标识为env1配置的数据源，如果有多个会同时开启多个。
 
 ```java
-@Configuration
-@Import(BaseConfiguration.class)
-//开启多数据操作 开启了4套：分别为env1，env2，env3，env4
-@EnableMultipleDataSource(env = {EnvFlag.ENV1,EnvFlag.ENV2, EnvFlag.ENV3, EnvFlag.ENV4})
-public class ApplicationConfiguration {
+//4. 开启多数据源
+@EnableMultipleDataSource(env = {EnvFlag.ENV1, EnvFlag.ENV2, EnvFlag.ENV3, EnvFlag.ENV4})
+public class DemoSpringIntegrationConfiguration extends BaseSpringIntegrationConfiguration{
 
+}
+
+@ContextConfiguration(classes = DemoSpringIntegrationConfiguration.class)
+public class DemoTestNGSpringContextTests extends BaseTestNGSpringContextTests {
 }
 ```
 
@@ -485,6 +494,103 @@ public class MultipleDatasourceTest extends TestContextConfiguration {
 ```
 
 当然像Arrays.asList()这样的Java提供的一些工具类也可以帮我们简化多参数的代码冗余繁琐的问题，需要灵活运用。
+
+### 7.测试用例编写以及规范
+
+#### 1. 从业务角度分析测试用例
+
+（1）对于测试人员来说，业务分为多个测试的模块。每个模块有对应不同的流程、业务场景：
+
+​	比如：米庄的开户业务，分为借款人开户、投资人开户会调用不同的接口、涉及不同的流程；所以建议不同		的业务场景写一条用例，也就是对于开户业务来说，我们可以写投资人开户用例、借款人开户用例两条测试用例。
+
+（2）每条用例建议都映射成一个TestCase，kipa-service提供了@TestCase注解用来标识为一个测试用例，同时规定测试用例执行的顺序。
+
+#### 2. 测试用例的分解
+
+（1）对于一条测试用例来说，它又分为若干个小的步骤，每个步骤可能会调一个接口：
+
+​	比如：米庄的投资人开户分为5个步骤，登录、请求开户、执行开户，校验开户信息、请求懒猫开户。
+
+（2）每个步骤会调用一个接口，那么我们需要对每一个步骤进行参数准备、接口调用、结果校验，确保每个测试的步骤没有问题，才能确保整个测试用例的流程没有问题。
+
+（3）每个测试步骤之前可能有前后的顺序和依赖关系，testng本身的@Test注解里面的属性priority可以帮助我们运行整个测试类的时候确保运行的优先级（先后顺序），dependsOnMethods属性可以让我们强依赖某个测试的步骤。
+
+（4）另外，kipa-service也提供了@Step整个注解。如果标识了step注解的测试步骤，通过order属性确定了步骤执行的先后顺序，运行的时候也会按照既定的顺序执行
+
+#### 3. 测试用例的编写
+
+（1）共有的一些数据、变量
+
+kipa-service框架整个了ehcache缓存框架，可以将application.properties属性文件中以common开头的key以及value都放到全局缓存里面，使用的时候，，只需要注入GlobalCacheContext，根据key获取对应的属性值来使用。
+
+（2）每个测试用例的可能会涉及参数传递，可以直接放到GlobalCacheContext全局缓存中，下个用例直接获取
+
+（3）步骤之间的数据传递，testng已经提供了测试的上下文，只需要在测试的时候，注入ITestContext接口，进行保存和获取
+
+（4）每个测试用例映射为一个测试类，每个测试步骤隐射为一个@Test的测试方法
+
+#### 4. 注意事项
+
+（1）测试用例的命名
+
+建议：测试用例以业务流程的含义命名，比如：投资人开户：LenderOpenAccountTest.java
+
+（2）测试步骤的命名
+
+建议：调用的接口的含义命名：比如请求开户：
+
+```java
+@Test
+public void requestLenderOpenAccount() {
+}
+```
+
+
+### 8. 框架批量拉起执行器
+
+传统的TestNG的测试用例需要将测试用例配到testng.xml的配置文件中，运行该文件可以批量的执行，目前这种方式会加大我们的工作量，每写一条用例就需要配置一条，加大了工作量。框架基于自定义注解+包扫描的方式进行了测试用例的执行，同时定制了TestNG的执行器(TestNGExecutor)，可以帮我们进行批量执行并生产测试报告。
+
+也可以自定义执行器，通过TestNGLaunchCondition 和实现TestNGLauncher接口进行自定义。
+
+```java
+    @Test
+    public void test() {
+        TestNGDiscovery discovery = TestNGDiscovery.builder()
+                .selectPackage("com.qinyadong.service.test.run")
+                .filterClass(Arrays.asList(RunTest.class))
+                .build();
+        TestNGExecutor executor = new TestNGExecutor();
+        executor.execute(discovery);
+    }
+```
+
+```java
+public class CustomizeTestNGExecutor {
+
+    public void execute(TestNGDiscovery discovery) {
+        TestNGLaunchCondition<BasicTestNGSpringContextTests> condition = new TestNGLaunchCondition<>();
+        condition.setBaseClass(BasicTestNGSpringContextTests.class);
+        condition.setFilterClass(discovery.getFilterClass());
+        condition.setAnnotationType(discovery.getAnnotationType());
+        condition.setSelectPackage(discovery.getSelectPackage());
+        SimpleTestNGLauncher<BasicTestNGSpringContextTests> launcher = new SimpleTestNGLauncher<>(condition);
+        launcher.setListenerClass(discovery.getListenerClass());
+        launcher.launch();
+    }
+
+    public void multiThreadExecute(TestNGDiscovery discovery) {
+        TestNGLaunchCondition<BasicTestNGSpringContextTests> condition = new TestNGLaunchCondition<>();
+        condition.setBaseClass(BasicTestNGSpringContextTests.class);
+        condition.setFilterClass(discovery.getFilterClass());
+        condition.setAnnotationType(discovery.getAnnotationType());
+        condition.setSelectPackage(discovery.getSelectPackage());
+        MultiThreadTestNGLauncher<BasicTestNGSpringContextTests> multiThreadTestNGLauncher = new MultiThreadTestNGLauncher<>(condition);
+        multiThreadTestNGLauncher.setListenerClass(discovery.getListenerClass());
+        multiThreadTestNGLauncher.launch();
+    }
+```
+
+
 
 
 

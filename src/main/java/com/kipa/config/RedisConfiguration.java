@@ -2,14 +2,15 @@ package com.kipa.config;
 
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.google.common.collect.Lists;
-import com.kipa.common.DataConstant;
 import com.kipa.common.KipaProcessException;
+import com.kipa.env.GlobalEnvironmentProperties;
 import com.kipa.redis.ClusterRedisCondition;
-import com.kipa.redis.RedisConfig;
+import com.kipa.redis.RedisProperties;
 import com.kipa.redis.StandAloneRedisCondition;
 import com.kipa.utils.PreCheckUtils;
 import com.kipa.utils.PropertiesUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +30,6 @@ import redis.clients.jedis.JedisPoolConfig;
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * @Author: Yadong Qin
@@ -40,7 +40,7 @@ import java.util.Properties;
 @PropertySource("classpath:redis/redis-client.properties")
 public class RedisConfiguration {
 
-    private RedisConfig redisConfig;
+    private RedisProperties redisProperties;
 
     @Value("${spring.redis.timeout}")
     private Integer timeout;
@@ -69,34 +69,35 @@ public class RedisConfiguration {
     @Value("${spring.redis.maxWaitMillis}")
     private Long maxWaitMillis;
 
+    @Autowired
+    private GlobalEnvironmentProperties globalEnvironmentProperties;
+
     @PostConstruct
     private void init() {
-        redisConfig = new RedisConfig();
-        Properties properties = PropertiesUtils.loadProperties(DataConstant.CONFIG_FILE);
-        String clusterAddress = PropertiesUtils.getProperty(properties, null, "spring.redis.cluster.address");
-        List<String> list = Lists.newArrayList();
+        redisProperties = new RedisProperties();
+        String clusterAddress = PropertiesUtils.getProperty(globalEnvironmentProperties, "spring.redis.cluster.address");
+        final List<String> list = Lists.newArrayList();
         PreCheckUtils.checkEmpty(clusterAddress, "redis服务器的地址不能为空");
-        String clusterPassword = properties.getProperty("spring.redis.cluster.password");
-        String aloneAddress = PropertiesUtils.getProperty(properties, null, "spring.redis.standalone.address");
-        String standAlonePassword = properties.getProperty("spring.redis.standalone.password");
+        String clusterPassword = PropertiesUtils.getProperty(globalEnvironmentProperties, "spring.redis.cluster.password");
+        String aloneAddress = PropertiesUtils.getProperty(globalEnvironmentProperties, "spring.redis.standalone.address");
+        String standAlonePassword = PropertiesUtils.getProperty(globalEnvironmentProperties, "spring.redis.standalone.password");
         if (StringUtils.isBlank(clusterAddress) && StringUtils.isBlank(aloneAddress)) {
             throw new KipaProcessException("请配置redis的服务地址");
         }
-
         try {
             if (StringUtils.isNotBlank(clusterAddress)) {
                 String[] clusterArray = clusterAddress.split(",");
                 list.addAll(Arrays.asList(clusterArray));
-                redisConfig.setList(list);
-                redisConfig.setClusterPassword(clusterPassword);
+                redisProperties.setList(list);
+                redisProperties.setClusterPassword(clusterPassword);
             }
             if (StringUtils.isNotBlank(standAlonePassword)) {
                 String[] split = aloneAddress.split(":");
                 String standAloneHost = split[0];
                 Integer standAlonePort = Integer.valueOf(split[1]);
-                redisConfig.setStandAloneHost(standAloneHost);
-                redisConfig.setStandAlonePassword(standAlonePassword);
-                redisConfig.setStandAlonePort(standAlonePort);
+                redisProperties.setStandAloneHost(standAloneHost);
+                redisProperties.setStandAlonePassword(standAlonePassword);
+                redisProperties.setStandAlonePort(standAlonePort);
             }
         } catch (Exception e) {
             throw new KipaProcessException("redis的服务地址格式有误");
@@ -125,14 +126,14 @@ public class RedisConfiguration {
     public RedisClusterConfiguration redisClusterConfiguration() {
         RedisClusterConfiguration redisClusterConfiguration = new RedisClusterConfiguration();
         List<RedisNode> redisNodes = Lists.newArrayList();
-        redisConfig.getList().forEach(address -> {
+        redisProperties.getList().forEach(address -> {
             String[] split = address.split(":");
-            RedisNode redisNode = new RedisClusterNode(split[0], Integer.valueOf(split[1]));
+            RedisNode redisNode = new RedisClusterNode(split[0], Integer.parseInt(split[1]));
             redisNodes.add(redisNode);
         });
         redisClusterConfiguration.setClusterNodes(redisNodes);
         redisClusterConfiguration.setMaxRedirects(3);
-        redisClusterConfiguration.setPassword(redisConfig.getClusterPassword());
+        redisClusterConfiguration.setPassword(redisProperties.getClusterPassword());
         return redisClusterConfiguration;
     }
 
@@ -143,9 +144,9 @@ public class RedisConfiguration {
     @Bean
     public RedisStandaloneConfiguration redisStandaloneConfiguration() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName(redisConfig.getStandAloneHost());
-        redisStandaloneConfiguration.setPort(redisConfig.getStandAlonePort());
-        redisStandaloneConfiguration.setPassword(redisConfig.getStandAlonePassword());
+        redisStandaloneConfiguration.setHostName(redisProperties.getStandAloneHost());
+        redisStandaloneConfiguration.setPort(redisProperties.getStandAlonePort());
+        redisStandaloneConfiguration.setPassword(redisProperties.getStandAlonePassword());
         redisStandaloneConfiguration.setDatabase(db);
         return redisStandaloneConfiguration;
     }

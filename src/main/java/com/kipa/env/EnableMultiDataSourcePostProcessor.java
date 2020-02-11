@@ -28,37 +28,10 @@ import java.util.Set;
  * 通过包扫描获取flag切换环境
  */
 @Component
-public class AppConfigScanPostProcessor implements BeanFactoryPostProcessor {
+public class EnableMultiDataSourcePostProcessor implements BeanFactoryPostProcessor {
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
-
-        AppConfigScan appConfigScan = getAnnotation(configurableListableBeanFactory, AppConfigScan.class);
-        if (!ObjectUtils.isEmpty(appConfigScan)) {
-                String basePackage = appConfigScan.basePackage();
-                //扫描到所有的带有@Database、@Dubbo、@Http的bean
-                Set<BeanDefinition> definitionSet = PackageScanUtils.getBeanWithAnnotationSet(basePackage, Arrays.asList(Database.class, Dubbo.class, Http.class));
-                if (CollectionUtils.isNotEmpty(definitionSet)) {
-                    definitionSet.forEach(beanDefinition -> {
-                        Map<String, Object> datasourceAttributes = getAnnotationAttributes(beanDefinition, Database.class);
-                        if (MapUtils.isNotEmpty(datasourceAttributes)) {
-                            String flag = (String) datasourceAttributes.get("datasourceFlag");
-                            DatabaseContextHolder.setFlag(flag);
-                        }
-                        Map<String, Object> consumerAttributes = getAnnotationAttributes(beanDefinition, Dubbo.class);
-                        if (MapUtils.isNotEmpty(consumerAttributes)) {
-                            DubboContextHolder.setConfig(consumerAttributes);
-                        }
-
-                        Map<String, Object> httpAttributes = getAnnotationAttributes(beanDefinition, Http.class);
-                        if (MapUtils.isNotEmpty(httpAttributes)) {
-                            HttpContextHolder.setFlag((String) httpAttributes.get("httpFlag"));
-                        }
-                    });
-                }
-
-            }
-
         EnableMultipleDataSource multipleDataSource = getAnnotation(configurableListableBeanFactory, EnableMultipleDataSource.class);
         if (!ObjectUtils.isEmpty(multipleDataSource)) {
             EnvFlag[] env = multipleDataSource.env();

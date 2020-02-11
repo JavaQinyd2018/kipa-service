@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-class SftpConfig {
+class SftpProperties {
 
     /**
      * sftp服务器host

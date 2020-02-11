@@ -3,7 +3,7 @@
 框架提供的mock功能只支持mock http请求，需要传入http请求的相关信息和http响应的相关信息，会在本地分配出来一个端口mock服务，默认是6231。当然，端口可以自己在mockserver.properties进行配置。
 
 ```java
-public class MockTest extends BaseTestConfiguration {
+public class MockTest extends BasicTestNGSpringContextTests {
 
     @Autowired
     private MockService mockService;
@@ -63,7 +63,7 @@ public class MockTest extends BaseTestConfiguration {
 
      ==================================================================================
      //框架定义了@MockHttp注解帮助我们进行mock时候的数据驱动，具体用法如下：
-    public class DataHelloTest extends BaseTestConfiguration {
+    public class DataHelloTest extends BasicTestNGSpringContextTests {
 
     @Autowired
     private MockService mockService;

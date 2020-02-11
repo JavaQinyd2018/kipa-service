@@ -30,9 +30,8 @@ import org.springframework.context.annotation.*;
         @ComponentScan("com.kipa.mock.dubbo"),
         @ComponentScan("com.kipa.data.ehcache")
 })
-@PropertySource(value = "classpath:config/business.properties")
 @EnableAspectJAutoProxy
 @EnableCaching
-public class SpringIntegrationConfiguration {
+public class BaseSpringIntegrationConfiguration {
 
 }

@@ -5,7 +5,7 @@
 #### （1）校验普通基础数据类型，包括list、map、数组
 
 ```java
-public class CheckTest extends BaseTestConfiguration {
+public class CheckTest extends BasicTestNGSpringContextTests {
 
     	List<Map<String, Object>> list = Lists.newArrayList();
         Map<String, Object> map = Maps.newHashMap();

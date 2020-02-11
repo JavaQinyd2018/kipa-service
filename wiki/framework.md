@@ -23,7 +23,7 @@ public class ContextTest3 {
 框架提供了GlobalCacheContext， 测试类之间的数据可以通过GlobalCacheContext放入缓存中，下一条用例需要的时候在从里面获取。
 
 ```java
-public class GlobalContext extends BaseTestConfiguration {
+public class GlobalContext extends BasicTestNGSpringContextTests {
 
     @Autowired
     private GlobalCacheContext cacheContext;
@@ -36,7 +36,7 @@ public class GlobalContext extends BaseTestConfiguration {
 ```
 
 ```java
-public class HelloContext extends BaseTestConfiguration {
+public class HelloContext extends BasicTestNGSpringContextTests {
 
     @Autowired
     private GlobalCacheContext cacheContext;
@@ -53,7 +53,7 @@ public class HelloContext extends BaseTestConfiguration {
 testng对于每个测试的方法提供了@Test的priority属性确定每个测试的方法运行的优先级，框架为了更清晰的标识提供了@Step注解，通过注解的order属性确定运行的顺序和优先级。
 
 ```java
-public class StepTest extends BaseTestConfiguration {
+public class StepTest extends BasicTestNGSpringContextTests {
 
     @Step(order = 1,description = "第一步")
     @Test
@@ -82,7 +82,7 @@ public class StepTest extends BaseTestConfiguration {
 
 ```java
 @TestCase(order = 1,description = "这是测试类1")
-public class HelloTest1 extends BaseTestConfiguration {
+public class HelloTest1 extends BasicTestNGSpringContextTests {
 
     @Test
     public void hello() {
@@ -93,7 +93,7 @@ public class HelloTest1 extends BaseTestConfiguration {
 
 ```java
 @TestCase(order = 2,description = "这是测试类2")
-public class HelloTest2 extends BaseTestConfiguration {
+public class HelloTest2 extends BasicTestNGSpringContextTests {
 
     @Test
     public void hello() {
@@ -104,7 +104,7 @@ public class HelloTest2 extends BaseTestConfiguration {
 
 ```java
 @TestCase(order = 3,description = "这是测试类3")
-public class HelloTest3 extends BaseTestConfiguration {
+public class HelloTest3 extends BasicTestNGSpringContextTests {
 
     @Test
     public void hello() {

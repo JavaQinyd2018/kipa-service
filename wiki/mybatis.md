@@ -5,7 +5,7 @@
 ##### （1）基本的增删改查操作
 
 ```java
-public class DatabaseTest  extends BaseTestConfiguration {
+public class DatabaseTest  extends BasicTestNGSpringContextTests {
 
   		//直接注入DatabaseService服务进行数据库增删改查的操作
         @Autowired
