@@ -98,7 +98,10 @@ public class BaseDubboFactoryBean implements FactoryBean<BaseDubboService>, Init
                     break;
                 case DIRECTED_LINK:
                     String rpcProtocol = StringUtils.isBlank(dubboProperties.getRpcProtocol()) ? "dubbo" : dubboProperties.getRpcProtocol();
-                    String url = String.format("%s://%s", rpcProtocol, dubboProperties.getAddress());
+                    String url = String.format("%s://%s", rpcProtocol, dubboRequest.getDirectUrl());
+                    if (StringUtils.startsWithIgnoreCase(url, "dubbo://")) {
+                        url = dubboRequest.getDirectUrl();
+                    }
                     referenceConfig.setUrl(url);
                     genericService = getGenericService(referenceConfig);
                     syncExecutor.setClient(genericService);

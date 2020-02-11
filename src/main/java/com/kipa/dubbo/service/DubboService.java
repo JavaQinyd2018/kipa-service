@@ -75,14 +75,14 @@ public interface DubboService {
      * @param typeAndValuePair
      * @return
      */
-    String directedInvoke(String interfaceName,String methodName, Map<String, Object> typeAndValuePair);
+    String directedInvoke(String interfaceName,String methodName, Map<String, Object> typeAndValuePair, String directUrl);
     /**
      * 直连调用
      * @param interfaceName
      * @param typeAndValuePair
      * @return
      */
-    String directedInvoke(String interfaceName,String methodName, Map<String, Object> typeAndValuePair, String version);
+    String directedInvoke(String interfaceName,String methodName, Map<String, Object> typeAndValuePair, String directUrl, String version);
 
     /**
      * 直连

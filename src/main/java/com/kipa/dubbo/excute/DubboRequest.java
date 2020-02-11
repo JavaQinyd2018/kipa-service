@@ -33,6 +33,10 @@ public final class DubboRequest extends AsyncInvokeRequest<ResponseCallback> {
     private Map<String, Object> classValuePair = new ConcurrentHashMap<>();
 
     /**
+     * 直连URL
+     */
+    private String directUrl;
+    /**
      * 请求的版本号
      */
     private String version;
@@ -41,12 +45,13 @@ public final class DubboRequest extends AsyncInvokeRequest<ResponseCallback> {
      * 构建器
      * @return
      */
-    public DubboRequest(String interfaceName, String methodName, Map<String, Object> classValuePair, String version, ResponseCallback responseCallback) {
+    public DubboRequest(String interfaceName, String methodName, Map<String, Object> classValuePair, String directUrl, String version, ResponseCallback responseCallback) {
         this.interfaceName = interfaceName;
         this.methodName = methodName;
         this.classValuePair = classValuePair;
         this.version = version;
         this.callback = responseCallback;
+        this.directUrl = directUrl;
     }
     public static DubboRequestBuilder builder() {
         return new DubboRequestBuilder();
@@ -58,6 +63,7 @@ public final class DubboRequest extends AsyncInvokeRequest<ResponseCallback> {
         private String methodName;
         private Map<String, Object> classValuePair = new ConcurrentHashMap<>();
         private ResponseCallback responseCallback;
+        private String directUrl;
         private String version;
 
         public DubboRequestBuilder interfaceName(String interfaceName) {
@@ -85,12 +91,16 @@ public final class DubboRequest extends AsyncInvokeRequest<ResponseCallback> {
             return this;
         }
 
+        public DubboRequestBuilder directUrl(String directUrl) {
+            this.directUrl = directUrl;
+            return this;
+        }
         public DubboRequestBuilder version(String  version) {
             this.version = version;
             return this;
         }
         public DubboRequest build() {
-            return new DubboRequest(this.interfaceName, this.methodName, this.classValuePair,this.version, this.responseCallback);
+            return new DubboRequest(this.interfaceName, this.methodName, this.classValuePair,this.directUrl, this.version, this.responseCallback);
         }
     }
 }
