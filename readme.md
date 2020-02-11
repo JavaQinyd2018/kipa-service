@@ -101,7 +101,7 @@ F. 配置业务的数据文件：通过Spring提供的@PropertySource注解进�
 /**
 * 直接继承框架提供的测试基类
 */
-public class HelloTest extends BaseTestNGSpringContextTests {
+public class HelloTest extends BasicTestNGSpringContextTests {
 
     @Test
     public void hello() {
@@ -113,7 +113,7 @@ public class HelloTest extends BaseTestNGSpringContextTests {
 /**
 * 继承框架自定义测试的基类
 */
-public class HelloTest extends BaseTestContextApplication {
+public class HelloTest extends BasicTestNGSpringContextTests {
 
     @Test
     public void hello() {
@@ -129,7 +129,7 @@ public class HelloTest extends BaseTestContextApplication {
 http提供了httpService和HttpsService两个服务类，可以帮助我们发起http请求，目前支持get、post、put、delete、以及文件的上传和下载等功能，能够满足测试需要，支持同步调用和异步调用，如下是同步调用的样例：
 
 ```java
-public class HttpTest extends BaseTestNGSpringContextTests {
+public class HttpTest extends BasicTestNGSpringContextTests {
 
  	//注入http服务
     @Autowired
@@ -192,7 +192,7 @@ public class HttpTest extends BaseTestNGSpringContextTests {
 dubbo接口调用需要传的参数有：接口名称（接口全路径、方法名称、参数类型名称全路径与参数值），如果dubbo接口是没有参数的，参数名称全路径和参数值不用传，否则会报错或者找不到服务提供者。dubbo调用有三种方式：同步调用、异步调用、直连调用。样例如下：
 
 ```java
-public class DubboTest extends BaseTestNGSpringContextTests {
+public class DubboTest extends BasicTestNGSpringContextTests {
 
     @Autowired
     DubboService dubboService;
@@ -222,7 +222,7 @@ public class DubboTest extends BaseTestNGSpringContextTests {
 框架提供的mock功能只支持mock http请求，需要传入http请求的相关信息和http响应的相关信息，会在本地分配出来一个端口mock服务，默认是6231。当然，端口可以自己在mockserver.properties进行配置。
 
 ```java
-public class MockTest extends BaseTestNGSpringContextTests {
+public class MockTest extends BasicTestNGSpringContextTests {
 
     @Autowired
     private MockService mockService;
@@ -258,7 +258,7 @@ public class MockTest extends BaseTestNGSpringContextTests {
 项目中常常存在生成话单或者账单文件等业务进行数据传递或者业务交互，框架提供了SftpHelper工具用于文件的上传、下载到sftp服务器。 常用的操作有：文件的长传、下载、删除、是否存在等操作。
 
 ```java
-public class SftpTest  extends BaseTestNGSpringContextTests {
+public class SftpTest  extends BasicTestNGSpringContextTests {
 
     @Test
     public void testUpload() {
@@ -276,7 +276,7 @@ public class SftpTest  extends BaseTestNGSpringContextTests {
 ##### 基本的增删改查操作
 
 ```java
-public class DatabaseTest  extends BaseTestNGSpringContextTests {
+public class DatabaseTest  extends BasicTestNGSpringContextTests {
 
   		//直接注入DatabaseService服务进行数据库增删改查的操作
         @Autowired
@@ -348,7 +348,7 @@ public class DatabaseTest  extends BaseTestNGSpringContextTests {
 #### 校验普通基础数据类型，包括list、map、数组
 
 ```java
-public class CheckTest extends BaseTestNGSpringContextTests {
+public class CheckTest extends BasicTestNGSpringContextTests {
 
     	List<Map<String, Object>> list = Lists.newArrayList();
         Map<String, Object> map = Maps.newHashMap();
