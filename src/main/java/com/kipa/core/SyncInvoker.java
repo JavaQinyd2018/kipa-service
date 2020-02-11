@@ -1,6 +1,7 @@
 package com.kipa.core;
 
 /**
+ * @author qinyadong
  * 同步调用器
  * @param <C> client 调用的客户端对象
  * @param <R> request 调用的请求参数

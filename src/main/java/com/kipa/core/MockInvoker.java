@@ -1,6 +1,7 @@
 package com.kipa.core;
 
 /**
+ * @author qinyadong
  * mock执行器统一接口
  * @param <C>
  * @param <MR>

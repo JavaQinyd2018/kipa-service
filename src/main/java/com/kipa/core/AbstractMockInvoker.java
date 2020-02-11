@@ -2,6 +2,13 @@ package com.kipa.core;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @author qinyadong
+ * mock调用器
+ * @param <C>
+ * @param <MR>
+ * @param <MT>
+ */
 @Slf4j
 public abstract class AbstractMockInvoker<C, MR, MT> implements MockInvoker<C, MR, MT> {
 

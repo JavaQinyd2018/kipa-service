@@ -3,6 +3,7 @@ package com.kipa.core;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * @author qinyadong
  * 响应结果转化器
  * 将第三方的结果 V 转化成 统一的请求对象InvokeResponse
  * @param <V> 响应结果的泛型
