@@ -1,21 +1,15 @@
 package com.kipa.config;
 
-import com.kipa.common.DataConstant;
-import com.kipa.dubbo.entity.DubboProperties;
-import com.kipa.env.DubboContextHolder;
-import com.kipa.utils.PreCheckUtils;
+import com.kipa.dubbo.excute.DubboProperties;
+import com.kipa.env.GlobalEnvironmentProperties;
 import com.kipa.utils.PropertiesUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * @Author Yadong Qin
@@ -33,8 +27,8 @@ public class DubboConfiguration {
     @Value("${dubbo.consumer.application.organization}")
     private String applicationOrganization;
 
-    private String address;
-    private String registerProtocol;
+//    private String address;
+//    private String registerProtocol;
 
     @Value("${dubbo.consumer.register.group}")
     private String registerGroup;
@@ -71,36 +65,28 @@ public class DubboConfiguration {
     @Value("${dubbo.consumer.reference.timeout}")
     private int timeout;
 
+    @Autowired
+    private GlobalEnvironmentProperties globalEnvironmentProperties;
+
+    private DubboProperties initDubboProperties;
+
     @PostConstruct
     public void init() {
-        Map<String, Object> config = DubboContextHolder.getConfig();
-        String flag = null;
-        if (MapUtils.isNotEmpty(config)) {
-            flag = (String) config.get("flag");
-            version = (String) config.get("version");
-            timeout = (Integer) config.get("timeout");
-        }
-
-        Properties properties = PropertiesUtils.loadProperties(DataConstant.CONFIG_FILE);
-        if (StringUtils.isNotBlank(flag)) {
-            registerProtocol = PropertiesUtils.getProperty(properties, flag,"dubbo.consumer.register.protocol");
-            address = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.register.address");
-            registerGroup = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.register.group");
-            registerTimeout = Integer.valueOf(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.register.timeout"));
-
-            protocol = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.protocol");
-            version = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.version");
-            retries = Integer.valueOf(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.retries"));
-            cluster = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.cluster");
-            timeout = Integer.valueOf(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.timeout"));
-            connections = Integer.valueOf(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.connections"));
-            loadBalance = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.loadBalance");
-            check = Boolean.valueOf(PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.reference.check"));
-        }else {
-            registerProtocol = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.register.protocol");
-            address = PropertiesUtils.getProperty(properties, flag, "dubbo.consumer.register.address");
-        }
-        PreCheckUtils.checkEmpty(address, "注册中心地址或者目标服务地址不能为空");
+        initDubboProperties = new DubboProperties();
+        //1. todo 需要重新做优化
+        initDubboProperties.setRegisterProtocol(PropertiesUtils.getProperty(globalEnvironmentProperties, "dubbo.consumer.register.protocol"));
+        initDubboProperties.setAddress(PropertiesUtils.getProperty(globalEnvironmentProperties, "dubbo.consumer.register.address"));
+        initDubboProperties.setGroup(PropertiesUtils.getProperty(globalEnvironmentProperties, "dubbo.consumer.register.group"));
+        initDubboProperties.setRegisterTimeout(PropertiesUtils.getIntegerProperty(globalEnvironmentProperties, "dubbo.consumer.register.timeout"));
+        //2. 协议相关信息
+        initDubboProperties.setProtocol(PropertiesUtils.getProperty(globalEnvironmentProperties, "dubbo.consumer.reference.protocol"));
+        initDubboProperties.setVersion(PropertiesUtils.getProperty(globalEnvironmentProperties, "dubbo.consumer.reference.version"));
+        initDubboProperties.setRetries(PropertiesUtils.getIntegerProperty(globalEnvironmentProperties, "dubbo.consumer.reference.retries"));;
+        initDubboProperties.setCluster(PropertiesUtils.getProperty(globalEnvironmentProperties,"dubbo.consumer.reference.cluster"));
+        initDubboProperties.setTimeout(PropertiesUtils.getIntegerProperty(globalEnvironmentProperties,  "dubbo.consumer.reference.timeout"));
+        initDubboProperties.setConnections(PropertiesUtils.getIntegerProperty(globalEnvironmentProperties, "dubbo.consumer.reference.connections"));
+        initDubboProperties.setLoadBalance(PropertiesUtils.getProperty(globalEnvironmentProperties, "dubbo.consumer.reference.loadBalance"));
+        initDubboProperties.setCheck(PropertiesUtils.getBooleanProperty(globalEnvironmentProperties,"dubbo.consumer.reference.check"));
     }
 
     @Bean("dubboProperties")
@@ -109,25 +95,20 @@ public class DubboConfiguration {
         dubboProperties.setApplicationName(applicationName);
         dubboProperties.setApplicationOrganization(applicationOrganization);
         dubboProperties.setApplicationOwner(applicationOwner);
-        dubboProperties.setRegisterProtocol(registerProtocol);
-        dubboProperties.setRegisterGroup(group);
-        dubboProperties.setAddress(address);
-        dubboProperties.setRegisterTimeout(registerTimeout);
-        dubboProperties.setRpcProtocol(rpcProtocol);
-        dubboProperties.setProtocol(protocol);
-        dubboProperties.setVersion(version);
-        dubboProperties.setRetries(retries);
-        dubboProperties.setCluster(cluster);
-        dubboProperties.setGroup(group);
-        dubboProperties.setConnections(connections);
-        dubboProperties.setLoadBalance(loadBalance);
-        dubboProperties.setCheck(check);
-        dubboProperties.setTimeout(timeout);
+        dubboProperties.setRegisterProtocol(initDubboProperties.getRegisterProtocol());
+        dubboProperties.setRegisterGroup(StringUtils.isNotBlank(initDubboProperties.getGroup()) ? initDubboProperties.getGroup() : group);
+        dubboProperties.setAddress(initDubboProperties.getAddress());
+        dubboProperties.setRegisterTimeout(initDubboProperties.getRegisterTimeout() != 0 ? initDubboProperties.getRegisterTimeout(): registerTimeout);
+        dubboProperties.setRpcProtocol(StringUtils.isNotBlank(initDubboProperties.getRpcProtocol()) ? initDubboProperties.getRpcProtocol(): rpcProtocol);
+        dubboProperties.setProtocol(StringUtils.isNotBlank(initDubboProperties.getProtocol()) ? initDubboProperties.getProtocol() : protocol);
+        dubboProperties.setVersion(initDubboProperties.getVersion() != null ? initDubboProperties.getVersion() : version);
+        dubboProperties.setRetries(initDubboProperties.getRetries() != 0 ? initDubboProperties.getRetries(): retries);
+        dubboProperties.setCluster(StringUtils.isNotBlank(initDubboProperties.getCluster()) ? initDubboProperties.getCluster(): cluster);
+        dubboProperties.setGroup(StringUtils.isNotBlank(initDubboProperties.getGroup())? initDubboProperties.getGroup(): group);
+        dubboProperties.setConnections(initDubboProperties.getConnections() != 0 ? initDubboProperties.getConnections(): connections);
+        dubboProperties.setLoadBalance(StringUtils.isNotBlank(initDubboProperties.getLoadBalance()) ? initDubboProperties.getLoadBalance(): loadBalance);
+        dubboProperties.setCheck(initDubboProperties.isCheck());
+        dubboProperties.setTimeout(initDubboProperties.getTimeout() != 0 ? initDubboProperties.getTimeout() : timeout);
         return dubboProperties;
-    }
-
-    @PreDestroy
-    public void destroy() {
-        DubboContextHolder.removeConfig();
     }
 }

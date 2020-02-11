@@ -1,9 +1,9 @@
 package com.kipa.dubbo.service.base;
 
-import com.kipa.dubbo.entity.DubboResponse;
+import com.kipa.dubbo.excute.DubboResponse;
 import com.kipa.dubbo.enums.InvokeType;
 import com.kipa.dubbo.annotation.Style;
-import com.kipa.dubbo.entity.DubboRequest;
+import com.kipa.dubbo.excute.DubboRequest;
 import com.kipa.log.SystemLog;
 
 /**

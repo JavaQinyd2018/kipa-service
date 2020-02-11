@@ -1,5 +1,6 @@
 package com.kipa.mock.http.entity;
 
+import com.kipa.core.Properties;
 import lombok.Data;
 
 /**
@@ -8,7 +9,7 @@ import lombok.Data;
  * mock 服务的配置信息
  */
 @Data
-public class MockServerProperties {
+public class MockServerProperties implements Properties {
 
     /**
      * 远程host

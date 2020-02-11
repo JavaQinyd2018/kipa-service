@@ -146,7 +146,8 @@ final class TransverseCSVResolver {
             entityList.forEach(t -> {
                 List<String> value = Lists.newArrayList();
                 fieldNameList.forEach(field -> {
-                    Method method = ReflectUtils.getGetMethod(clazz, field);
+                    Method method = ReflectUtils.getGetOrIsMethod(clazz, field);
+//                    Method method = ReflectUtils.getGetMethod(clazz, field);
                     Object o = ReflectionUtils.invokeMethod(method, t);
                     if (o instanceof String) {
                         value.add((String)o);

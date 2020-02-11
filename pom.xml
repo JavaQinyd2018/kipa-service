@@ -6,7 +6,7 @@
 
     <groupId>com.kipa</groupId>
     <artifactId>kipa-service</artifactId>
-    <version>2.1.0</version>
+    <version>2.3.0</version>
 
     <properties>
         <!--项目基础的配置-->
@@ -37,6 +37,7 @@
         <rocketmq.version>4.3.2</rocketmq.version>
         <zookeeper.version>3.5.5</zookeeper.version>
         <ehcache.version>3.8.0</ehcache.version>
+        <elastic-job.version>2.1.5</elastic-job.version>
     </properties>
     <dependencies>
         <!--spring相关的依赖-->
@@ -250,13 +251,6 @@
             <artifactId>jsch</artifactId>
             <version>${jsch.version}</version>
         </dependency>
-        <!--对象池 线程池-->
-<!--        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-pool2</artifactId>
-            <version>2.6.0</version>
-        </dependency>-->
-
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-redis</artifactId>
@@ -300,8 +294,49 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>jaxb-api</artifactId>
+                    <groupId>javax.xml.bind</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
+        <!--分布式定时任务-->
+        <!--<dependency>
+            <groupId>com.dangdang</groupId>
+            <artifactId>elastic-job-lite-lifecycle</artifactId>
+            <version>${elastic-job.version}</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-lang3</artifactId>
+                    <groupId>org.apache.commons</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jaxb-api</artifactId>
+                    <groupId>javax.xml.bind</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>curator-recipes</artifactId>
+                    <groupId>org.apache.curator</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>curator-framework</artifactId>
+                    <groupId>org.apache.curator</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>curator-client</artifactId>
+                    <groupId>org.apache.curator</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>-->
     </dependencies>
 
     <build>

@@ -28,19 +28,9 @@ public class MessageListenerConcurrentlyImpl implements MessageListenerConcurren
         try {
             MessageHandler.handleMessage(config, list);
         } catch (Exception e) {
-            handleException(e);
+            MessageHandler.handleException(e);
+            return ConsumeConcurrentlyStatus.RECONSUME_LATER;
         }
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     }
-
-
-    private static void handleException(final Exception e) {
-        Class exceptionClass = e.getClass();
-        if (exceptionClass.equals(UnsupportedEncodingException.class)) {
-            log.error(e.getMessage());
-        } else if (exceptionClass.equals(KipaProcessException.class)) {
-            log.error("消息消费调用目标方法失败,错误信息为：{}",e);
-        }
-    }
-
 }

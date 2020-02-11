@@ -2,6 +2,7 @@ package com.kipa.mq.consumer;
 
 import com.alibaba.fastjson.JSONObject;
 import com.kipa.common.KipaProcessException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +19,7 @@ import java.util.Map;
  * @Author: Yadong Qin
  * @Date: 2019/4/27
  */
+@Slf4j
 public class MessageHandler {
 
     private MessageHandler() {}
@@ -69,6 +71,15 @@ public class MessageHandler {
             }
         } catch (Exception e) {
             throw new KipaProcessException("方法"+method.getName()+"执行失败.",e);
+        }
+    }
+
+
+    public static void handleException(final Exception e) {
+        if (e instanceof KipaProcessException) {
+            log.error("调用执行：{}",e.getMessage());
+        }else if (e instanceof UnsupportedOperationException){
+            log.error("出现异常：{}",e);
         }
     }
 }

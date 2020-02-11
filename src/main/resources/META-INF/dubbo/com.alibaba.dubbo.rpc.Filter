@@ -1,1 +1,1 @@
-mockDubboProviderFilter=com.kipa.mock.dubbo.MockDubboProviderFilter
+mockDubboConsumerFilter=com.kipa.mock.dubbo.MockDubboConsumerFilter

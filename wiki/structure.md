@@ -1,64 +1,82 @@
 > > 代码的目录结构
 > >
 > > ```
-> > ├─java
-> > │  └─com
-> > │      └─kipa
-> > │          ├─base
-> > │          ├─check
-> > │          ├─config
-> > │          ├─data
+> > ├─src
+> > │  └─main
+> > │      ├─java
+> > │      │  └─com
+> > │      │      └─kipa
+> > │      │          ├─base
+> > │      │          ├─check
+> > │      │          ├─common
+> > │      │          │  └─run
+> > │      │          ├─config
+> > │      │          ├─core
+> > │      │          ├─data
+> > │      │          │  ├─csv
+> > │      │          │  └─ehcache
+> > │      │          ├─dubbo
+> > │      │          │  ├─annotation
+> > │      │          │  ├─enums
+> > │      │          │  ├─excute
+> > │      │          │  └─service
+> > │      │          │      ├─base
+> > │      │          │      └─impl
+> > │      │          ├─env
+> > │      │          ├─http
+> > │      │          │  ├─annotation
+> > │      │          │  ├─emuns
+> > │      │          │  ├─excute
+> > │      │          │  ├─service
+> > │      │          │  │  ├─base
+> > │      │          │  │  └─impl
+> > │      │          │  └─ssl
+> > │      │          ├─job
+> > │      │          ├─log
+> > │      │          ├─mock
+> > │      │          │  ├─dubbo
+> > │      │          │  └─http
+> > │      │          │      ├─annotation
+> > │      │          │      ├─entity
+> > │      │          │      └─service
+> > │      │          │          ├─base
+> > │      │          │          ├─bo
+> > │      │          │          ├─execute
+> > │      │          │          └─impl
+> > │      │          ├─mq
+> > │      │          │  ├─consumer
+> > │      │          │  └─producer
+> > │      │          ├─mybatis
+> > │      │          │  ├─dao
+> > │      │          │  │  ├─mapper
+> > │      │          │  │  ├─mapper1
+> > │      │          │  │  ├─mapper2
+> > │      │          │  │  ├─mapper3
+> > │      │          │  │  └─mapper4
+> > │      │          │  ├─ext
+> > │      │          │  ├─provider
+> > │      │          │  └─service
+> > │      │          │      ├─condition
+> > │      │          │      ├─impl
+> > │      │          │      └─type
+> > │      │          ├─redis
+> > │      │          ├─sftp
+> > │      │          └─utils
+> > │      └─resources
+> > │          ├─customize
+> > │          ├─db
 > > │          ├─dubbo
-> > │          │  ├─annotation
-> > │          │  ├─entity
-> > │          │  ├─enums
-> > │          │  ├─exception
-> > │          │  └─service
-> > │          │      ├─base
-> > │          │      ├─execute
-> > │          │      └─impl
-> > │          ├─env
 > > │          ├─http
-> > │          │  ├─annotation
-> > │          │  ├─core
-> > │          │  ├─emuns
-> > │          │  ├─exception
-> > │          │  ├─service
-> > │          │  │  ├─base
-> > │          │  │  ├─convert
-> > │          │  │  ├─execute
-> > │          │  │  └─impl
-> > │          │  └─ssl
-> > │          ├─log
+> > │          ├─META-INF
+> > │          │  └─dubbo
 > > │          ├─mock
-> > │          │  ├─annotation
-> > │          │  ├─entity
-> > │          │  └─service
-> > │          │      ├─base
-> > │          │      ├─bo
-> > │          │      ├─execute
-> > │          │      └─impl
 > > │          ├─mq
-> > │          │  ├─consumer
-> > │          │  └─producer
-> > │          ├─mybatis
-> > │          │  ├─mapper
-> > │          │  ├─provider
-> > │          │  ├─service
-> > │          │  │  └─impl
-> > │          │  └─type
-> > │          ├─sftp
-> > │          └─utils
-> > └─resources --框架配置数据文件
-> >     ├─db
-> >     ├─dubbo
-> >     ├─http
-> >     ├─mock
-> >     ├─mq
-> >     └─redis
+> > │          └─redis
+> >
 > > ```
 > >
 > > * base：整个项目的配置类，包括和testng整合的测试的基类，用于测试用例的继承和加载testng的测试框架
+> > * common: 公共的工具和框架运行器
 > > * check：实体类的校验工具类以及用到的常量
 > > * config：spring整合http、dubbo、mockserver、mybatis、redis、rocketMq的配置类，包括可控的配置开启注解
 > > * data：testng框架数据驱动和数据csv文件解析的工具类

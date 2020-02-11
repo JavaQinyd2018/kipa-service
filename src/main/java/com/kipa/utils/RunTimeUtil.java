@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date: 2019/4/23 17:31
  *
  */
-public class RunTimeUtil {
+public final class RunTimeUtil {
 
     private RunTimeUtil() {
 

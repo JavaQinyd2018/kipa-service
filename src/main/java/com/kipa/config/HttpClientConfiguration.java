@@ -1,17 +1,15 @@
 package com.kipa.config;
 
-import com.kipa.common.DataConstant;
-import com.kipa.env.HttpContextHolder;
-import com.kipa.http.core.OkHttpClientProperties;
+import com.kipa.env.GlobalEnvironmentProperties;
+import com.kipa.http.excute.OkHttpClientProperties;
 import com.kipa.utils.PropertiesUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.util.Properties;
 
 /**
  * @Author: Yadong Qin
@@ -55,16 +53,19 @@ public class HttpClientConfiguration {
     @Value("${okhttp.client.keepAliveDuration}")
     private long keepAliveDuration;
 
+    @Autowired
+    private GlobalEnvironmentProperties globalEnvironmentProperties;
+
+    private OkHttpClientProperties initOkHttpClientProperties;
+
     @PostConstruct
     public void init() {
-        String flag = HttpContextHolder.getFlag();
-        Properties properties = PropertiesUtils.loadProperties(DataConstant.CONFIG_FILE);
-        verifySSLCertificate = Boolean.parseBoolean(PropertiesUtils.getProperty(properties, flag,"okhttp.client.verifySSLCertificate"));
-        certificatePath = PropertiesUtils.getProperty(properties, flag, "okhttp.client.certificatePath");
-        keyStorePass = PropertiesUtils.getProperty(properties, flag,"okhttp.client.keyStorePass");
-        keyStorePath = PropertiesUtils.getProperty(properties, flag, "okhttp.client.keyStorePath");
-        maxIdleConnections = Integer.parseInt(PropertiesUtils.getProperty(properties,flag, "okhttp.client.maxIdleConnections"));
-        keepAliveDuration = Integer.parseInt(PropertiesUtils.getProperty(properties, flag, "okhttp.client.keepAliveDuration"));
+        initOkHttpClientProperties = new OkHttpClientProperties();
+        initOkHttpClientProperties.setVerifySSLCertificate(PropertiesUtils.getBooleanProperty(globalEnvironmentProperties,"okhttp.client.verifySSLCertificate"));
+        initOkHttpClientProperties.setCertificatePath(PropertiesUtils.getProperty(globalEnvironmentProperties, "okhttp.client.certificatePath"));
+        initOkHttpClientProperties.setKeyStorePass(PropertiesUtils.getProperty(globalEnvironmentProperties,"okhttp.client.keyStorePass"));
+        initOkHttpClientProperties.setMaxIdleConnections(PropertiesUtils.getIntegerProperty(globalEnvironmentProperties, "okhttp.client.maxIdleConnections"));
+        initOkHttpClientProperties.setKeepAliveDuration(PropertiesUtils.getIntegerProperty(globalEnvironmentProperties, "okhttp.client.keepAliveDuration"));
     }
 
     @Bean
@@ -75,17 +76,12 @@ public class HttpClientConfiguration {
         properties.setConnectTimeout(connectTimeout);
         properties.setFollowRedirects(followRedirects);
         properties.setRetry(retry);
-        properties.setVerifySSLCertificate(verifySSLCertificate);
-        properties.setCertificatePath(certificatePath);
-        properties.setKeyStorePass(keyStorePass);
-        properties.setKeyStorePath(keyStorePath);
-        properties.setMaxIdleConnections(maxIdleConnections);
-        properties.setKeepAliveDuration(keepAliveDuration);
+        properties.setVerifySSLCertificate(initOkHttpClientProperties.isVerifySSLCertificate());
+        properties.setCertificatePath(StringUtils.isNotBlank(initOkHttpClientProperties.getCertificatePath()) ? initOkHttpClientProperties.getCertificatePath() : certificatePath);
+        properties.setKeyStorePass(StringUtils.isNotBlank(initOkHttpClientProperties.getKeyStorePass()) ? initOkHttpClientProperties.getKeyStorePass(): keyStorePass);
+        properties.setKeyStorePath(StringUtils.isNotBlank(initOkHttpClientProperties.getCertificatePath())? initOkHttpClientProperties.getKeyStorePath() : keyStorePath);
+        properties.setMaxIdleConnections(initOkHttpClientProperties.getMaxIdleConnections() != 0 ? initOkHttpClientProperties.getMaxIdleConnections(): maxIdleConnections);
+        properties.setKeepAliveDuration(initOkHttpClientProperties.getKeepAliveDuration() != 0 ? initOkHttpClientProperties.getKeepAliveDuration(): keepAliveDuration);
         return properties;
-    }
-
-    @PreDestroy
-    public void destroy() {
-        HttpContextHolder.removeFlag();
     }
  }

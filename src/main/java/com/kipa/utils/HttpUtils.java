@@ -14,7 +14,7 @@ import java.util.Map;
  * @Date: 2019/3/30
  * http url工具类
  */
-public class HttpUtils {
+public final class HttpUtils {
 
     private HttpUtils() {}
 

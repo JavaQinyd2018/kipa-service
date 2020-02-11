@@ -32,6 +32,8 @@ public class MockDubboRequest {
      */
     private Map<String, Object> classValuePair;
 
+    private String version;
+
     public static MockDubboRequestBuilder builder() {
         return new MockDubboRequestBuilder();
     }
@@ -43,6 +45,8 @@ public class MockDubboRequest {
         private String methodName;
 
         private Map<String, Object> classValuePair = new ConcurrentHashMap<>();
+
+        private String version;
 
         public MockDubboRequestBuilder interfaceName(String interfaceName) {
             this.interfaceName = interfaceName;
@@ -64,8 +68,12 @@ public class MockDubboRequest {
             return this;
         }
 
+        public MockDubboRequestBuilder version(String version) {
+            this.version = version;
+            return this;
+        }
         public MockDubboRequest build() {
-            return new MockDubboRequest(this.interfaceName, this.methodName, this.classValuePair);
+            return new MockDubboRequest(this.interfaceName, this.methodName, this.classValuePair,version);
         }
     }
 }

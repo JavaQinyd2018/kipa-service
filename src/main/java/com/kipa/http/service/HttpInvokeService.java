@@ -1,5 +1,5 @@
 package com.kipa.http.service;
-import com.kipa.http.core.HttpResponse;
+import com.kipa.http.excute.HttpResponse;
 import okhttp3.Callback;
 
 import java.util.Map;

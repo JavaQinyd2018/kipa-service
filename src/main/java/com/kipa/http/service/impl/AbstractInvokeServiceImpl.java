@@ -1,7 +1,7 @@
 package com.kipa.http.service.impl;
 
-import com.kipa.http.core.HttpRequest;
-import com.kipa.http.core.HttpResponse;
+import com.kipa.http.excute.HttpRequest;
+import com.kipa.http.excute.HttpResponse;
 import com.kipa.http.emuns.HttpSendMethod;
 import com.kipa.http.service.HttpInvokeService;
 import com.kipa.utils.HttpUtils;

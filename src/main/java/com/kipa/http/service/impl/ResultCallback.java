@@ -1,8 +1,8 @@
 package com.kipa.http.service.impl;
 
-import com.kipa.http.core.HttpResponse;
-import com.kipa.http.exception.HttpProcessException;
-import com.kipa.http.service.convert.ResponseConvert;
+import com.kipa.common.KipaProcessException;
+import com.kipa.http.excute.HttpResponse;
+import com.kipa.http.excute.HttpResponseConvert;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -16,13 +16,18 @@ import java.io.IOException;
 public interface ResultCallback extends Callback {
     @Override
     default void onFailure(Call call, IOException e) {
-        throw new HttpProcessException("http异步回调异常，错误原因是", e);
+        throw new KipaProcessException("http异步回调异常，错误原因是", e);
     }
 
     @Override
     default void onResponse(Call call, Response response) throws IOException {
-        ResponseConvert responseConvert = new ResponseConvert();
-        HttpResponse httpResponse = responseConvert.convert(response);
+        HttpResponseConvert httpResponseConvert = new HttpResponseConvert();
+        HttpResponse httpResponse = null;
+        try {
+            httpResponse = (HttpResponse) httpResponseConvert.convert(response);
+        } catch (Exception e) {
+            throw new KipaProcessException("http转化异常，错误原因是", e);
+        }
         callResponse(call, httpResponse);
     }
 

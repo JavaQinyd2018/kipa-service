@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  * @Date: 2018/12/24 10:51
  * 驼峰转化标识
  */
-public class CamelToUnderlineUtils {
+public final class CamelToUnderlineUtils {
 
     private CamelToUnderlineUtils() {}
 

@@ -1,5 +1,7 @@
 package com.kipa.mock.http.entity;
 
+import com.kipa.core.InvokeRequest;
+import com.kipa.core.InvokeResponse;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.concurrent.TimeUnit;
@@ -11,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Data
 @NoArgsConstructor
-public class BaseMockError {
+public class BaseMockError implements InvokeRequest {
 
     private boolean dropConnection;
     private String responseMessage;

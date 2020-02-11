@@ -17,9 +17,9 @@ import lombok.NoArgsConstructor;
 public class MockDubboResponse {
 
     /**
-     * dubbo接口响应的数据
+     * mock的回调接口
      */
-    private Object responseData;
+    private MockCallback callback;
 
     /**
      * 响应的状态，是否成功

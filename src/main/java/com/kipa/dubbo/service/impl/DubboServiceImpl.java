@@ -5,8 +5,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
-import com.kipa.dubbo.entity.DubboRequest;
-import com.kipa.dubbo.entity.DubboResponse;
+import com.kipa.dubbo.excute.DubboRequest;
+import com.kipa.dubbo.excute.DubboResponse;
 import com.kipa.dubbo.service.DubboService;
 import com.kipa.dubbo.service.base.BaseDubboService;
 import com.kipa.utils.PreCheckUtils;
@@ -27,62 +27,57 @@ public class DubboServiceImpl implements DubboService {
     @Autowired
     private BaseDubboService baseDubboService;
 
+    @Override
+    public String invoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair) {
+        return invoke(interfaceName, methodName, typeAndValuePair, null);
+    }
 
     @Override
-    public List<Map<String, Object>> invoke(final String interfaceName, final String methodName, final Map<String, Object> typeAndValuePair) {
-        DubboRequest dubboRequest = assembleDubboRequest(interfaceName, methodName, typeAndValuePair);
+    public String asyncInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair, ResponseCallback responseCallback) {
+        return asyncInvoke(interfaceName, methodName, typeAndValuePair, null, responseCallback);
+    }
+
+    @Override
+    public String directedInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair) {
+        return directedInvoke(interfaceName, methodName, typeAndValuePair, null);
+    }
+
+    @Override
+    public String invoke(final String interfaceName, final String methodName, final Map<String, Object> typeAndValuePair,String version) {
+        DubboRequest dubboRequest = assembleDubboRequest(interfaceName, methodName, typeAndValuePair, version);
         DubboResponse dubboResponse = baseDubboService.invoke(dubboRequest);
         return parseDubboResponse(dubboResponse);
     }
 
     @Override
-    public List<Map<String, Object>> asyncInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair, ResponseCallback responseCallback) {
+    public String asyncInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair,String version, ResponseCallback responseCallback) {
         PreCheckUtils.checkEmpty(responseCallback, "异步回调接口不能为空");
-        DubboRequest dubboRequest = assembleDubboRequest(interfaceName,methodName, typeAndValuePair);
-        dubboRequest.setResponseCallback(responseCallback);
+        DubboRequest dubboRequest = assembleDubboRequest(interfaceName,methodName, typeAndValuePair, version);
+        dubboRequest.setCallback(responseCallback);
         DubboResponse dubboResponse = baseDubboService.asyncInvoke(dubboRequest);
         return parseDubboResponse(dubboResponse);
     }
 
     @Override
-    public List<Map<String, Object>> directedInvoke(String interfaceName, String methodName,  Map<String, Object> typeAndValuePair) {
-        DubboRequest dubboRequest = assembleDubboRequest(interfaceName ,methodName, typeAndValuePair);
+    public String directedInvoke(String interfaceName, String methodName,  Map<String, Object> typeAndValuePair, String version) {
+        DubboRequest dubboRequest = assembleDubboRequest(interfaceName ,methodName, typeAndValuePair,version);
         DubboResponse dubboResponse = baseDubboService.directInvoke(dubboRequest);
         return parseDubboResponse(dubboResponse);
     }
 
-    private DubboRequest assembleDubboRequest(String interfaceName, String methodName, Map<String, Object> typeAndValuePair) {
+    private DubboRequest assembleDubboRequest(String interfaceName, String methodName, Map<String, Object> typeAndValuePair, String version) {
         DubboRequest dubboRequest = new DubboRequest();
         PreCheckUtils.checkEmpty(interfaceName, "dubbo接口的全路径名不能为空");
         PreCheckUtils.checkEmpty(methodName, "接口对应的方法不能为空");
         dubboRequest.setInterfaceName(interfaceName);
         dubboRequest.setMethodName(methodName);
         dubboRequest.setClassValuePair(typeAndValuePair);
+        dubboRequest.setVersion(version);
         return dubboRequest;
     }
 
-    private List<Map<String, Object>> parseDubboResponse(DubboResponse dubboResponse) {
-        List<Map<String, Object>> mapList = Lists.newArrayList();
-
-        if (dubboResponse == null) {
-            return mapList;
-        }
-
-        Object responseData = dubboResponse.getResponseData();
-
-        if (responseData == null) {
-            return mapList;
-        }
-
-        String json = JSON.toJSONString(responseData);
-        if (StringUtils.startsWith(json, "{")) {
-            Map map = JSONObject.parseObject(json, Map.class);
-            mapList.add(map);
-        }else if (StringUtils.startsWith(json, "[")) {
-            List<Map> maps = JSONArray.parseArray(json, Map.class);
-            maps.forEach(mapList::add);
-        }
-        return mapList;
+    private String parseDubboResponse(DubboResponse dubboResponse) {
+        return JSON.toJSONString(dubboResponse);
     }
 
     @Override
@@ -94,7 +89,7 @@ public class DubboServiceImpl implements DubboService {
     @Override
     public DubboResponse asyncInvoke(DubboRequest request,  ResponseCallback responseCallback) {
         checkRequest(request);
-        request.setResponseCallback(responseCallback);
+        request.setCallback(responseCallback);
         return baseDubboService.asyncInvoke(request);
     }
 

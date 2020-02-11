@@ -11,6 +11,9 @@ import com.kipa.mybatis.service.type.TypeConvertor;
 import com.kipa.utils.PreCheckUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
@@ -24,7 +27,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since: 数据库增删改查抽象类
  */
 public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService {
-
 
     @Override
     public int insert(String tableName, Map<String, Object> paramMap) {
@@ -81,7 +83,7 @@ public abstract class AbstractDatabaseServiceImpl implements BaseDatabaseService
         return 0;
     }
 
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     @Override
     public int batchInsert(String tableName, List<Map<String, Object>> paramMapList) {
         PreCheckUtils.checkEmpty(paramMapList, "批量插入的数据集合不能为空");

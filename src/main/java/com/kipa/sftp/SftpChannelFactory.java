@@ -26,20 +26,20 @@ public class SftpChannelFactory extends BasePooledObjectFactory<Channel> {
      */
     private static final String STRICT_VALUE = "no";
 
-    private SftpConfig sftpConfig;
+    private SftpProperties sftpProperties;
     private String channelType;
 
-    SftpChannelFactory(SftpConfig sftpConfig, String channelType) {
-        this.sftpConfig = sftpConfig;
+    SftpChannelFactory(SftpProperties sftpProperties, String channelType) {
+        this.sftpProperties = sftpProperties;
         this.channelType = channelType;
     }
 
      @Override
     public Channel create() throws Exception {
-         String host = sftpConfig.getHost();
-         Integer port = sftpConfig.getPort();
-         String username = sftpConfig.getUsername();
-         String password = sftpConfig.getPassword();
+         String host = sftpProperties.getHost();
+         Integer port = sftpProperties.getPort();
+         String username = sftpProperties.getUsername();
+         String password = sftpProperties.getPassword();
          JSch jSch = new JSch();
          Session session = jSch.getSession(username, host, port);
          session.setPassword(password);

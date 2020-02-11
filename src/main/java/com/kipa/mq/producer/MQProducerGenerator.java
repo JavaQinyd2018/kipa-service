@@ -1,6 +1,7 @@
 package com.kipa.mq.producer;
 
 import com.kipa.common.KipaProcessException;
+import com.kipa.core.ClientFactory;
 import com.kipa.utils.RunTimeUtil;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.MQProducer;
@@ -12,37 +13,40 @@ import org.springframework.stereotype.Service;
  * @date: 2019/4/22 17:45
  * MQ生产者的组装类
  */
-@Service
-public class MQProducerGenerator {
+public class MQProducerGenerator implements ClientFactory<MQProducer, MQProducerProperties> {
+
+    private ProducerType producerType;
+    public MQProducerGenerator(ProducerType producerType) {
+        this.producerType = producerType;
+    }
+
+    @Override
+    public MQProducer create(MQProducerProperties properties) throws Exception {
+        return build(properties, producerType);
+    }
 
     /**
      * producer.setInstanceName(RunTimeUtil.getRocketMqUniqeInstanceName());
-     * @param config
+     * @param properties
      * @param type
      * @return
      */
-    public MQProducer build(MQProducerProperties config, ProducerType type) {
+    private MQProducer build(MQProducerProperties properties, ProducerType type) {
+        DefaultMQProducer producer;
         if (type == ProducerType.DEFAULT_PRODUCER) {
-            DefaultMQProducer producer  = new DefaultMQProducer();
-            producer.setNamesrvAddr(config.getNameServerAddress());
-            producer.setProducerGroup(config.getGroupName());
-            producer.setMaxMessageSize(config.getMaxMessageSize());
-            producer.setRetryTimesWhenSendFailed(config.getRetryTimesWhenSendFailed());
-            producer.setSendMsgTimeout(config.getSendMsgTimeout());
-            producer.setInstanceName(RunTimeUtil.getRocketMqUniqeInstanceName());
-            return producer;
+            producer  = new DefaultMQProducer();
         }else if (type == ProducerType.TRANSACTION_PRODUCER){
-            TransactionMQProducer producer = new TransactionMQProducer();
-            producer.setNamesrvAddr(config.getNameServerAddress());
-            producer.setProducerGroup(config.getGroupName());
-            producer.setMaxMessageSize(config.getMaxMessageSize());
-            producer.setRetryTimesWhenSendFailed(config.getRetryTimesWhenSendFailed());
-            producer.setSendMsgTimeout(config.getSendMsgTimeout());
-            producer.setInstanceName(RunTimeUtil.getRocketMqUniqeInstanceName());
-            return producer;
+            producer = new TransactionMQProducer();
         }else {
             throw new KipaProcessException("没有对应类型的生产者");
         }
+        producer.setNamesrvAddr(properties.getNameServerAddress());
+        producer.setProducerGroup(properties.getGroupName());
+        producer.setMaxMessageSize(properties.getMaxMessageSize());
+        producer.setRetryTimesWhenSendFailed(properties.getRetryTimesWhenSendFailed());
+        producer.setSendMsgTimeout(properties.getSendMsgTimeout());
+        producer.setInstanceName(RunTimeUtil.getRocketMqUniqeInstanceName());
+        return producer;
     }
 
 }

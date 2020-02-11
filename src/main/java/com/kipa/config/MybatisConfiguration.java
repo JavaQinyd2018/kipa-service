@@ -29,16 +29,16 @@ import javax.sql.DataSource;
  *启注解事务管理，等同于xml配置方式的 <tx:annotation-driven />
  */
 @Configuration
-@EnableTransactionManagement
+//@EnableTransactionManagement
 public class MybatisConfiguration {
 
-    @Bean(name = "transactionManager")
+/*    @Bean(name = "transactionManager")
     @Primary
     public DataSourceTransactionManager transactionManager(@Qualifier("dataSource") DruidDataSource dataSource) {
         final DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
         transactionManager.setDataSource(dataSource);
         return transactionManager;
-    }
+    }*/
 
     @Bean("sqlSessionFactory")
     @Primary
