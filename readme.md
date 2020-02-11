@@ -4,7 +4,7 @@
 >
 > > 基本结构
 >
-> ![kipa-structure-head](wiki/png/kipa-struction-head.jpg)
+> ![kipa-structure](wiki/png/kipa-struction.jpg)
 
 [代码的目录结构](wiki/structure.md)
 # 详细使用

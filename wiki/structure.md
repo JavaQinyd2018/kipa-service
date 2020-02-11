@@ -102,4 +102,4 @@
 > > * mq 直接整合rocketMq
 
 ### 框架的结构图
-![kipa-structure](png/kipa-structure.png)
+![kipa-struction](png/kipa-struction.jpg)

@@ -38,8 +38,8 @@ public class DubboServiceImpl implements DubboService {
     }
 
     @Override
-    public String directedInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair) {
-        return directedInvoke(interfaceName, methodName, typeAndValuePair, null);
+    public String directedInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair, String directUrl) {
+        return directedInvoke(interfaceName, methodName, typeAndValuePair, directUrl,null);
     }
 
     @Override
@@ -59,8 +59,10 @@ public class DubboServiceImpl implements DubboService {
     }
 
     @Override
-    public String directedInvoke(String interfaceName, String methodName,  Map<String, Object> typeAndValuePair, String version) {
+    public String directedInvoke(String interfaceName, String methodName,  Map<String, Object> typeAndValuePair, String directUrl, String version) {
+        PreCheckUtils.checkEmpty(directUrl, "直连的URL不能为空");
         DubboRequest dubboRequest = assembleDubboRequest(interfaceName ,methodName, typeAndValuePair,version);
+        dubboRequest.setDirectUrl(directUrl);
         DubboResponse dubboResponse = baseDubboService.directInvoke(dubboRequest);
         return parseDubboResponse(dubboResponse);
     }
