@@ -11,7 +11,7 @@
 ### 1. 依赖
 
 ```xml
-	<dependency>
+    <dependency>
         <groupId>com.kipa</groupId>
         <artifactId>kipa-service</artifactId>
         <version>${lastest-version}</version>
