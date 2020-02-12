@@ -6,6 +6,7 @@ import org.testng.ITestNGListener;
 import org.testng.TestNG;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,6 +19,11 @@ public abstract class AbstractTestNGLauncher<T> implements TestNGLauncher {
 
     private TestNGLaunchHandler<T> testNGLaunchHandler;
 
+    /**
+     * 同步锁
+     */
+    private final Object monitor = new Object();
+
     AbstractTestNGLauncher (TestNGLaunchCondition<T> discovery) {
         this.testNGLaunchHandler = new TestNGLaunchHandler<>(discovery);
     }
@@ -27,16 +33,18 @@ public abstract class AbstractTestNGLauncher<T> implements TestNGLauncher {
     private Class<? extends ITestNGListener> listenerClass;
 
     protected  void run(Class<? extends T>... testCaseClass) {
-        TestNG testNG = new TestNG();
-        if (getListenerClass() != null) {
-            //默认不使用testng的监听器
-            testNG = new TestNG(false);
-            testNG.setListenerClasses(Arrays.asList(listenerClass));
+        synchronized (monitor) {
+            TestNG testNG = new TestNG();
+            if (getListenerClass() != null) {
+                //默认不使用testng的监听器
+                testNG = new TestNG(false);
+                testNG.setListenerClasses(Collections.singletonList(listenerClass));
+            }
+            testNG.setTestClasses(testCaseClass);
+            testNG.run();
         }
-        testNG.setTestClasses(testCaseClass);
-        testNG.run();
         //运行完正常退出
-        System.exit(0);
+//        System.exit(0);
     }
 
     TestNGLaunchHandler<T> getTestNGLaunchHandler() {
