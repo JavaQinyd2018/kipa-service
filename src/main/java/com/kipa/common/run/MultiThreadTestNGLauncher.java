@@ -34,7 +34,7 @@ public class MultiThreadTestNGLauncher<T> extends AbstractTestNGLauncher<T> {
     @Override
     public void launch() {
         TestNGLaunchHandler<T> testNGLaunchHandler = getTestNGLaunchHandler();
-        Map<String, List<Class<? extends T>>> multiLaunchClass = testNGLaunchHandler.getMultiLaunchClass();
+        final Map<String, List<Class<? extends T>>> multiLaunchClass = testNGLaunchHandler.getMultiLaunchClass();
         if (MapUtils.isNotEmpty(multiLaunchClass)) {
             multiLaunchClass.forEach((packageName, classeList) -> executorService.execute(() -> run(convert(classeList))));
         }
