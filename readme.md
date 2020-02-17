@@ -47,6 +47,7 @@ D. 需要在resources下面新建data目录，用于放数据驱动的数据文�
 **(2) 自定义配置（高级配置，支持Redis、RocketMQ）**
 
 A. 继承框架提供的BaseSpringIntegrationConfiguration配置类：他是Spring的基于@Configuration注解的配置类。
+
 B. 继承框架提供的 BaseTestNGSpringContextTests基类，它是spring整合TestNG的入口类，通过@ContextConfiguration 注解去加载Spring的配置类，从而运行整个测试框架
 
 C. 选择配置Redis，在Spring配置类（eg: DemoSpringIntegrationConfiguration）中添加@EnableRedis注解开启redis，RedisModel默认是集群模式的redis，可以自定义配置STAND_ALONE（单机模式的）redis
