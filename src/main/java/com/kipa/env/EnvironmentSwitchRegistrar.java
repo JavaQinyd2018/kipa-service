@@ -27,7 +27,6 @@ public class EnvironmentSwitchRegistrar implements ImportBeanDefinitionRegistrar
             }else {
                 globalPropertiesFile = String.format(GLOBAL_PROPERTIES_FORMATTER, env.getRemark());
             }
-            System.setProperty("globalProperties",globalPropertiesFile);
             try {
                 BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(GlobalEnvironmentProperties.class);
                 builder.addConstructorArgValue(globalPropertiesFile);
