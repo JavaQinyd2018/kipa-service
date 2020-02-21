@@ -590,9 +590,64 @@ public class CustomizeTestNGExecutor {
     }
 ```
 
+### 9. Elastic-job的使用
 
+####（1）配置
 
+配置主配置类
 
+```java
+//6. 开启定时任务
+@EnableElasticJob
+public class DemoSpringIntegrationConfiguration extends BaseSpringIntegrationConfiguration{
+}
+
+@ContextConfiguration(classes = DemoSpringIntegrationConfiguration.class)
+public class DemoTestNGSpringContextTests extends BaseTestNGSpringContextTests {
+}
+```
+
+（2）配置数据文件
+
+```properties
+# elastic-job的配置
+# 注册中心地址
+elastic.job.zk.host=127.0.0.1:2181
+#注册中心校验信息
+elastic.job.zk.digest=
+```
+
+#### （2）使用
+
+框架提供了JobOperationService这个服务类，注解注入进来，通过它可以去获取定时任务的信息，分片信息，触发定时任务作业的执行等等，如下：
+
+```java
+public class JobTest extends TestNGSpringContextTests {
+
+    @Autowired
+    private JobOperationService jobOperationService;
+
+  // 获取所有作业信息
+    @Test
+    public void testJob() {
+        Collection<JobBriefInfo> allJobsBriefInfo = jobOperationService.getAllJobsBriefInfo("elastic-job-demo");
+        System.out.println(allJobsBriefInfo);
+    }
+
+  //获取配置信息
+    @Test
+    public void testJobSettings() {
+        JobSettings demoSimpleJob = jobOperationService.getJobSettings("elastic-job-demo", "com.learn.springboot.springbootssmp.job.DemoSimpleJob");
+        PrintUtils.println(demoSimpleJob);
+    }
+}
+
+//触发一次操作
+@Test
+    public void testTrigger() {
+        jobOperationService.trigger("elastic-job-demo", "com.learn.springboot.springbootssmp.job.DemoSimpleJob");
+    }
+```
 
 
 

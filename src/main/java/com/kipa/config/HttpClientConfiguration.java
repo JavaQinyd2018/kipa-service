@@ -76,7 +76,7 @@ public class HttpClientConfiguration {
         properties.setConnectTimeout(connectTimeout);
         properties.setFollowRedirects(followRedirects);
         properties.setRetry(retry);
-        properties.setVerifySSLCertificate(initOkHttpClientProperties.isVerifySSLCertificate());
+        properties.setVerifySSLCertificate(initOkHttpClientProperties.isVerifySSLCertificate()?initOkHttpClientProperties.isVerifySSLCertificate(): verifySSLCertificate);
         properties.setCertificatePath(StringUtils.isNotBlank(initOkHttpClientProperties.getCertificatePath()) ? initOkHttpClientProperties.getCertificatePath() : certificatePath);
         properties.setKeyStorePass(StringUtils.isNotBlank(initOkHttpClientProperties.getKeyStorePass()) ? initOkHttpClientProperties.getKeyStorePass(): keyStorePass);
         properties.setKeyStorePath(StringUtils.isNotBlank(initOkHttpClientProperties.getCertificatePath())? initOkHttpClientProperties.getKeyStorePath() : keyStorePath);

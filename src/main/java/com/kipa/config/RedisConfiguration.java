@@ -91,8 +91,8 @@ public class RedisConfiguration {
                 redisProperties.setList(list);
                 redisProperties.setClusterPassword(clusterPassword);
             }
-            if (StringUtils.isNotBlank(standAlonePassword)) {
-                String[] split = aloneAddress.split(":");
+            if (StringUtils.isNotBlank(aloneAddress)) {
+                String[] split = StringUtils.split(aloneAddress, ":");
                 String standAloneHost = split[0];
                 Integer standAlonePort = Integer.valueOf(split[1]);
                 redisProperties.setStandAloneHost(standAloneHost);
