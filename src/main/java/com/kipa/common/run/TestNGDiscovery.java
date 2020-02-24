@@ -35,4 +35,9 @@ public class TestNGDiscovery {
     private Class<? extends Annotation> annotationType;
 
     private Class<? extends ITestNGListener> listenerClass;
+
+    /**
+     * 是否启动默认监听器，生成测试报告
+     */
+    private boolean useDefaultListeners;
 }

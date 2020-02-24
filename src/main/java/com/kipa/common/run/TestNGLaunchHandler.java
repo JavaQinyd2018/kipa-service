@@ -13,25 +13,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * @author Qinyadong
- * @date 2019/8/26 10:15
- * @description 条件处理器
- * @since 2.1.0
- */
-class TestNGLaunchHandler<T> {
+public class TestNGLaunchHandler<T> implements TestNGHandler<T> {
 
     private TestNGLaunchCondition<T> discovery;
 
-    TestNGLaunchHandler(TestNGLaunchCondition<T> discovery) {
+    public TestNGLaunchHandler(TestNGLaunchCondition<T> discovery) {
         this.discovery = discovery;
     }
 
-    /**
-     * 获取运行的测试类
-     * @return
-     */
-    List<Class<? extends T>> getLaunchClass() {
+    @Override
+    public List<Class<? extends T>> getLaunchClass() {
         final List<Class<?>> filterClass = discovery.getFilterClass();
         String selectPackage = discovery.getSelectPackage();
         Class<T> baseClass = discovery.getBaseClass();
@@ -40,18 +31,16 @@ class TestNGLaunchHandler<T> {
         return getSimpleLaunchClass(baseClass, selectPackage,filterClass, annotationType);
     }
 
-    /**
-     * 获取多线程执行的测试类映射关系
-     * @return
-     */
-    Map<String, List<Class<? extends T>>> getMultiLaunchClass() {
+    @Override
+    public Map<String, List<Class<? extends T>>> getMultiLaunchClass() {
         final Map<String, List<Class<? extends T>>> map = Maps.newHashMap();
         Class<T> baseClass = discovery.getBaseClass();
         Class<? extends Annotation> annotationType = discovery.getAnnotationType();
         final List<Class<?>> filterClass = discovery.getFilterClass();
         String selectPackage = discovery.getSelectPackage();
         PreCheckUtils.checkEmpty(selectPackage, "扫描的包路径不能为空");
-        List<String> allPackageName = PackageScanUtils.getAllPackageName(selectPackage);
+        final List<String> allPackageName = PackageScanUtils.getAllPackageName(selectPackage);
+        allPackageName.remove(selectPackage);
         if (CollectionUtils.isNotEmpty(allPackageName)) {
             allPackageName.forEach(packageName -> {
                 List<Class<? extends T>> simpleLaunchClass = getSimpleLaunchClass(baseClass, packageName, filterClass, annotationType);

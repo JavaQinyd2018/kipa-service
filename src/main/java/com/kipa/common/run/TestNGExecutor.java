@@ -1,15 +1,8 @@
 package com.kipa.common.run;
 
 import com.kipa.base.BaseTestNGSpringContextTests;
-import com.kipa.base.BasicTestNGSpringContextTests;
 import org.apache.commons.lang3.ClassUtils;
 
-/**
- * @author Qinyadong
- * @date 2019/8/27 10:10
- * @description 定制的执行器
- * @since
- */
 public class TestNGExecutor<T> {
 
     private Class<T> baseClass;
@@ -21,33 +14,43 @@ public class TestNGExecutor<T> {
         this.baseClass = baseClass;
     }
 
-    /**
-     * 单线程执行器
-     * @param discovery
-     */
-    public void execute(TestNGDiscovery discovery) {
-        TestNGLaunchCondition<T> condition = new TestNGLaunchCondition<>();
-        condition.setBaseClass(baseClass);
-        condition.setFilterClass(discovery.getFilterClass());
-        condition.setAnnotationType(discovery.getAnnotationType());
-        condition.setSelectPackage(discovery.getSelectPackage());
-        SimpleTestNGLauncher<T> launcher = new SimpleTestNGLauncher<>(condition);
-        launcher.setListenerClass(discovery.getListenerClass());
-        launcher.launch();
+
+    public void executeClass(TestNGDiscovery discovery) {
+        SimpleTestNGLauncher<T> launcher = buildLauncher(discovery);
+        ClassTestNGConverter<T> converter = new ClassTestNGConverter<>();
+        ClassTestNGRunner runner = new ClassTestNGRunner(discovery.isUseDefaultListeners(), discovery.getListenerClass());
+        launcher.launch(converter, runner);
     }
 
-    /**
-     * 多线程执行器
-     * @param discovery
-     */
+    public void executeXml(TestNGDiscovery discovery) {
+        SimpleTestNGLauncher<T> launcher = buildLauncher(discovery);
+        XmlTestNGConverter<T> converter = new XmlTestNGConverter<>();
+        XmlTestNGRunner runner = new XmlTestNGRunner(discovery.isUseDefaultListeners(),discovery.getListenerClass());
+        launcher.launch(converter, runner);
+    }
+
     public void multiThreadExecute(TestNGDiscovery discovery) {
+        TestNGLaunchCondition<T> condition = buildCondition(discovery);
+        TestNGLaunchHandler<T> handler = new TestNGLaunchHandler<>(condition);
+        MultiThreadTestNGLauncher<T> launcher = new MultiThreadTestNGLauncher<>(handler);
+        XmlListTestNgConverter<T> converter = new XmlListTestNgConverter<>();
+        XmlTestNGRunner runner = new XmlTestNGRunner(discovery.isUseDefaultListeners(), discovery.getListenerClass());
+        launcher.launch(converter, runner);
+    }
+
+    private SimpleTestNGLauncher<T> buildLauncher(TestNGDiscovery discovery) {
+        TestNGLaunchCondition<T> condition = buildCondition(discovery);
+        TestNGLaunchHandler<T> handler = new TestNGLaunchHandler<>(condition);
+        return new SimpleTestNGLauncher<>(handler);
+    }
+
+    private TestNGLaunchCondition<T> buildCondition(TestNGDiscovery discovery) {
         TestNGLaunchCondition<T> condition = new TestNGLaunchCondition<>();
         condition.setBaseClass(baseClass);
         condition.setFilterClass(discovery.getFilterClass());
         condition.setAnnotationType(discovery.getAnnotationType());
         condition.setSelectPackage(discovery.getSelectPackage());
-        MultiThreadTestNGLauncher<T> multiThreadTestNGLauncher = new MultiThreadTestNGLauncher<>(condition);
-        multiThreadTestNGLauncher.setListenerClass(discovery.getListenerClass());
-        multiThreadTestNGLauncher.launch();
+        return condition;
     }
+
 }

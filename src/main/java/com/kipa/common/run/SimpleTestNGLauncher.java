@@ -1,27 +1,35 @@
 package com.kipa.common.run;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import java.util.List;
+import java.util.Map;
 
-/**
- * @author Qinyadong
- * @date 2019/8/23 21:19
- * @description 单一的处理器
- * @since 2.1.0
- */
-public class SimpleTestNGLauncher<T> extends AbstractTestNGLauncher<T> {
+@Slf4j
+public class SimpleTestNGLauncher<T> implements TestNGLauncher<T>{
 
-    public SimpleTestNGLauncher(TestNGLaunchCondition<T> discovery) {
-        super(discovery);
+        private TestNGLaunchHandler<T> handler;
+        public SimpleTestNGLauncher(TestNGLaunchHandler<T> handler) {
+            this.handler = handler;
+        }
+
+    @Override
+    public void launch(ClassTestNGConverter<T> converter, ClassTestNGRunner runner) {
+        final List<Class<? extends T>> launchClass = handler.getLaunchClass();
+        if (CollectionUtils.isEmpty(launchClass)) {
+            log.warn("===========[注意] 当前没有符合条件的可执行用例===========");
+        }
+        runner.run(converter.convert(launchClass));
     }
 
     @Override
-    public void launch() {
-        TestNGLaunchHandler<T> testNGLaunchHandler = getTestNGLaunchHandler();
-        List<Class<? extends T>> launchClass = testNGLaunchHandler.getLaunchClass();
-        if (CollectionUtils.isNotEmpty(launchClass)) {
-            run(convert(launchClass));
+    public void launch(XmlTestNGConverter<T> converter, XmlTestNGRunner runner) {
+        final Map<String, List<Class<? extends T>>> multiLaunchClass = handler.getMultiLaunchClass();
+        if (MapUtils.isEmpty(multiLaunchClass)) {
+            log.warn("===========[注意] 当前没有符合条件的可执行用例===========");
         }
+        runner.run(converter.convert(multiLaunchClass));
     }
 }

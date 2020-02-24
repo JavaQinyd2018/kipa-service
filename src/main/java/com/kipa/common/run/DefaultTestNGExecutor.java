@@ -23,10 +23,13 @@ public final class DefaultTestNGExecutor {
      * 单一执行器
      * @param discovery
      */
-    public void execute(TestNGDiscovery discovery) {
-        testNGExecutor.execute(discovery);
+    public void executeClass(TestNGDiscovery discovery) {
+        testNGExecutor.executeClass(discovery);
     }
 
+    public void executeXml(TestNGDiscovery discovery) {
+        testNGExecutor.executeXml(discovery);
+    }
     /**
      * 多包扫描执行器
      * @param discovery

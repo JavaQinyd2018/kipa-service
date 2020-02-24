@@ -1,7 +1,9 @@
 package com.kipa.common.run;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
+import org.testng.xml.XmlSuite;
 
 import java.util.List;
 import java.util.Map;
@@ -10,13 +12,8 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author Qinyadong
- * @date 2019/8/23 23:46
- * @description 多线程testNg执行器
- * @since 2.1.0
- */
-public class MultiThreadTestNGLauncher<T> extends AbstractTestNGLauncher<T> {
+@Slf4j
+public class MultiThreadTestNGLauncher<T> {
 
     private static ExecutorService executorService = new ThreadPoolExecutor(3,
             20,
@@ -27,17 +24,24 @@ public class MultiThreadTestNGLauncher<T> extends AbstractTestNGLauncher<T> {
             new ThreadPoolExecutor.AbortPolicy());
 
 
-    public MultiThreadTestNGLauncher(TestNGLaunchCondition<T> discovery) {
-        super(discovery);
+    private TestNGLaunchHandler<T> handler;
+
+    public MultiThreadTestNGLauncher(TestNGLaunchHandler<T> handler) {
+        this.handler = handler;
     }
 
-    @Override
-    public void launch() {
-        TestNGLaunchHandler<T> testNGLaunchHandler = getTestNGLaunchHandler();
-        final Map<String, List<Class<? extends T>>> multiLaunchClass = testNGLaunchHandler.getMultiLaunchClass();
-        if (MapUtils.isNotEmpty(multiLaunchClass)) {
-            multiLaunchClass.forEach((packageName, classeList) -> executorService.execute(() -> run(convert(classeList))));
+    public void launch(XmlListTestNgConverter<T> converter, XmlTestNGRunner runner) {
+        final Map<String, List<Class<? extends T>>> multiLaunchClass = handler.getMultiLaunchClass();
+        if (MapUtils.isEmpty(multiLaunchClass)) {
+            log.warn("===========[注意] 当前没有符合条件的可执行用例===========");
         }
+        final List<XmlSuite> xmlSuiteList = converter.convert(multiLaunchClass);
+        xmlSuiteList.forEach(xmlSuite -> {
+            executorService.execute(() -> {
+                runner.run(xmlSuite);
+            });
+        });
+
         executorService.shutdown();
         try {
             if(executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS)) {
