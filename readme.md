@@ -114,7 +114,7 @@ G. 选择配置Elastic-job， 在Spring的配置类（eg: DemoSpringIntegrationC
 /**
 * 直接继承框架提供的测试基类
 */
-public class HelloTest extends BaseTestNGSpringContextTests {
+public class HelloTest extends BasicTestNGSpringContextTests {
 
     @Test
     public void hello() {
@@ -125,8 +125,9 @@ public class HelloTest extends BaseTestNGSpringContextTests {
 ```java
 /**
 * 继承框架自定义测试的基类
+* 如果你自定义的入口类为：DemoTestNGSpringContextTests，即如下：
 */
-public class HelloTest extends BaseTestContextApplication {
+public class HelloTest extends DemoTestNGSpringContextTests {
 
     @Test
     public void hello() {
@@ -142,7 +143,7 @@ public class HelloTest extends BaseTestContextApplication {
 http提供了httpService和HttpsService两个服务类，可以帮助我们发起http请求，目前支持get、post、put、delete、以及文件的上传和下载等功能，能够满足测试需要，支持同步调用和异步调用，如下是同步调用的样例：
 
 ```java
-public class HttpTest extends BaseTestNGSpringContextTests {
+public class HttpTest extends BasicTestNGSpringContextTests {
 
  	//注入http服务
     @Autowired
@@ -173,30 +174,6 @@ public class HttpTest extends BaseTestNGSpringContextTests {
         System.out.println(result);
     }
 
-    	@Test
-        public void testPut() {
-            Map<String, String> headMap = Maps.newHashMap();
-            headMap.put("Accept","application/json");
-            Map<String, String> paramMap = Maps.newHashMap();
-            paramMap.put("id","104");
-            paramMap.put("username","root");
-            paramMap.put("password","456123");
-            paramMap.put("password2","456123");
-            paramMap.put("email","root@123.com");
-            paramMap.put("phone","4747474747");
-            String jsonString = JSON.toJSONString(paramMap);
-            String result = httpService.put("http://localhost:8989/user/update", headMap, jsonString, true);
-            System.out.println(result);
-        }
-
-        @Test
-        public void testDelete() {
-            Map<String, String> paramMap = Maps.newHashMap();
-            paramMap.put("ids","104,91,92,93");
-            String result = httpService.delete("http://localhost:8989/user/delete", paramMap, true);
-            System.out.println(result);
-        }
-
 ```
 [http使用的详细wiki](wiki/http.md)
 
@@ -205,7 +182,7 @@ public class HttpTest extends BaseTestNGSpringContextTests {
 dubbo接口调用需要传的参数有：接口名称（接口全路径、方法名称、参数类型名称全路径与参数值），如果dubbo接口是没有参数的，参数名称全路径和参数值不用传，否则会报错或者找不到服务提供者。dubbo调用有三种方式：同步调用、异步调用、直连调用。样例如下：
 
 ```java
-public class DubboTest extends BaseTestNGSpringContextTests {
+public class DubboTest extends BasicTestNGSpringContextTests {
 
     @Autowired
     DubboService dubboService;
@@ -235,7 +212,7 @@ public class DubboTest extends BaseTestNGSpringContextTests {
 框架提供的mock功能只支持mock http请求，需要传入http请求的相关信息和http响应的相关信息，会在本地分配出来一个端口mock服务，默认是6231。当然，端口可以自己在mockserver.properties进行配置。
 
 ```java
-public class MockTest extends BaseTestNGSpringContextTests {
+public class MockTest extends BasicTestNGSpringContextTests {
 
     @Autowired
     private MockService mockService;
@@ -271,7 +248,7 @@ public class MockTest extends BaseTestNGSpringContextTests {
 项目中常常存在生成话单或者账单文件等业务进行数据传递或者业务交互，框架提供了SftpHelper工具用于文件的上传、下载到sftp服务器。 常用的操作有：文件的长传、下载、删除、是否存在等操作。
 
 ```java
-public class SftpTest  extends BaseTestNGSpringContextTests {
+public class SftpTest  extends BasicTestNGSpringContextTests {
 
     @Test
     public void testUpload() {
@@ -289,7 +266,7 @@ public class SftpTest  extends BaseTestNGSpringContextTests {
 ##### 基本的增删改查操作
 
 ```java
-public class DatabaseTest  extends BaseTestNGSpringContextTests {
+public class DatabaseTest  extends BasicTestNGSpringContextTests {
 
   		//直接注入DatabaseService服务进行数据库增删改查的操作
         @Autowired
@@ -307,19 +284,6 @@ public class DatabaseTest  extends BaseTestNGSpringContextTests {
             map.put("password",123456);
             map.put("phone","141414141");
             List<Map<String, Object>> list = databaseService.selectList("tb_user", map);
-            System.out.println(list);
-        }
-
-    	/**
-  	* 分页查询多条数据，将多个查询条件拼成sql语句进行交互
-  	* 将结果封装成List<Map<String, Object>>
-  	*/
-        @Test
-        public void test10() {
-            Map<String,Object> map = Maps.newHashMap();
-            map.put("password",123456);
-            map.put("phone","141414141");
-            List<Map<String, Object>> list = databaseService.selectPage("tb_user", map, 1, 2);
             System.out.println(list);
         }
 

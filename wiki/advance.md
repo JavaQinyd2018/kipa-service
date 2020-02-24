@@ -259,7 +259,7 @@ rocketmq.consumer.nameServerAddress=127.0.0.1:9876
 框架提供了MQProducerService消息生产服务发送消息，会根据topic、tag等配置进行消息发送，可以满足基本的发送要求
 
 ```java
-public class ProducerTest extends BaseTestContextApplication {
+public class ProducerTest extends DemoTestNGSpringContextTests {
     @Autowired
     private MQProducerService mqProducerService;
 
@@ -335,7 +335,7 @@ spring.redis.standalone.password=123456
 直接注入RedisTemplate或者StringRedisTemplate进行redis的数据操作
 
 ```java
-public class RedisTest extends BaseTestContextApplication {
+public class RedisTest extends DemoTestNGSpringContextTests {
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -403,7 +403,7 @@ env4.mybatis.datasource.password=123456
 DatabaseService4 进行数据crud操作。
 
 ```java
-public class MultipleDatasourceTest extends TestContextConfiguration {
+public class MultipleDatasourceTest extends DemoTestNGSpringContextTests {
 
     @Autowired
     private DatabaseService databaseService;
@@ -622,12 +622,12 @@ elastic.job.zk.digest=
 框架提供了JobOperationService这个服务类，注解注入进来，通过它可以去获取定时任务的信息，分片信息，触发定时任务作业的执行等等，如下：
 
 ```java
-public class JobTest extends TestNGSpringContextTests {
+public class JobTest extends DemoTestNGSpringContextTests {
 
     @Autowired
     private JobOperationService jobOperationService;
 
-  // 获取所有作业信息
+   // 获取所有作业信息
     @Test
     public void testJob() {
         Collection<JobBriefInfo> allJobsBriefInfo = jobOperationService.getAllJobsBriefInfo("elastic-job-demo");
@@ -642,8 +642,8 @@ public class JobTest extends TestNGSpringContextTests {
     }
 }
 
-//触发一次操作
-@Test
+  //触发一次操作
+   @Test
     public void testTrigger() {
         jobOperationService.trigger("elastic-job-demo", "com.learn.springboot.springbootssmp.job.DemoSimpleJob");
     }
