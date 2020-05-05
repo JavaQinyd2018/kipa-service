@@ -1,6 +1,9 @@
 package com.kipa.dubbo.excute;
 
 import com.alibaba.dubbo.remoting.exchange.ResponseCallback;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.kipa.core.AsyncInvokeRequest;
 import lombok.*;
 
@@ -30,7 +33,7 @@ public final class DubboRequest extends AsyncInvokeRequest<ResponseCallback> {
      * 例如:String say(String word);
      * map.put("java.lang.String","hello world")
      */
-    private Map<String, Object> classValuePair = new ConcurrentHashMap<>();
+    private Multimap<String, Object> classValuePair = ArrayListMultimap.create();
 
     /**
      * 直连URL
@@ -45,7 +48,7 @@ public final class DubboRequest extends AsyncInvokeRequest<ResponseCallback> {
      * 构建器
      * @return
      */
-    public DubboRequest(String interfaceName, String methodName, Map<String, Object> classValuePair, String directUrl, String version, ResponseCallback responseCallback) {
+    public DubboRequest(String interfaceName, String methodName, Multimap<String, Object> classValuePair, String directUrl, String version, ResponseCallback responseCallback) {
         this.interfaceName = interfaceName;
         this.methodName = methodName;
         this.classValuePair = classValuePair;
@@ -61,7 +64,7 @@ public final class DubboRequest extends AsyncInvokeRequest<ResponseCallback> {
 
         private String interfaceName;
         private String methodName;
-        private Map<String, Object> classValuePair = new ConcurrentHashMap<>();
+        private Multimap<String, Object> classValuePair = ArrayListMultimap.create();
         private ResponseCallback responseCallback;
         private String directUrl;
         private String version;
@@ -76,7 +79,7 @@ public final class DubboRequest extends AsyncInvokeRequest<ResponseCallback> {
             return this;
         }
 
-        public DubboRequestBuilder classValuePair(Map<String, Object> classValuePair) {
+        public DubboRequestBuilder classValuePair(Multimap<String, Object> classValuePair) {
             this.classValuePair = classValuePair;
             return this;
         }

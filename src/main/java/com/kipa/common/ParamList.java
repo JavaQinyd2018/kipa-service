@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author Qinyadong
  * @date 2019/7/1 15:05
- * @desciption 参数list集合
+ * @description 参数list集合
  */
 public final class ParamList<E> {
 

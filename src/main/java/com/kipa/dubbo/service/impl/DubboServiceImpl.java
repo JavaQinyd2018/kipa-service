@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.kipa.dubbo.excute.DubboRequest;
 import com.kipa.dubbo.excute.DubboResponse;
 import com.kipa.dubbo.service.DubboService;
@@ -28,29 +29,29 @@ public class DubboServiceImpl implements DubboService {
     private BaseDubboService baseDubboService;
 
     @Override
-    public String invoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair) {
+    public String invoke(String interfaceName, String methodName, Multimap<String, Object> typeAndValuePair) {
         return invoke(interfaceName, methodName, typeAndValuePair, null);
     }
 
     @Override
-    public String asyncInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair, ResponseCallback responseCallback) {
+    public String asyncInvoke(String interfaceName, String methodName, Multimap<String, Object> typeAndValuePair, ResponseCallback responseCallback) {
         return asyncInvoke(interfaceName, methodName, typeAndValuePair, null, responseCallback);
     }
 
     @Override
-    public String directedInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair, String directUrl) {
+    public String directedInvoke(String interfaceName, String methodName, Multimap<String, Object> typeAndValuePair, String directUrl) {
         return directedInvoke(interfaceName, methodName, typeAndValuePair, directUrl,null);
     }
 
     @Override
-    public String invoke(final String interfaceName, final String methodName, final Map<String, Object> typeAndValuePair,String version) {
+    public String invoke(final String interfaceName, final String methodName, final Multimap<String, Object> typeAndValuePair,String version) {
         DubboRequest dubboRequest = assembleDubboRequest(interfaceName, methodName, typeAndValuePair, version);
         DubboResponse dubboResponse = baseDubboService.invoke(dubboRequest);
         return parseDubboResponse(dubboResponse);
     }
 
     @Override
-    public String asyncInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair,String version, ResponseCallback responseCallback) {
+    public String asyncInvoke(String interfaceName, String methodName, Multimap<String, Object> typeAndValuePair,String version, ResponseCallback responseCallback) {
         PreCheckUtils.checkEmpty(responseCallback, "异步回调接口不能为空");
         DubboRequest dubboRequest = assembleDubboRequest(interfaceName,methodName, typeAndValuePair, version);
         dubboRequest.setCallback(responseCallback);
@@ -59,7 +60,7 @@ public class DubboServiceImpl implements DubboService {
     }
 
     @Override
-    public String directedInvoke(String interfaceName, String methodName,  Map<String, Object> typeAndValuePair, String directUrl, String version) {
+    public String directedInvoke(String interfaceName, String methodName,  Multimap<String, Object> typeAndValuePair, String directUrl, String version) {
         PreCheckUtils.checkEmpty(directUrl, "直连的URL不能为空");
         DubboRequest dubboRequest = assembleDubboRequest(interfaceName ,methodName, typeAndValuePair,version);
         dubboRequest.setDirectUrl(directUrl);
@@ -67,7 +68,7 @@ public class DubboServiceImpl implements DubboService {
         return parseDubboResponse(dubboResponse);
     }
 
-    private DubboRequest assembleDubboRequest(String interfaceName, String methodName, Map<String, Object> typeAndValuePair, String version) {
+    private DubboRequest assembleDubboRequest(String interfaceName, String methodName, Multimap<String, Object> typeAndValuePair, String version) {
         DubboRequest dubboRequest = new DubboRequest();
         PreCheckUtils.checkEmpty(interfaceName, "dubbo接口的全路径名不能为空");
         PreCheckUtils.checkEmpty(methodName, "接口对应的方法不能为空");

@@ -5,6 +5,10 @@ import org.testng.TestNG;
 
 import java.util.Collections;
 
+/**
+ * @author qinyadong
+ * @param <T>
+ */
 public abstract class AbstractTestNGRunner<T> implements TestNGRunner<T> {
 
     private Class<? extends ITestNGListener> listenerClass;

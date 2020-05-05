@@ -1,6 +1,7 @@
 package com.kipa.dubbo.service;
 
 import com.alibaba.dubbo.remoting.exchange.ResponseCallback;
+import com.google.common.collect.Multimap;
 import com.kipa.dubbo.excute.DubboRequest;
 import com.kipa.dubbo.excute.DubboResponse;
 
@@ -20,7 +21,7 @@ public interface DubboService {
      * @param typeAndValuePair
      * @return
      */
-    String invoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair);
+    String invoke(String interfaceName, String methodName, Multimap<String, Object> typeAndValuePair);
 
     /**
      * dubbo接口返回结果是一个对象或者List的时候用改方法简便，
@@ -30,7 +31,7 @@ public interface DubboService {
      * @param typeAndValuePair
      * @return
      */
-    String invoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair,String version);
+    String invoke(String interfaceName, String methodName, Multimap<String, Object> typeAndValuePair,String version);
 
     /**
      * 如果是一个基础数据类型或者调用该结果失败，用该方法
@@ -48,7 +49,7 @@ public interface DubboService {
      * @param responseCallback
      * @return
      */
-    String asyncInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair, ResponseCallback responseCallback);
+    String asyncInvoke(String interfaceName, String methodName, Multimap<String, Object> typeAndValuePair, ResponseCallback responseCallback);
 
     /**
      *
@@ -58,7 +59,7 @@ public interface DubboService {
      * @param responseCallback 响应回调接口
      * @return
      */
-    String asyncInvoke(String interfaceName, String methodName, Map<String, Object> typeAndValuePair, String version, ResponseCallback responseCallback);
+    String asyncInvoke(String interfaceName, String methodName, Multimap<String, Object> typeAndValuePair, String version, ResponseCallback responseCallback);
 
     /**
      * 异步调用
@@ -75,14 +76,14 @@ public interface DubboService {
      * @param typeAndValuePair
      * @return
      */
-    String directedInvoke(String interfaceName,String methodName, Map<String, Object> typeAndValuePair, String directUrl);
+    String directedInvoke(String interfaceName,String methodName, Multimap<String, Object> typeAndValuePair, String directUrl);
     /**
      * 直连调用
      * @param interfaceName
      * @param typeAndValuePair
      * @return
      */
-    String directedInvoke(String interfaceName,String methodName, Map<String, Object> typeAndValuePair, String directUrl, String version);
+    String directedInvoke(String interfaceName,String methodName, Multimap<String, Object> typeAndValuePair, String directUrl, String version);
 
     /**
      * 直连

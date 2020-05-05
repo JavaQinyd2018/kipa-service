@@ -173,7 +173,7 @@ public class HttpTest extends BasicTestNGSpringContextTests {
         String result = httpService.post("http://localhost:8989/user/save", json);
         System.out.println(result);
     }
-
+}
 ```
 [http使用的详细wiki](wiki/http.md)
 
@@ -189,7 +189,7 @@ public class DubboTest extends BasicTestNGSpringContextTests {
   	//同步调用，dubbo接口是基础数据参数
     @Test
     public void testSyncParam() {
-        Map<String, Object> paramMap = Maps.newHashMap();
+        Multimap<String, Object> paramMap = ArrayListMultimap.create();
         paramMap.put(String.class.getName(),"16323232223");
         String result = dubboService.invoke("com.learn.springboot.springbootssmp.dubbo.UserInfoDubboService", "queryUserInfoByPhoneNo", paramMap);
         System.out.println(result);
@@ -199,7 +199,7 @@ public class DubboTest extends BasicTestNGSpringContextTests {
     @Test
     public void testSyncObject() {
         String json = "{\"phone\":\"16323232223\",\"email\":\"jordan@huawei.com\"}";
-        Map<String, Object> paramMap = Maps.newHashMap();
+        Multimap<String, Object> paramMap = ArrayListMultimap.create();
         paramMap.put("com.learn.springboot.springbootssmp.ro.UserRo", JSONObject.parseObject(json));
         String result = dubboService.invoke("com.learn.springboot.springbootssmp.dubbo.UserInfoDubboService", "getInfo", paramMap);
         System.out.println(result);
@@ -236,10 +236,10 @@ public class MockTest extends BasicTestNGSpringContextTests {
     @Test
     public void testMock() {
        	//http 调用，返回结果是mock的结果
-        String s = httpService.get("http:127.0.0.1:1234/userInfo/showUserInfo?phone=2355464646, true);
+        String s = httpService.get("http:127.0.0.1:1234/userInfo/showUserInfo?phone=2355464646", true);
         System.out.println(s);
     }
-
+}
 ```
 [mock使用的详细wiki](wiki/mock.md)
 
@@ -327,28 +327,33 @@ public class DatabaseTest  extends BasicTestNGSpringContextTests {
 ```java
 public class CheckTest extends BaseTestNGSpringContextTests {
 
-    	List<Map<String, Object>> list = Lists.newArrayList();
-        Map<String, Object> map = Maps.newHashMap();
-        map.put("username","kobe");
-        map.put("phone","123456789");
-        Map<String, Object> map3 = Maps.newHashMap();
-        map3.put("username","kobe2");
-        map3.put("phone","123456789");
-        list.add(map);
-        list.add(map3);
-        List<Map<String, Object>> list1 = Lists.newArrayList();
-        Map<String, Object> map1 = Maps.newHashMap();
-        map1.put("username","kobe1");
-        map1.put("phone","123456789");
-        Map<String, Object> map4 = Maps.newHashMap();
-        map4.put("username","kobe");
-        map4.put("phone","123456789");
-        list1.add(map1);
-        list1.add(map4);
-  		//校验 两个map对象是否相等
-        CheckHelper.checkBeanEquals(map, map1, "map不相等");
-  		//校验 两个list集合是否相等
-        CheckHelper.checkBeanEquals(list, list1, "list不相等");
+    	public static void main(String[] args){
+    	  List<Map<String, Object>> list = Lists.newArrayList();
+                  Map<String, Object> map = Maps.newHashMap();
+                  map.put("username","kobe");
+                  map.put("phone","123456789");
+                  Map<String, Object> map3 = Maps.newHashMap();
+                  map3.put("username","kobe2");
+                  map3.put("phone","123456789");
+                  list.add(map);
+                  list.add(map3);
+                  List<Map<String, Object>> list1 = Lists.newArrayList();
+                  Map<String, Object> map1 = Maps.newHashMap();
+                  map1.put("username","kobe1");
+                  map1.put("phone","123456789");
+                  Map<String, Object> map4 = Maps.newHashMap();
+                  map4.put("username","kobe");
+                  map4.put("phone","123456789");
+                  list1.add(map1);
+                  list1.add(map4);
+            		//校验 两个map对象是否相等
+                  CheckHelper.checkBeanEquals(map, map1, "map不相等");
+            		//校验 两个list集合是否相等
+                  CheckHelper.checkBeanEquals(list, list1, "list不相等");
+    	}
+}
+```
+```text
 =======================================================================
 Exception in thread "main" java.lang.KipaProcessException: list不相等:
 当前集合第1个元素字段对应的

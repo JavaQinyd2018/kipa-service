@@ -1,5 +1,6 @@
 package com.kipa.dubbo.excute;
 
+import com.google.common.collect.Multimap;
 import com.kipa.core.InvokeRequest;
 import com.kipa.core.RequestConverter;
 import org.apache.commons.collections4.MapUtils;
@@ -19,13 +20,13 @@ public class DubboRequestConverter extends RequestConverter<WrappedDubboParamete
         WrappedDubboParameter wrappedDubboParameter = new WrappedDubboParameter();
         DubboRequest request = (DubboRequest) invokeRequest;
         wrappedDubboParameter.setMethodName(request.getMethodName());
-        Map<String, Object> classValuePair = request.getClassValuePair();
-        if (MapUtils.isNotEmpty(classValuePair)) {
+        Multimap<String, Object> classValuePair = request.getClassValuePair();
+        if (!classValuePair.isEmpty()) {
             int size = classValuePair.size();
             String[] paramTypeArray = new String[size];
             List<Object> valueList = new ArrayList<>(size);
             int index = 0;
-            for (Map.Entry<String, Object> entry : classValuePair.entrySet()) {
+            for (Map.Entry<String, Object> entry : classValuePair.entries()) {
                 String s = entry.getKey();
                 Object o = entry.getValue();
                 paramTypeArray[index] = s;

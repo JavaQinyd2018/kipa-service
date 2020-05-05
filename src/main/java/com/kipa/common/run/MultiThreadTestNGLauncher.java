@@ -26,11 +26,11 @@ public class MultiThreadTestNGLauncher<T> {
 
     private TestNGLaunchHandler<T> handler;
 
-    public MultiThreadTestNGLauncher(TestNGLaunchHandler<T> handler) {
+    MultiThreadTestNGLauncher(TestNGLaunchHandler<T> handler) {
         this.handler = handler;
     }
 
-    public void launch(XmlListTestNgConverter<T> converter, XmlTestNGRunner runner) {
+    void launch(XmlListTestNgConverter<T> converter, XmlTestNGRunner runner) {
         final Map<String, List<Class<? extends T>>> multiLaunchClass = handler.getMultiLaunchClass();
         if (MapUtils.isEmpty(multiLaunchClass)) {
             log.warn("===========[注意] 当前没有符合条件的可执行用例===========");
