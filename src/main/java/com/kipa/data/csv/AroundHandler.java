@@ -79,16 +79,10 @@ final class AroundHandler {
     }
 
     private static File checkAndCreateFile(String relativePath) throws IOException {
-        String fullPath = DataConstant.BASE_PATH + relativePath;
+        String fullPath = DataConstant.BASE_PATH + StringUtils.replace(relativePath, "/",File.separator);
         File fileDir = new File(fullPath.substring(0, fullPath.lastIndexOf("/")));
         String csvFileName = fullPath.substring(fullPath.lastIndexOf("/") + 1);
-        if (StringUtils.containsIgnoreCase(System.getProperty("os.name"),"windows")) {
-            fullPath = DataConstant.BASE_PATH + relativePath.replace("/","\\") ;
-            fileDir = new File(fullPath.substring(0, fullPath.lastIndexOf("\\")));
-            csvFileName = fullPath.substring(fullPath.lastIndexOf("\\") + 1);
-        }
         log.debug("csv文件的路径为：{}",fullPath);
-
         if (!fileDir.exists() || !fileDir.isDirectory()) {
             if (!fileDir.mkdirs()) {
                 throw new KipaProcessException("目录"+fileDir+"创建失败");

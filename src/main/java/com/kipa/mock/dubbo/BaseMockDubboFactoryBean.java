@@ -1,6 +1,6 @@
 package com.kipa.mock.dubbo;
 
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Service;
 import org.testng.collections.Maps;
@@ -9,7 +9,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author: Qinyadong

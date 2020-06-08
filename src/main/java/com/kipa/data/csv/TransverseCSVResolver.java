@@ -157,8 +157,8 @@ final class TransverseCSVResolver {
                     }else {
                         value.add(JSON.toJSONString(o));
                     }
-                    list.add(ArrayUtils.toStringArray(value.toArray()));
                 });
+                list.add(ArrayUtils.toStringArray(value.toArray()));
             });
         }
 
