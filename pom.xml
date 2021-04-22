@@ -16,7 +16,7 @@
         <!--第三方依赖-->
         <aspectj.version>1.8.10</aspectj.version>
         <spring.version>5.1.2.RELEASE</spring.version>
-        <mybatis.version>3.4.5</mybatis.version>
+        <mybatis.version>3.5.6</mybatis.version>
         <mybatis.spring.version>1.3.2</mybatis.spring.version>
         <mysql.version>6.0.6</mysql.version>
         <druid.version>1.1.10</druid.version>
